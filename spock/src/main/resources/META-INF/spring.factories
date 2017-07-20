@@ -1,0 +1,3 @@
+org.springframework.test.context.ContextCustomizerFactory=com.pchudzik.springmock.spock.spring.SpockContextCustomizerFactory
+
+org.springframework.test.context.TestExecutionListener=com.pchudzik.springmock.spock.spring.MockAttachingTestExecutionListener

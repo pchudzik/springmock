@@ -1,0 +1,42 @@
+package com.pchudzik.springmock.samples.spock
+
+import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock
+import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy
+import org.mockito.Mockito
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.mock.mockito.MockBean
+import spock.lang.Specification
+
+import static TwoRepository.TWO
+
+@SpringBootTest
+class SpockSamplesApplicationTest extends Specification {
+	@AutowiredMock
+	AddOneTranslator addOneTranslator
+
+	@AutowiredSpy
+	TwoRepository twoRepository
+
+	@MockBean
+	LogService logService
+
+	@Autowired
+	MyService myService
+
+	def "should calculate values"() {
+		given:
+		final inputA = 1
+		final translatedA = 10
+		final expectedResult = translatedA + TWO
+		addOneTranslator.addOne(inputA) >> translatedA
+
+		when:
+		final result = myService.calculate(inputA)
+
+		then:
+		1 * twoRepository.getTwo()
+		result == expectedResult
+		Mockito.verify(logService).logCall(inputA, expectedResult)
+	}
+}

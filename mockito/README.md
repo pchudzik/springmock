@@ -1,0 +1,1 @@
+Mockito mocks provider
