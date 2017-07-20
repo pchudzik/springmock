@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/pchudzik/springmock.svg?branch=master)](https://travis-ci.org/pchudzik/springmock)
 
+## Introduction
+
 Alternative spring mocking infrastructure. With pluggable mocking library support. Purpose is to
 allow you to easily create and inject mocks of any mocking library into your spring tests. Currently
 mockito and spock mocks are supported.
@@ -12,6 +14,24 @@ motivation was to extend @MockBean and @SpyBean behaviour of spring-boot-test an
 inject mocks from library of your choice.
 
 Note that this is not yet final release so if you decide to use it you do it on your own risk.
+
+## Contents
+
+* [Introduction](#introduction)
+* [Contents](#contents)
+* [Requirements](#requirements)
+  * [Mockito](#mockito)
+  * [Spock](#spock)
+* [Installation](#installation)
+  * [Releases](#releases)
+  * [Snapshots](#snapshots)
+* [Mockito support](#mockito-support)
+* [Spock support](#spock-support)
+* [Usage](#usage)
+  * [Mocks](#mocks)
+  * [Spies](#spies)
+* [Problems](#problems)
+* [Changelog](#changelog)
 
 ## Requirements
 
@@ -38,16 +58,31 @@ To get spock mocks running you'll need:
 
 ## Installation
 
-Add XXX to repositories list
+### Releases
+
+### Snapshots
+
+Add (sonatype snapshots)[https://oss.sonatype.org/content/repositories/snapshots] repository to
+repositories list
 
 Maven:
 ```
-TODO
+	<repositories>
+		<repository>
+			<id>sonatype-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+	</repositories>
 ```
 
 Gradle:
 ```
-TODO
+repositories {
+	maven {
+		url 'https://oss.sonatype.org/content/repositories/snapshots'
+	}
+	mavenCentral()
+}
 ```
 
 ## Mockito support
@@ -143,3 +178,7 @@ then destination bean will be matched field name or by class.
 
 Please report any problems with the library using Github issues. I'd really appreciate failing test case included in
 issue description or as PR.
+
+## Changelog
+
+Will be filled after first official release
