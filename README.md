@@ -55,7 +55,7 @@ TODO
 Include mvn dependency:
 ```
 <dependency>
-	<groupId>com.pchudzik.spring.mock</groupId>
+	<groupId>com.pchudzik.springmock</groupId>
 	<artifactId>springmock-mockito</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 </dependency>
@@ -64,7 +64,7 @@ Include mvn dependency:
 Or gradle dependency:
 
 ```
-testCompile('com.pchudzik.spring.mock:springmock-mockito:1.0.0-SNAPSHOT')
+testCompile('com.pchudzik.springmock:springmock-mockito:1.0.0-SNAPSHOT')
 ```
 
 [sample pom.xml with spring-boot](samples/mockito-samples/pom.xml)
@@ -74,7 +74,7 @@ testCompile('com.pchudzik.spring.mock:springmock-mockito:1.0.0-SNAPSHOT')
 Include mvn dependency:
 ```
 <dependency>
-	<groupId>com.pchudzik.spring.mock</groupId>
+	<groupId>com.pchudzik.springmock</groupId>
 	<artifactId>springmock-spock</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 </dependency>
@@ -83,7 +83,7 @@ Include mvn dependency:
 Or gradle dependency:
 
 ```
-testCompile('com.pchudzik.spring.mock:springmock-spock:1.0.0-SNAPSHOT')
+testCompile('com.pchudzik.springmock:springmock-spock:1.0.0-SNAPSHOT')
 ```
 
 [sample build.gradle](samples/spock-samples/build.gradle)
