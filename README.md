@@ -1,4 +1,4 @@
-#springmock
+# springmock
 
 Alternative spring mocking infrastructure. With pluggable mocking library support. Purpose is to
 allow you to easily create and inject mocks of any mocking library into your spring tests. Currently
@@ -23,7 +23,7 @@ Required spring modules: spring-context & spring-test
 
 ### Mockito
 
-mockito-core <= 1.10.x is required and must be provided. [Samples with spring-boot](samples/mockito-samples/pom.xml)
+mockito-core <= 1.10.x is required and must be provided. [Samples with spring-boot](samples/mockito-samples)
 
 ### Spock
 
@@ -32,7 +32,7 @@ To get spock mocks running you'll need:
 * spock-core 1.1-groovy-2.4
 * spock-spring 1.1-groovy-2.4
 
-[Samples with spring-boot](samples/spock-samples/build.gradle)
+[Samples with spring-boot](samples/spock-samples)
 
 ## Installation
 
