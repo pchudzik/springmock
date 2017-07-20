@@ -26,7 +26,7 @@ repositories {
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile('com.pchudzik.spring.mock:springmock-spock:1.0.0-alpha1')
+	testCompile('com.pchudzik.springmock:springmock-spock:1.0.0-SNAPSHOT')
 	testCompile('org.spockframework:spock-core:1.1-groovy-2.4')
 	testCompile('org.spockframework:spock-spring:1.1-groovy-2.4')
 }

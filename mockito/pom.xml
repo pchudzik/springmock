@@ -3,9 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.pchudzik.spring.mock</groupId>
+		<groupId>com.pchudzik.springmock</groupId>
 		<artifactId>springmock-core</artifactId>
-		<version>1.0.0-alpha1</version>
+		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
 	<name>springmock-mockito</name>
@@ -15,7 +15,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.pchudzik.spring.mock</groupId>
+			<groupId>com.pchudzik.springmock</groupId>
 			<artifactId>springmock-infrastructure</artifactId>
 		</dependency>
 		<dependency>
