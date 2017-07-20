@@ -1,5 +1,7 @@
 # springmock
 
+[![Build Status](https://travis-ci.org/pchudzik/springmock.svg?branch=master)](https://travis-ci.org/pchudzik/springmock)
+
 Alternative spring mocking infrastructure. With pluggable mocking library support. Purpose is to
 allow you to easily create and inject mocks of any mocking library into your spring tests. Currently
 mockito and spock mocks are supported.
