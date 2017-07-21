@@ -11,10 +11,15 @@ import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 import spock.lang.Specification;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static org.springframework.beans.factory.BeanFactory.FACTORY_BEAN_PREFIX;
 
 /**
@@ -25,8 +30,16 @@ import static org.springframework.beans.factory.BeanFactory.FACTORY_BEAN_PREFIX;
  * TODO raise an incident for spockframework so they'll handle it
  */
 public class MockAttachingTestExecutionListener extends AbstractTestExecutionListener {
-	private static final String MOCKED_BEANS_NAMES = SpockConstants.PACKAGE_PREFIX + "testExecutionListener.mockedBeans";
-	private final MockUtil mockUtil = new MockUtil();
+	static final String MOCKED_BEANS_NAMES = SpockConstants.PACKAGE_PREFIX + "testExecutionListener.mockedBeans";
+	private final MockUtil mockUtil;
+
+	public MockAttachingTestExecutionListener() {
+		this(new MockUtil());
+	}
+
+	MockAttachingTestExecutionListener(MockUtil mockUtil) {
+		this.mockUtil = mockUtil;
+	}
 
 	@Override
 	public void beforeTestMethod(TestContext testContext) throws Exception {
@@ -35,48 +48,87 @@ public class MockAttachingTestExecutionListener extends AbstractTestExecutionLis
 			throw new IllegalArgumentException(getClass().getSimpleName() + " can be applied only for spock specifications");
 		}
 
-		final List<Object> mockedBeans = new LinkedList<>();
-
 		final Specification specification = (Specification) testInstance;
+		final List<Object> mocks = new LinkedList<>();
 		final ApplicationContext applicationContext = testContext.getApplicationContext();
-		final BeanDefinitionRegistry beanDefinitionRegistry = (BeanDefinitionRegistry) applicationContext;
-		final String[] mockBeanNames = applicationContext.getBeanDefinitionNames();
+		final Collection<String> beanNames = getBeanDefinitionNames(applicationContext);
 
-		for (String beanName : mockBeanNames) {
-			final BeanDefinition beanDefinition = beanDefinitionRegistry.getBeanDefinition(beanName);
+		for (String beanName : beanNames) {
+			final BeanDefinition beanDefinition = getBeanDefinition(applicationContext, beanName);
 			if (!beanDefinition.isAbstract() && beanDefinition.isSingleton()) {
-				Optional<Object> bean = tryToGetBean(applicationContext, beanName);
-				Optional<Object> beanFactory = tryToGetBean(applicationContext, FACTORY_BEAN_PREFIX + beanName);
-
-				attachIfPresent(specification, bean, mockedBeans);
-				attachIfPresent(specification, beanFactory, mockedBeans);
+				Stream
+						.of(
+								tryToGetBean(applicationContext, beanName),
+								tryToGetBean(applicationContext, FACTORY_BEAN_PREFIX + beanName))
+						.filter(mockUtil::isMock)
+						.forEach(mock -> {
+							mocks.add(mock);
+							mockUtil.attachMock(mock, specification);
+						});
 			}
 		}
 
-		testContext.setAttribute(MOCKED_BEANS_NAMES, mockedBeans);
+		testContext.setAttribute(MOCKED_BEANS_NAMES, mocks);
 	}
 
 	@Override
 	public void afterTestMethod(TestContext testContext) throws Exception {
-		final List<Object> mockedBeans = (List<Object>) testContext.getAttribute(MOCKED_BEANS_NAMES);
-		if (mockedBeans != null) {
-			mockedBeans.forEach(mockUtil::detachMock);
-		}
+		getMocksFromContext(testContext).forEach(mockUtil::detachMock);
 	}
 
-	private void attachIfPresent(Specification specification, Optional<Object> maybeBean, List<Object> mocks) {
-		if (maybeBean.isPresent() && mockUtil.isMock(maybeBean.get())) {
-			mockUtil.attachMock(maybeBean.get(), specification);
-			mocks.add(maybeBean.get());
-		}
+	private BeanDefinition getBeanDefinition(ApplicationContext applicationContext, String beanName) {
+		return walkContext(applicationContext, ctx -> tryToGetBeanDefinition((BeanDefinitionRegistry) ctx, beanName))
+				.stream()
+				.flatMap(selectOnlyPresentOptionals())
+				.findFirst()
+				.orElseThrow(() -> new NoSuchBeanDefinitionException("No bean definition for " + beanName));
 	}
 
-	private Optional<Object> tryToGetBean(ApplicationContext applicationContext, String beanName) {
+	private <T> Function<Optional<T>, Stream<? extends T>> selectOnlyPresentOptionals() {
+		return maybeDefinition -> maybeDefinition.map(Stream::of).orElse(Stream.empty());
+	}
+
+	private Collection<String> getBeanDefinitionNames(ApplicationContext applicationContext) {
+		return walkContext(applicationContext, ctx -> asList(ctx.getBeanDefinitionNames()))
+				.stream()
+				.flatMap(Collection::stream)
+				.collect(Collectors.toSet());
+	}
+
+	private <T> Collection<T> walkContext(ApplicationContext applicationContext, Function<ApplicationContext, T> contextProcessor) {
+		final List<T> result = new LinkedList<>();
+		ApplicationContext currentContext = applicationContext;
+		while (currentContext != null) {
+			T processingResult = contextProcessor.apply(currentContext);
+			currentContext = currentContext.getParent();
+
+			result.add(processingResult);
+		}
+
+		return result;
+	}
+
+	private Optional<BeanDefinition> tryToGetBeanDefinition(BeanDefinitionRegistry registry, String beanName) {
 		try {
-			//null is possible when mocking factoryBean without default return value
-			return Optional.ofNullable(applicationContext.getBean(beanName));
-		} catch (NoSuchBeanDefinitionException | BeanIsNotAFactoryException ex) {
+			return Optional.of(registry.getBeanDefinition(beanName));
+		} catch (NoSuchBeanDefinitionException ex) {
 			return Optional.empty();
 		}
+	}
+
+	private Object tryToGetBean(ApplicationContext applicationContext, String beanName) {
+		try {
+			//null is possible when mocking factoryBean without default return value
+			return applicationContext.getBean(beanName);
+		} catch (NoSuchBeanDefinitionException | BeanIsNotAFactoryException ex) {
+			return null;
+		}
+	}
+
+	private List<Object> getMocksFromContext(TestContext testContext) {
+		return Optional
+				.ofNullable((List<Object>) testContext.getAttribute(MOCKED_BEANS_NAMES))
+				.orElseGet(LinkedList::new);
+
 	}
 }
