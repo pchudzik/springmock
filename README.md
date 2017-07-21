@@ -62,26 +62,26 @@ To get spock mocks running you'll need:
 
 ### Snapshots
 
-Add (sonatype snapshots)[https://oss.sonatype.org/content/repositories/snapshots] repository to
+Add [sonatype snapshots](https://oss.sonatype.org/content/repositories/snapshots) repository to
 repositories list
 
 Maven:
 ```
-	<repositories>
-		<repository>
-			<id>sonatype-snapshots</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</repository>
-	</repositories>
+<repositories>
+  <repository>
+    <id>sonatype-snapshots</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  </repository>
+</repositories>
 ```
 
 Gradle:
 ```
 repositories {
-	maven {
-		url 'https://oss.sonatype.org/content/repositories/snapshots'
-	}
-	mavenCentral()
+  maven {
+    url 'https://oss.sonatype.org/content/repositories/snapshots'
+  }
+  mavenCentral()
 }
 ```
 
@@ -90,9 +90,9 @@ repositories {
 Include mvn dependency:
 ```
 <dependency>
-	<groupId>com.pchudzik.springmock</groupId>
-	<artifactId>springmock-mockito</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+  <groupId>com.pchudzik.springmock</groupId>
+  <artifactId>springmock-mockito</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -109,9 +109,9 @@ testCompile('com.pchudzik.springmock:springmock-mockito:1.0.0-SNAPSHOT')
 Include mvn dependency:
 ```
 <dependency>
-	<groupId>com.pchudzik.springmock</groupId>
-	<artifactId>springmock-spock</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+  <groupId>com.pchudzik.springmock</groupId>
+  <artifactId>springmock-spock</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -146,6 +146,17 @@ public void should_inject_mock() {
 }
 ```
 
+or in spock: (TODO check if it works ;))
+```
+@AutowiredMock AService service
+
+def "should inject mock"() {
+  given: service.hello() >> "mock"
+  when:  final result = service.hello()
+  then:  result == "mock"
+}
+```
+
 You can specify name of the registered mock using name param. Which will result in registering mock with the specific
 name in the spring context (like in with
 [@Bean#name](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/Bean.html#name--)).
@@ -168,6 +179,15 @@ already be registered in the context. It needs appropriate object to already exi
 @Test
 public void should_inject_spy() {
   assertTrue(mockingDetails(service).isSpy());
+}
+```
+or in spock (TODO check if it works ;))
+```
+@AutowiredSpy Service service
+
+def "should inject spy"() {
+  when: service.hello()
+  then: 1 * service.hello() >> "spy!"
 }
 ```
 
