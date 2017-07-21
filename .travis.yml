@@ -1,4 +1,9 @@
 language: java
 jdk: oraclejdk8
 
+cache:
+  directories:
+    - $HOME/.m2/repositories
+    - $HOME/.m2/wrapper
+
 script: ./mvnw -B clean verify
