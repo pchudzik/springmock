@@ -193,7 +193,7 @@ public void should_inject_mock() {
 }
 ```
 
-or in spock: (TODO check if it works ;))
+or in spock:
 ```
 @AutowiredMock AService service
 
