@@ -16,6 +16,8 @@
 		</license>
 	</licenses>
 
+	<url>https://github.com/pchudzik/springmock</url>
+
 	<scm>
 		<connection>scm:git:git://github.com/pchudzik/springmock.git</connection>
 		<developerConnection>scm:git:ssh://github.com:pchudzik/springmock.git</developerConnection>
