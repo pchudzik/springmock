@@ -24,14 +24,23 @@ Note that this is not yet final release so if you decide to use it you do it on 
   * [Spock](#spock)
 * [Installation](#installation)
   * [Releases](#releases)
+    * [With Mockito as mocks provider](#with-mockito-as-mocks-provider)
+      * [mvn](#mvn)
+      * [gradle](#gradle)
+    * [With Spock as mock provider](#with-spock-as-mock-provider)
+      * [mvn](#mvn-1)
+      * [gradle:](#gradle-1)
   * [Snapshots](#snapshots)
-* [Mockito support](#mockito-support)
-* [Spock support](#spock-support)
+    * [Repository configuration](#repository-configuration)
+    * [Mockito as mocks provider](#mockito-as-mocks-provider)
+    * [Spock as mocks provider](#spock-as-mocks-provider)
 * [Usage](#usage)
   * [Mocks](#mocks)
   * [Spies](#spies)
 * [Problems](#problems)
 * [Changelog](#changelog)
+  * [1.0.0 - 2017.07.22](#100---20170722)
+
 
 ## Requirements
 
@@ -60,7 +69,49 @@ To get spock mocks running you'll need:
 
 ### Releases
 
+#### With Mockito as mocks provider
+
+##### mvn
+
+```xml
+<dependency>
+  <groupId>com.pchudzik.springmock</groupId>
+  <artifactId>springmock-mockito</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+##### gradle
+
+```java
+testCompile('com.pchudzik.springmock:springmock-mockito:1.0.0')
+``` 
+
+#### With Spock as mock provider 
+
+##### mvn
+
+```xml
+<dependency>
+  <groupId>com.pchudzik.springmock</groupId>
+  <artifactId>springmock-spock</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+##### gradle:
+
+```
+testCompile('com.pchudzik.springmock:springmock-mockito:1.0.0')
+```
+
+[sample pom.xml with spring-boot](samples/mockito-samples/pom.xml)
+
+[sample build.gradle](samples/spock-samples/build.gradle)
+
 ### Snapshots
+
+#### Repository configuration
 
 Add [sonatype snapshots](https://oss.sonatype.org/content/repositories/snapshots) repository to
 repositories list
@@ -85,43 +136,39 @@ repositories {
 }
 ```
 
-## Mockito support
+#### Mockito as mocks provider
 
 Include mvn dependency:
 ```
 <dependency>
   <groupId>com.pchudzik.springmock</groupId>
   <artifactId>springmock-mockito</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
 </dependency>
 ```
 
 Or gradle dependency:
 
 ```
-testCompile('com.pchudzik.springmock:springmock-mockito:1.0.0-SNAPSHOT')
+testCompile('com.pchudzik.springmock:springmock-mockito:1.0.1-SNAPSHOT')
 ```
 
-[sample pom.xml with spring-boot](samples/mockito-samples/pom.xml)
-
-## Spock support
+#### Spock as mocks provider
 
 Include mvn dependency:
 ```
 <dependency>
   <groupId>com.pchudzik.springmock</groupId>
   <artifactId>springmock-spock</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
 </dependency>
 ```
 
 Or gradle dependency:
 
 ```
-testCompile('com.pchudzik.springmock:springmock-spock:1.0.0-SNAPSHOT')
+testCompile('com.pchudzik.springmock:springmock-spock:1.0.1-SNAPSHOT')
 ```
-
-[sample build.gradle](samples/spock-samples/build.gradle)
 
 ## Usage
 
@@ -181,7 +228,9 @@ public void should_inject_spy() {
   assertTrue(mockingDetails(service).isSpy());
 }
 ```
-or in spock (TODO check if it works ;))
+
+or in spock:
+
 ```
 @AutowiredSpy Service service
 
@@ -201,4 +250,7 @@ issue description or as PR.
 
 ## Changelog
 
-Will be filled after first official release
+### 1.0.0 - 2017.07.22
+
+  * @AutowiredMock with name and aliases support
+  * @AutowiredSpy with name and aliases support
