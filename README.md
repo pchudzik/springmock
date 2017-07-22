@@ -29,7 +29,7 @@ Note that this is not yet final release so if you decide to use it you do it on 
       * [gradle](#gradle)
     * [With Spock as mock provider](#with-spock-as-mock-provider)
       * [mvn](#mvn-1)
-      * [gradle:](#gradle-1)
+      * [gradle](#gradle-1)
   * [Snapshots](#snapshots)
     * [Repository configuration](#repository-configuration)
     * [Mockito as mocks provider](#mockito-as-mocks-provider)
@@ -99,7 +99,7 @@ testCompile('com.pchudzik.springmock:springmock-mockito:1.0.0')
 </dependency>
 ```
 
-##### gradle:
+##### gradle
 
 ```
 testCompile('com.pchudzik.springmock:springmock-mockito:1.0.0')
