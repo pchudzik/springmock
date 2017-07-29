@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * Annotation which notifies springmock infrastructure to process the field annotated with it
  * and locate bean matching field and annotation definition and create spy from it.
  */
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Autowired

@@ -1,7 +1,7 @@
 package com.pchudzik.springmock.infrastructure.spring;
 
 import com.pchudzik.springmock.infrastructure.DoubleFactory;
-import com.pchudzik.springmock.infrastructure.definition.SpyDefinition;
+import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionTestFactory.doubleDefinition;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
@@ -44,14 +45,17 @@ public class SpyReplacingContextPostProcessorTest {
 		final Service service1 = new Service();
 		final Service service2 = new Service();
 		final String serviceName = "service1";
-		final SpyDefinition spyDefinition = new SpyDefinition(Service.class, serviceName);
+		final DoubleDefinition definition = DoubleDefinition.builder()
+				.doubleClass(Service.class)
+				.name(serviceName)
+				.build();
 
 		final SpyReplacingContextPostProcessor processor = new SpyProcessorBuilder()
 				.withBean(serviceName, service1)
-				.withSpy(spyDefinition)
+				.withSpy(definition)
 
 				.withBean("any service", service2)
-				.withSpy(new SpyDefinition(Service.class, "some yet another spy"))
+				.withSpy(doubleDefinition(Service.class))
 				.build();
 
 		//when
@@ -60,7 +64,7 @@ public class SpyReplacingContextPostProcessorTest {
 		//then
 		Mockito
 				.verify(doubleFactory)
-				.createSpy(service1, spyDefinition);
+				.createSpy(service1, definition);
 		verifyNoMoreInteractions(doubleFactory);
 	}
 
@@ -70,10 +74,10 @@ public class SpyReplacingContextPostProcessorTest {
 		final Service service = new Service();
 		final String serviceName = "service";
 		final String spyName = "spy";
-		final SpyDefinition spyDefinition = new SpyDefinition(Service.class, spyName);
+		final DoubleDefinition definition = doubleDefinition(Service.class, spyName);
 		final SpyReplacingContextPostProcessor postProcessor = new SpyProcessorBuilder()
 				.withBean(serviceName, service)
-				.withSpy(spyDefinition)
+				.withSpy(definition)
 				.build();
 
 		//when
@@ -82,7 +86,7 @@ public class SpyReplacingContextPostProcessorTest {
 		//then
 		Mockito
 				.verify(doubleFactory)
-				.createSpy(service, spyDefinition);
+				.createSpy(service, definition);
 		verifyNoMoreInteractions(doubleFactory);
 	}
 
@@ -96,8 +100,8 @@ public class SpyReplacingContextPostProcessorTest {
 		final SpyReplacingContextPostProcessor postProcessor = new SpyProcessorBuilder()
 				.withBean(serviceName, service)
 				.withBean(childServiceName, childService)
-				.withSpy(new SpyDefinition(Service.class, "spy"))
-				.withSpy(new SpyDefinition(Service.class, "otherSpy"))
+				.withSpy(doubleDefinition(Service.class))
+				.withSpy(doubleDefinition(Service.class))
 				.build();
 
 		//when
@@ -113,7 +117,7 @@ public class SpyReplacingContextPostProcessorTest {
 		//given
 		final String serviceName = "service";
 		final OtherService otherService = new OtherService();
-		final SpyDefinition spyDefinition = new SpyDefinition(Service.class, serviceName);
+		final DoubleDefinition spyDefinition = doubleDefinition(Service.class, serviceName);
 		final SpyReplacingContextPostProcessor postProcessor = new SpyProcessorBuilder()
 				.withBean(serviceName, otherService)
 				.withSpy(spyDefinition)
@@ -130,14 +134,14 @@ public class SpyReplacingContextPostProcessorTest {
 
 	private class SpyProcessorBuilder {
 		private List<TestBeanDefinition> beans = new LinkedList<>();
-		private List<SpyDefinition> spies = new LinkedList<>();
+		private List<DoubleDefinition> spies = new LinkedList<>();
 
 		public SpyProcessorBuilder withBean(String name, Object bean) {
 			beans.add(new TestBeanDefinition(name, bean));
 			return this;
 		}
 
-		public SpyProcessorBuilder withSpy(SpyDefinition spyDefinition) {
+		public SpyProcessorBuilder withSpy(DoubleDefinition spyDefinition) {
 			spies.add(spyDefinition);
 			return this;
 		}

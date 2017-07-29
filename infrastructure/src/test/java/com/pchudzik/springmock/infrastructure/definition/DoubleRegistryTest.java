@@ -1,35 +1,39 @@
 package com.pchudzik.springmock.infrastructure.definition;
 
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.util.Collection;
-import java.util.Collections;
 
+import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionTestFactory.doubleDefinition;
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class DoubleRegistryTest {
-	private Collection<SpyDefinition> noSpies = Collections.emptyList();
 
 	@Test
 	public void should_return_all_registered_mock_names() {
 		//given
 		final String firstMockName = "firstService";
 		final String secondMockName = "secondService";
-		final DoubleRegistry registry = new DoubleRegistry(asList(
-				new MockDefinition(Service.class, firstMockName, Collections.emptyList()),
-				new MockDefinition(OtherService.class, secondMockName, Collections.emptyList())),
-				noSpies);
+		final String firstSpyName = "spy1";
+		final String secondSpyName = "spy2";
+		final DoubleRegistry registry = new DoubleRegistry(
+				asList(
+						doubleDefinition(Service.class, firstMockName),
+						doubleDefinition(OtherService.class, secondMockName)),
+				asList(
+						doubleDefinition(Service.class, firstSpyName),
+						doubleDefinition(Service.class, secondSpyName)));
 
 		//when
-		final Collection<String> mockNames = registry.getRegisteredMockNames();
+		final Collection<String> mockNames = registry.getRegisteredDoubleNames();
 
 		//then
-		assertEquals(2, mockNames.size());
-		assertThat(mockNames, Matchers.containsInAnyOrder(firstMockName, secondMockName));
+		assertEquals(4, mockNames.size());
+		assertThat(mockNames, containsInAnyOrder(firstMockName, secondMockName, firstSpyName, secondSpyName));
 	}
 
 	private static class Service {

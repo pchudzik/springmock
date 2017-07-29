@@ -6,4 +6,6 @@ cache:
     - $HOME/.m2/repositories
     - $HOME/.m2/wrapper
 
+install: true  #skip ./mvwn install it's not required
+
 script: ./mvnw -B clean verify

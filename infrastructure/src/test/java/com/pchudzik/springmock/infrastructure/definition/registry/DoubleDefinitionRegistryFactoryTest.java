@@ -1,8 +1,10 @@
 package com.pchudzik.springmock.infrastructure.definition.registry;
 
+import com.pchudzik.springmock.infrastructure.DoubleConfigurationParser;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionMatchers.*;
 import static java.util.Arrays.asList;
@@ -10,6 +12,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.springframework.util.ReflectionUtils.findField;
 
 public class DoubleDefinitionRegistryFactoryTest {
 	private static final String ANY_SERVICE1_NAME = "anyService1";
@@ -17,6 +20,8 @@ public class DoubleDefinitionRegistryFactoryTest {
 	private static final String SERVICE1_ALIAS_2 = "service2";
 
 	private static final String ANY_SERVICE2_NAME = "anyService2";
+
+	private DoubleConfigurationParser configurationParser = Mockito.mock(DoubleConfigurationParser.class);
 
 	@Test
 	public void should_find_all_mock_definitions_registered_in_class() {
@@ -83,8 +88,31 @@ public class DoubleDefinitionRegistryFactoryTest {
 				doubleWithName(SpyWithoutNameSpec.FIELD_NAME));
 	}
 
+	@Test
+	public void should_parse_mock_configuration() throws NoSuchFieldException {
+		//when
+		parseRegistry(RegisteredAliasesMocks.class);
+
+		//then
+		Mockito
+				.verify(configurationParser)
+				.parseDoubleConfiguration(findField(RegisteredAliasesMocks.class, RegisteredAliasesMocks.FIELD_NAME));
+	}
+
+
+	@Test
+	public void should_parse_spy_configuration() throws NoSuchFieldException {
+		//when
+		parseRegistry(SpyWithoutNameSpec.class);
+
+		//then
+		Mockito
+				.verify(configurationParser)
+				.parseDoubleConfiguration(findField(SpyWithoutNameSpec.class, SpyWithoutNameSpec.FIELD_NAME));
+	}
+
 	public DoubleRegistry parseRegistry(Class<?> clazz) {
-		final DoubleDefinitionRegistryFactory definitionRegistryFactory = new DoubleDefinitionRegistryFactory();
+		final DoubleDefinitionRegistryFactory definitionRegistryFactory = new DoubleDefinitionRegistryFactory(configurationParser);
 		return definitionRegistryFactory.parse(clazz);
 	}
 
@@ -95,6 +123,8 @@ public class DoubleDefinitionRegistryFactoryTest {
 	}
 
 	private static class RegisteredAliasesMocks {
+		public static final String FIELD_NAME = "anyService";
+
 		@AutowiredMock(name = ANY_SERVICE1_NAME, alias = {SERVICE1_ALIAS_1, SERVICE1_ALIAS_2})
 		AnyService1 anyService;
 	}

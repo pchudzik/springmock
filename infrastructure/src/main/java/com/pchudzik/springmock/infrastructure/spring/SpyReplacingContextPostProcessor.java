@@ -2,7 +2,7 @@ package com.pchudzik.springmock.infrastructure.spring;
 
 import com.pchudzik.springmock.infrastructure.DoubleFactory;
 import com.pchudzik.springmock.infrastructure.MockConstants;
-import com.pchudzik.springmock.infrastructure.definition.SpyDefinition;
+import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleSearch;
 import org.springframework.aop.framework.Advised;
@@ -35,17 +35,17 @@ public class SpyReplacingContextPostProcessor extends InstantiationAwareBeanPost
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		final Class<?> beanClass = resolveBeanClass(bean);
-		final DoubleSearch<SpyDefinition> spySearch = doubleRegistry.spySearch();
+		final DoubleSearch spySearch = doubleRegistry.spySearch();
 
 		if(spySearch.containsAnyDoubleMatching(beanName, beanClass)) {
 			if(spySearch.containsExactlyOneDouble(beanName, beanClass)) {
-				final SpyDefinition spyDefinition = spySearch.findOneDefinition(beanName, beanClass);
+				final DoubleDefinition spyDefinition = spySearch.findOneDefinition(beanName, beanClass);
 				return createSpy(bean, spyDefinition);
 			} else if(spySearch.containsExactlyOneDouble(beanName)) {
-				final SpyDefinition spyDefinition = spySearch.findOneDefinition(beanName);
+				final DoubleDefinition spyDefinition = spySearch.findOneDefinition(beanName);
 				return createSpy(bean, spyDefinition);
 			} else if(spySearch.containsExactlyOneDouble(beanClass)) {
-				final SpyDefinition spyDefinition = spySearch.findOneDefinition(beanClass);
+				final DoubleDefinition spyDefinition = spySearch.findOneDefinition(beanClass);
 				if(hasOnlyOneBeanOfClass(spyDefinition.getDoubleClass())) {
 					return createSpy(bean, spyDefinition);
 				}
@@ -57,7 +57,7 @@ public class SpyReplacingContextPostProcessor extends InstantiationAwareBeanPost
 		return bean;
 	}
 
-	private Object createSpy(Object bean, SpyDefinition spyDefinition) {
+	private Object createSpy(Object bean, DoubleDefinition spyDefinition) {
 		return doubleFactory.createSpy(unwrapAopProxy(bean), spyDefinition);
 	}
 

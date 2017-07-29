@@ -1,17 +1,28 @@
 package com.pchudzik.springmock.infrastructure.definition;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.util.Assert;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 
-public abstract class DoubleDefinition {
+public class DoubleDefinition {
+	public static final Object NO_CONFIGURATION = null;
+
 	private final Class<?> doubleClass;
 	private final DoubleName doubleName;
+	private final Object doubleConfiguration;
 
-	public DoubleDefinition(Class<?> doubleClass, String name, Collection<String> aliases) {
+	protected DoubleDefinition(Class<?> doubleClass, Object doubleConfiguration, DoubleName doubleName) {
 		this.doubleClass = doubleClass;
-		this.doubleName = new DoubleName(name, aliases);
+		this.doubleName = doubleName;
+		this.doubleConfiguration = doubleConfiguration;
+	}
+
+	public static DoubleDefinitionBuilder builder() {
+		return new DoubleDefinitionBuilder();
 	}
 
 	public Class<?> getDoubleClass() {
@@ -30,9 +41,17 @@ public abstract class DoubleDefinition {
 		return doubleName.hasName(beanName);
 	}
 
-
 	public boolean hasClass(Class<?> spyClass) {
 		return spyClass.isAssignableFrom(doubleClass);
+	}
+
+	public <T> Optional<T> getConfiguration(Class<T> configurationClass) {
+		if (doubleConfiguration == null) {
+			return Optional.empty();
+		}
+
+		Assert.isInstanceOf(configurationClass, doubleConfiguration);
+		return Optional.of((T) doubleConfiguration);
 	}
 
 	@Override
@@ -47,8 +66,8 @@ public abstract class DoubleDefinition {
 
 		final DoubleDefinition that = (DoubleDefinition) o;
 
-		return Objects.equals(doubleClass, that.doubleClass) &&
-				Objects.equals(doubleName, that.doubleName);
+		return Objects.equals(this.doubleClass, that.doubleClass) &&
+				Objects.equals(this.doubleName, that.doubleName);
 	}
 
 	@Override
@@ -62,5 +81,42 @@ public abstract class DoubleDefinition {
 				.append("doubleClass", doubleClass)
 				.append("doubleName", doubleName)
 				.toString();
+	}
+
+	public static class DoubleDefinitionBuilder {
+		private Class<?> doubleClass;
+		private String name;
+		private Collection<String> aliases = Collections.emptyList();
+		private Object doubleConfiguration = NO_CONFIGURATION;
+
+		private DoubleDefinitionBuilder() {
+		}
+
+		public DoubleDefinitionBuilder doubleClass(Class<?> doubleClass) {
+			this.doubleClass = doubleClass;
+			return this;
+		}
+
+		public DoubleDefinitionBuilder name(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public DoubleDefinitionBuilder aliases(Collection<String> aliases) {
+			this.aliases = aliases;
+			return this;
+		}
+
+		public DoubleDefinitionBuilder doubleConfiguration(Object doubleConfiguration) {
+			this.doubleConfiguration = doubleConfiguration;
+			return this;
+		}
+
+		public DoubleDefinition build() {
+			Assert.notNull(doubleClass);
+			Assert.notNull(name);
+
+			return new DoubleDefinition(doubleClass, doubleConfiguration, new DoubleName(name, aliases));
+		}
 	}
 }

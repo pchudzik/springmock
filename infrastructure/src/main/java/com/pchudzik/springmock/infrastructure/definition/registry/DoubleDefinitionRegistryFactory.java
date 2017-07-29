@@ -1,17 +1,17 @@
 package com.pchudzik.springmock.infrastructure.definition.registry;
 
+import com.pchudzik.springmock.infrastructure.DoubleConfigurationParser;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
-import com.pchudzik.springmock.infrastructure.definition.MockDefinition;
-import com.pchudzik.springmock.infrastructure.definition.SpyDefinition;
+import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleNameResolver.resolveDoubleName;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.core.annotation.AnnotationUtils.getAnnotation;
 import static org.springframework.util.ReflectionUtils.doWithFields;
 
@@ -20,9 +20,15 @@ import static org.springframework.util.ReflectionUtils.doWithFields;
  * the registry
  */
 public class DoubleDefinitionRegistryFactory {
+	private final DoubleConfigurationParser<?> configurationParser;
+
+	public DoubleDefinitionRegistryFactory(DoubleConfigurationParser configurationParser) {
+		this.configurationParser = configurationParser;
+	}
+
 	public DoubleRegistry parse(Class<?> clazz) {
-		final Set<MockDefinition> mocks = new HashSet<>();
-		final Set<SpyDefinition> spies = new HashSet<>();
+		final Set<DoubleDefinition> mocks = new HashSet<>();
+		final Set<DoubleDefinition> spies = new HashSet<>();
 
 		doWithFields(clazz, (Field field) -> {
 			extractMockDefinition(field).ifPresent(mocks::add);
@@ -32,37 +38,33 @@ public class DoubleDefinitionRegistryFactory {
 		return new DoubleRegistry(mocks, spies);
 	}
 
-	protected MockDefinition createMockDefinition(Field field, AutowiredMock autowiredMock) {
-		return new MockDefinition(
-				field.getType(),
-				generateDoubleName(field, autowiredMock.name()),
-				asList(autowiredMock.alias()));
+	protected DoubleDefinition createMockDefinition(Field field, AutowiredMock autowiredMock) {
+		return DoubleDefinition.builder()
+				.doubleClass(field.getType())
+				.name(resolveDoubleName(field))
+				.aliases(asList(autowiredMock.alias()))
+				.doubleConfiguration(configurationParser.parseDoubleConfiguration(field))
+				.build();
 	}
 
-	protected SpyDefinition createSpyDefinition(Field field, AutowiredSpy autowiredSpy) {
-		return new SpyDefinition(
-				field.getType(),
-				generateDoubleName(field, autowiredSpy.name()),
-				asList(autowiredSpy.alias()));
+	protected DoubleDefinition createSpyDefinition(Field field, AutowiredSpy autowiredSpy) {
+		return DoubleDefinition.builder()
+				.doubleClass(field.getType())
+				.name(resolveDoubleName(field))
+				.aliases(asList(autowiredSpy.alias()))
+				.doubleConfiguration(configurationParser.parseDoubleConfiguration(field))
+				.build();
 	}
 
-	private Optional<MockDefinition> extractMockDefinition(Field field) {
+	private Optional<DoubleDefinition> extractMockDefinition(Field field) {
 		return Optional
 				.ofNullable(getAnnotation(field, AutowiredMock.class))
 				.map(autowiredMock -> createMockDefinition(field, autowiredMock));
 	}
 
-	private Optional<SpyDefinition> extractSpyDefinition(Field field) {
+	private Optional<DoubleDefinition> extractSpyDefinition(Field field) {
 		return Optional
 				.ofNullable(getAnnotation(field, AutowiredSpy.class))
 				.map(autowiredSpy -> createSpyDefinition(field, autowiredSpy));
-	}
-
-	private String generateDoubleName(Field field, String maybeMockName) {
-		if (isBlank(maybeMockName)) {
-			return field.getName();
-		}
-
-		return maybeMockName;
 	}
 }

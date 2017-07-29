@@ -11,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
 @ContextConfiguration
-class ShouldInjectmockByAliasTest extends Specification {
+class ShouldInjectMockByAliasTest extends Specification {
 	@AutowiredMock(alias = "alias")
 	AnyService mock
 

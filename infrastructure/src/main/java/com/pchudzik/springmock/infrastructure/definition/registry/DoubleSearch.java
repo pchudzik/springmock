@@ -8,10 +8,10 @@ import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 
-public class DoubleSearch<T extends DoubleDefinition> {
-	private final Collection<T> doubles;
+public class DoubleSearch {
+	private final Collection<DoubleDefinition> doubles;
 
-	DoubleSearch(Collection<T> doubles) {
+	DoubleSearch(Collection<DoubleDefinition> doubles) {
 		this.doubles = doubles;
 	}
 
@@ -31,25 +31,33 @@ public class DoubleSearch<T extends DoubleDefinition> {
 		return 1 == matchingDoublesCount(filterByClass(beanClass));
 	}
 
-	public T findOneDefinition(String beanName, Class<?> beanClass) {
-		final List<T> matchingDoubles = matchingDoubles(filterByName(beanName).and(filterByClass(beanClass)));
+	public DoubleDefinition findOneDefinition(String beanName, Class<?> beanClass) {
+		final List<DoubleDefinition> matchingDoubles = matchingDoubles(filterByName(beanName).and(filterByClass(beanClass)));
 		ensureSingleMatch(matchingDoubles, "[name = " + beanName + " AND class = " + beanClass + "]");
 		return matchingDoubles.get(0);
 	}
 
-	public T findOneDefinition(String beanName) {
-		final List<T> matchingDoubles = matchingDoubles(filterByName(beanName));
+	public DoubleDefinition findOneDefinition(String beanName) {
+		final List<DoubleDefinition> matchingDoubles = matchingDoubles(filterByName(beanName));
 		ensureSingleMatch(matchingDoubles, "[name = " + beanName + "]");
 		return matchingDoubles.get(0);
 	}
 
-	public T findOneDefinition(Class<?> beanClass) {
-		final List<T> matchingDoubles = matchingDoubles(filterByClass(beanClass));
+	public DoubleDefinition findOneDefinition(Class<?> beanClass) {
+		final List<DoubleDefinition> matchingDoubles = matchingDoubles(filterByClass(beanClass));
 		ensureSingleMatch(matchingDoubles, "[class = "+ beanClass + "]");
 		return matchingDoubles.get(0);
 	}
 
-	private void ensureSingleMatch(List<T> matchingDoubles, String filterDescription) {
+	private int matchingDoublesCount(Predicate<DoubleDefinition> matcher) {
+		return matchingDoubles(matcher).size();
+	}
+
+	private List<DoubleDefinition> matchingDoubles(Predicate<DoubleDefinition> matcher) {
+		return doubles.stream().filter(matcher).collect(toList());
+	}
+
+	private static void ensureSingleMatch(List<DoubleDefinition> matchingDoubles, String filterDescription) {
 		if(matchingDoubles.isEmpty()) {
 			throw new IllegalStateException("Expected exactly one double matching " + filterDescription + " but found none");
 		}
@@ -58,19 +66,11 @@ public class DoubleSearch<T extends DoubleDefinition> {
 		}
 	}
 
-	private List<T> matchingDoubles(Predicate<T> matcher) {
-		return doubles.stream().filter(matcher).collect(toList());
-	}
-
-	private int matchingDoublesCount(Predicate<T> matcher) {
-		return matchingDoubles(matcher).size();
-	}
-
-	private Predicate<T> filterByName(String beaName) {
+	private static Predicate<DoubleDefinition> filterByName(String beaName) {
 		return doubleDefinition -> doubleDefinition.hasNameOrAlias(beaName);
 	}
 
-	private Predicate<T> filterByClass(Class<?> beanClass) {
+	private static Predicate<DoubleDefinition> filterByClass(Class<?> beanClass) {
 		return doubleDefinition -> doubleDefinition.hasClass(beanClass);
 	}
 }

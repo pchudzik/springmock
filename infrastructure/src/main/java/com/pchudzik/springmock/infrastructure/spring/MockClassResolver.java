@@ -2,8 +2,7 @@ package com.pchudzik.springmock.infrastructure.spring;
 
 import com.pchudzik.springmock.infrastructure.DoubleFactory;
 import com.pchudzik.springmock.infrastructure.MockConstants;
-import com.pchudzik.springmock.infrastructure.definition.MockDefinition;
-import com.pchudzik.springmock.infrastructure.definition.SpyDefinition;
+import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleSearch;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessorAdapter;
@@ -12,8 +11,8 @@ import org.springframework.beans.factory.config.InstantiationAwareBeanPostProces
  * <p>Creates link between beanName registered using @AutowiredMock with actual mock type</p>
  *
  * <p>It is required to to provide bean class type from the outside because mocks are created using
- * {@link DoubleFactory#createMock(MockDefinition)} and {@link DoubleFactory#createSpy(Object,
- * SpyDefinition)} and signature of both of those methods returns Objects. Based on factory method
+ * {@link DoubleFactory#createMock(DoubleDefinition)} and {@link DoubleFactory#createSpy(Object,
+ * DoubleDefinition)} and signature of both of those methods returns Objects. Based on factory method
  * signature spring decides to use Object as bean target class instead of class defined in
  * beanDefinition.</p>
  *
@@ -34,9 +33,9 @@ class MockClassResolver extends InstantiationAwareBeanPostProcessorAdapter {
 
 	@Override
 	public Class<?> predictBeanType(Class<?> beanClass, String beanName) {
-		final DoubleSearch<MockDefinition> mockSearch = doubleRegistry.mockSearch();
+		final DoubleSearch mockSearch = doubleRegistry.mockSearch();
 		if(mockSearch.containsExactlyOneDouble(beanName)) {
-			final MockDefinition definition = mockSearch.findOneDefinition(beanName);
+			final DoubleDefinition definition = mockSearch.findOneDefinition(beanName);
 			return definition.getDoubleClass();
 		}
 

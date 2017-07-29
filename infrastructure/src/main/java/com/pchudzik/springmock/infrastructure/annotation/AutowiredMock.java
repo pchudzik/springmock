@@ -8,7 +8,7 @@ import java.lang.annotation.*;
  * Annotation which notifies springmock infrastructure to process the field annotated with it
  * and create mock inside of spring context and latter inject into specification
  */
-@Target({ElementType.FIELD})
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Autowired

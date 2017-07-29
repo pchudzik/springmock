@@ -1,25 +1,21 @@
 package com.pchudzik.springmock.spock.spring;
 
+import com.pchudzik.springmock.infrastructure.spring.util.ApplicationContextWalker;
 import com.pchudzik.springmock.spock.SpockConstants;
 import org.spockframework.mock.MockUtil;
 import org.springframework.beans.factory.BeanIsNotAFactoryException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 import spock.lang.Specification;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static org.springframework.beans.factory.BeanFactory.FACTORY_BEAN_PREFIX;
 
 /**
@@ -51,10 +47,10 @@ public class MockAttachingTestExecutionListener extends AbstractTestExecutionLis
 		final Specification specification = (Specification) testInstance;
 		final List<Object> mocks = new LinkedList<>();
 		final ApplicationContext applicationContext = testContext.getApplicationContext();
-		final Collection<String> beanNames = getBeanDefinitionNames(applicationContext);
+		final ApplicationContextWalker contextWalker = new ApplicationContextWalker(applicationContext);
 
-		for (String beanName : beanNames) {
-			final BeanDefinition beanDefinition = getBeanDefinition(applicationContext, beanName);
+		for (String beanName : contextWalker.getBeanDefinitionNames()) {
+			final BeanDefinition beanDefinition = contextWalker.getBeanDefinition(beanName);
 			if (!beanDefinition.isAbstract() && beanDefinition.isSingleton()) {
 				Stream
 						.of(
@@ -74,46 +70,6 @@ public class MockAttachingTestExecutionListener extends AbstractTestExecutionLis
 	@Override
 	public void afterTestMethod(TestContext testContext) throws Exception {
 		getMocksFromContext(testContext).forEach(mockUtil::detachMock);
-	}
-
-	private BeanDefinition getBeanDefinition(ApplicationContext applicationContext, String beanName) {
-		return walkContext(applicationContext, ctx -> tryToGetBeanDefinition((BeanDefinitionRegistry) ctx, beanName))
-				.stream()
-				.flatMap(selectOnlyPresentOptionals())
-				.findFirst()
-				.orElseThrow(() -> new NoSuchBeanDefinitionException("No bean definition for " + beanName));
-	}
-
-	private <T> Function<Optional<T>, Stream<? extends T>> selectOnlyPresentOptionals() {
-		return maybeDefinition -> maybeDefinition.map(Stream::of).orElse(Stream.empty());
-	}
-
-	private Collection<String> getBeanDefinitionNames(ApplicationContext applicationContext) {
-		return walkContext(applicationContext, ctx -> asList(ctx.getBeanDefinitionNames()))
-				.stream()
-				.flatMap(Collection::stream)
-				.collect(Collectors.toSet());
-	}
-
-	private <T> Collection<T> walkContext(ApplicationContext applicationContext, Function<ApplicationContext, T> contextProcessor) {
-		final List<T> result = new LinkedList<>();
-		ApplicationContext currentContext = applicationContext;
-		while (currentContext != null) {
-			T processingResult = contextProcessor.apply(currentContext);
-			currentContext = currentContext.getParent();
-
-			result.add(processingResult);
-		}
-
-		return result;
-	}
-
-	private Optional<BeanDefinition> tryToGetBeanDefinition(BeanDefinitionRegistry registry, String beanName) {
-		try {
-			return Optional.of(registry.getBeanDefinition(beanName));
-		} catch (NoSuchBeanDefinitionException ex) {
-			return Optional.empty();
-		}
 	}
 
 	private Object tryToGetBean(ApplicationContext applicationContext, String beanName) {

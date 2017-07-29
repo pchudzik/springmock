@@ -37,6 +37,9 @@ Note that this is not yet final release so if you decide to use it you do it on 
 * [Usage](#usage)
   * [Mocks](#mocks)
   * [Spies](#spies)
+  * [Configuration](#configuration)
+    * [mockito](#mockito-1)
+    * [spock](#spock-1)
 * [Problems](#problems)
 * [Changelog](#changelog)
   * [1.0.0 - 2017.07.22](#100---20170722)
@@ -243,12 +246,48 @@ def "should inject spy"() {
 You can specify name of the bean which should be replaced by created spy using name attribute. if no name is defined
 then destination bean will be matched field name or by class.
 
+### Configuration
+
+#### Mockito
+
+Annotate @AutowiredMock or @AutowiredSpy field with
+[@MockitoDouble](mockito/src/main/java/com/pchudzik/springmock/mockito/configuration/MockitoDouble.java). Examples:
+
+* [ShouldParseDoubleResetModeTest](mockito/src/test/java/com/pchudzik/springmock/mockito/configuration/ShouldParseDoubleResetModeTest.java)
+* [ShouldConfigureAnswerTest](mockito/src/test/java/com/pchudzik/springmock/mockito/configuration/ShouldConfigureAnswerTest.java)
+* [ShouldAssignExtraInterfacesToCreatedMockTest](mockito/src/test/java/com/pchudzik/springmock/mockito/configuration/ShouldAssignExtraInterfacesToCreatedMockTest.java)
+* [ShouldConfigureMockSerializableModeTest](mockito/src/test/java/com/pchudzik/springmock/mockito/configuration/ShouldConfigureMockSerializableModeTest.java)
+* [ShouldConfigureVerboseDoubleTest](mockito/src/test/java/com/pchudzik/springmock/mockito/configuration/ShouldConfigureVerboseDoubleTest.java)
+* [ShouldConfigureStubOnlyDoubleTest](mockito/src/test/java/com/pchudzik/springmock/mockito/configuration/ShouldConfigureStubOnlyDoubleTest.java)
+* [ShouldConfigureInvocationListenerTest](mockito/src/test/java/com/pchudzik/springmock/mockito/configuration/ShouldConfigureInvocationListenerTest.java)
+
+#### Spock
+
+Annotate @AutowiredMock or @AutowiredSpy field with
+[@SpockDouble](spock/src/main/java/com/pchudzik/springmock/spock/configuration/SpockDouble.java). Examples:
+
+* [DoubleConstructorArgumentsTest](spock/src/test/groovy/com/pchudzik/springmock/spock/configuration/DoubleConstructorArgumentsTest.groovy)
+* [DoubleDefaultResponseTest](spock/src/test/groovy/com/pchudzik/springmock/spock/configuration/DoubleDefaultResponseTest.groovy)
+* [GlobalSpockDoubleTest](spock/src/test/groovy/com/pchudzik/springmock/spock/configuration/GlobalSpockDoubleTest.groovy)
+* [SpockDoubleImplementationTest](spock/src/test/groovy/com/pchudzik/springmock/spock/configuration/SpockDoubleImplementationTest.groovy)
+* [StubDoublesTest](spock/src/test/groovy/com/pchudzik/springmock/spock/configuration/StubDoublesTest.groovy)
+* [UseObjenesisInDoublesTest](spock/src/test/groovy/com/pchudzik/springmock/spock/configuration/UseObjenesisInDoublesTest.groovy)
+
 ## Problems
 
 Please report any problems with the library using Github issues. I'd really appreciate failing test case included in
 issue description or as PR.
 
 ## Changelog
+
+### 1.1.0 springmock-mockito - to be released
+  
+  * mocks configuration - @MockitoDouble
+  * fixed mocks reset in context hierarchy  
+
+### 1.1.0 springmock-spock - to be released
+
+  * mocks configuration - @SpockDouble
 
 ### 1.0.0 - 2017.07.22
 

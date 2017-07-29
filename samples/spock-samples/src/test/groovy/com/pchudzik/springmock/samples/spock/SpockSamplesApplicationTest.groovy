@@ -2,6 +2,7 @@ package com.pchudzik.springmock.samples.spock
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy
+import com.pchudzik.springmock.spock.configuration.SpockDouble
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -13,6 +14,7 @@ import static TwoRepository.TWO
 @SpringBootTest
 class SpockSamplesApplicationTest extends Specification {
 	@AutowiredMock
+	@SpockDouble(stub = true)
 	AddOneTranslator addOneTranslator
 
 	@AutowiredSpy

@@ -1,11 +1,12 @@
 package com.pchudzik.springmock.infrastructure.definition.registry;
 
-import com.pchudzik.springmock.infrastructure.definition.MockDefinition;
+import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionTestFactory.doubleDefinition;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -25,26 +26,30 @@ public class DoubleSearchTest {
 	public void should_find_by_name() {
 		//given
 		final String mockName = "mock";
-		final MockDefinition mockDefinition = new MockDefinition(Service.class, mockName);
+		final DoubleDefinition definition = doubleDefinition(Service.class, mockName);
 
 		//when
-		final DoubleSearch<MockDefinition> search = new DoubleSearch<>(asList(
-				new MockDefinition(OtherService.class, "other mock"),
-				mockDefinition));
+		final DoubleSearch search = new DoubleSearch(asList(
+				doubleDefinition(OtherService.class, "other mock"),
+				definition));
 
 		//expect
 		assertTrue(search.containsExactlyOneDouble(mockName));
-		assertEquals(mockDefinition, search.findOneDefinition(mockName));
+		assertEquals(definition, search.findOneDefinition(mockName));
 	}
 
 	@Test
 	public void should_match_by_alias() {
 		//given
 		final String mockAlias = "alias";
-		final MockDefinition mockDefinition = new MockDefinition(Service.class, "mockName", singletonList(mockAlias));
+		final DoubleDefinition definition = DoubleDefinition.builder()
+				.doubleClass(Service.class)
+				.name("mockName")
+				.aliases(singletonList(mockAlias))
+				.build();
 
 		//when
-		final DoubleSearch<MockDefinition> search = new DoubleSearch<>(singletonList(mockDefinition));
+		final DoubleSearch search = new DoubleSearch(singletonList(definition));
 
 		//expect
 		assertTrue(search.containsAnyDoubleMatching(mockAlias, Service.class));
@@ -53,11 +58,11 @@ public class DoubleSearchTest {
 
 		//and
 		assertEquals(
-				mockDefinition,
+				definition,
 				search.findOneDefinition(mockAlias));
 
 		assertEquals(
-				mockDefinition,
+				definition,
 				search.findOneDefinition(mockAlias, Service.class));
 	}
 
@@ -65,16 +70,16 @@ public class DoubleSearchTest {
 	public void should_find_by_class() {
 		//given
 		final Class<Service> mockClass = Service.class;
-		final MockDefinition mockDefinition = new MockDefinition(mockClass, "any mock name");
+		final DoubleDefinition definition = doubleDefinition(mockClass);
 
 		//when
-		final DoubleSearch<MockDefinition> search = new DoubleSearch<>(asList(
-				new MockDefinition(OtherService.class, "other mock"),
-				mockDefinition));
+		final DoubleSearch search = new DoubleSearch(asList(
+				doubleDefinition(OtherService.class),
+				definition));
 
 		//expect
 		assertTrue(search.containsExactlyOneDouble(mockClass));
-		assertEquals(mockDefinition, search.findOneDefinition(mockClass));
+		assertEquals(definition, search.findOneDefinition(mockClass));
 	}
 
 	@Test
@@ -82,16 +87,16 @@ public class DoubleSearchTest {
 		//given
 		final String mockName = "mock";
 		final Class<Service> mockClass = Service.class;
-		final MockDefinition mockDefinition = new MockDefinition(mockClass, mockName);
+		final DoubleDefinition definition = doubleDefinition(mockClass, mockName);
 
 		//when
-		final DoubleSearch<MockDefinition> search = new DoubleSearch<>(asList(
-				new MockDefinition(OtherService.class, "other mock"),
-				mockDefinition));
+		final DoubleSearch search = new DoubleSearch(asList(
+				doubleDefinition(OtherService.class),
+				definition));
 
 		//expect
 		assertTrue(search.containsExactlyOneDouble(mockName, mockClass));
-		assertEquals(mockDefinition, search.findOneDefinition(mockName, mockClass));
+		assertEquals(definition, search.findOneDefinition(mockName, mockClass));
 	}
 
 	@Test
@@ -99,11 +104,11 @@ public class DoubleSearchTest {
 		//given
 		final String serviceMock = "mock";
 		final String otherServiceMock = "other mock";
-		final MockDefinition serviceDefinition = new MockDefinition(Service.class, serviceMock);
-		final MockDefinition otherServiceDefinition = new MockDefinition(OtherService.class, otherServiceMock);
+		final DoubleDefinition serviceDefinition = doubleDefinition(Service.class, serviceMock);
+		final DoubleDefinition otherServiceDefinition = doubleDefinition(OtherService.class, otherServiceMock);
 
 		//when
-		final DoubleSearch<MockDefinition> search = new DoubleSearch<>(asList(
+		final DoubleSearch search = new DoubleSearch(asList(
 				serviceDefinition,
 				otherServiceDefinition));
 
@@ -117,7 +122,7 @@ public class DoubleSearchTest {
 	@Test
 	public void should_throw_exception_when_no_definition_found_by_name_and_class() {
 		//given
-		final DoubleSearch<MockDefinition> search = new DoubleSearch<>(emptyList());
+		final DoubleSearch search = new DoubleSearch(emptyList());
 		exception.expect(IllegalStateException.class);
 		exception.expectMessage(Matchers.allOf(
 				startsWith(MISSING_DOUBLE_EXCEPTION_PREFIX),
@@ -132,9 +137,9 @@ public class DoubleSearchTest {
 		//given
 		final String mockName = "mock";
 		final Class<?> mockClass = Service.class;
-		final DoubleSearch<MockDefinition> search = new DoubleSearch<>(asList(
-				new MockDefinition(mockClass, mockName),
-				new MockDefinition(mockClass, mockName)));
+		final DoubleSearch search = new DoubleSearch(asList(
+				doubleDefinition(mockClass, mockName),
+				doubleDefinition(mockClass, mockName)));
 		exception.expect(IllegalStateException.class);
 		exception.expectMessage(Matchers.allOf(
 				startsWith(MISSING_DOUBLE_EXCEPTION_PREFIX),
@@ -147,7 +152,7 @@ public class DoubleSearchTest {
 	@Test
 	public void should_throw_exception_when_no_definition_found_by_name() {
 		//given
-		final DoubleSearch<MockDefinition> search = new DoubleSearch<>(emptyList());
+		final DoubleSearch search = new DoubleSearch(emptyList());
 		exception.expect(IllegalStateException.class);
 		exception.expectMessage(Matchers.allOf(
 				startsWith(MISSING_DOUBLE_EXCEPTION_PREFIX),
@@ -162,9 +167,9 @@ public class DoubleSearchTest {
 		//given
 		final String mockName = "mock";
 		final Class<?> mockClass = Service.class;
-		final DoubleSearch<MockDefinition> search = new DoubleSearch<>(asList(
-				new MockDefinition(mockClass, mockName),
-				new MockDefinition(mockClass, mockName)));
+		final DoubleSearch search = new DoubleSearch(asList(
+				doubleDefinition(mockClass, mockName),
+				doubleDefinition(mockClass, mockName)));
 		exception.expect(IllegalStateException.class);
 		exception.expectMessage(Matchers.allOf(
 				startsWith(MISSING_DOUBLE_EXCEPTION_PREFIX),
@@ -177,7 +182,7 @@ public class DoubleSearchTest {
 	@Test
 	public void should_throw_exception_when_no_definition_found_by_class() {
 		//given
-		final DoubleSearch<MockDefinition> search = new DoubleSearch<>(emptyList());
+		final DoubleSearch search = new DoubleSearch(emptyList());
 		exception.expect(IllegalStateException.class);
 		exception.expectMessage(Matchers.allOf(
 				startsWith(MISSING_DOUBLE_EXCEPTION_PREFIX),
@@ -192,9 +197,9 @@ public class DoubleSearchTest {
 		//given
 		final String mockName = "mock";
 		final Class<?> mockClass = Service.class;
-		final DoubleSearch<MockDefinition> search = new DoubleSearch<>(asList(
-				new MockDefinition(mockClass, mockName),
-				new MockDefinition(mockClass, mockName)));
+		final DoubleSearch search = new DoubleSearch(asList(
+				doubleDefinition(mockClass, mockName),
+				doubleDefinition(mockClass, mockName)));
 		exception.expect(IllegalStateException.class);
 		exception.expectMessage(Matchers.allOf(
 				startsWith(MISSING_DOUBLE_EXCEPTION_PREFIX),

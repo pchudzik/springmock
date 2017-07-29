@@ -3,7 +3,7 @@ package com.pchudzik.springmock.infrastructure.spring;
 import com.pchudzik.springmock.infrastructure.DoubleFactory;
 import com.pchudzik.springmock.infrastructure.MockConstants;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
-import com.pchudzik.springmock.infrastructure.definition.MockDefinition;
+import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -33,7 +33,7 @@ public class MockRegisteringContextPostProcessor implements BeanFactoryPostProce
 				.forEach(mockDefinition -> registerMock(definitionRegistry, mockDefinition));
 	}
 
-	private void registerMock(BeanDefinitionRegistry definitionRegistry, MockDefinition mockDefinition) {
+	private void registerMock(BeanDefinitionRegistry definitionRegistry, DoubleDefinition mockDefinition) {
 		definitionRegistry.registerBeanDefinition(
 				mockDefinition.getName(),
 				BeanDefinitionBuilder

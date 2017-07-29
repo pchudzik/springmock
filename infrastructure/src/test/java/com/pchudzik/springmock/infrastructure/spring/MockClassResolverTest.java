@@ -1,9 +1,10 @@
 package com.pchudzik.springmock.infrastructure.spring;
 
-import com.pchudzik.springmock.infrastructure.definition.MockDefinition;
+import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import org.junit.Test;
 
+import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionTestFactory.doubleDefinition;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
@@ -14,7 +15,7 @@ public class MockClassResolverTest {
 
 	@Test
 	public void should_resolve_bean_class_for_mocked_bean() {
-		final MockClassResolver mockClassResolver = createClassResolver(new MockDefinition(MockClass.class, beanName));
+		final MockClassResolver mockClassResolver = createClassResolver(doubleDefinition(MockClass.class, beanName));
 
 		//expect
 		assertEquals(
@@ -25,7 +26,7 @@ public class MockClassResolverTest {
 	@Test
 	public void should_return_not_predictable_type_when_mock_does_not_exists_in_double_registry() {
 		//given
-		final MockClassResolver mockClassResolver = createClassResolver(new MockDefinition(OtherMockClass.class, "other mock"));
+		final MockClassResolver mockClassResolver = createClassResolver(doubleDefinition(OtherMockClass.class));
 
 		//expect
 		assertEquals(
@@ -33,7 +34,7 @@ public class MockClassResolverTest {
 				mockClassResolver.predictBeanType(ANY_CLASS, beanName));
 	}
 
-	private MockClassResolver createClassResolver(MockDefinition... mocks) {
+	private MockClassResolver createClassResolver(DoubleDefinition... mocks) {
 		final DoubleRegistry doubleRegistry = new DoubleRegistry(asList(mocks), emptyList());
 		return new MockClassResolver(doubleRegistry);
 	}

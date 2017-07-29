@@ -2,13 +2,10 @@ package com.pchudzik.springmock.spock.spring
 
 import org.spockframework.mock.MockUtil
 import org.springframework.beans.factory.FactoryBean
-import org.springframework.beans.factory.support.BeanDefinitionBuilder
-import org.springframework.beans.factory.support.DefaultListableBeanFactory
-import org.springframework.context.ApplicationContext
-import org.springframework.context.support.GenericApplicationContext
 import org.springframework.test.context.TestContext
 import spock.lang.Specification
 
+import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.buildAppContext
 import static com.pchudzik.springmock.spock.spring.MockAttachingTestExecutionListener.MOCKED_BEANS_NAMES
 
 class MockAttachingTestExecutionListenerTest extends Specification {
@@ -138,41 +135,4 @@ class MockAttachingTestExecutionListenerTest extends Specification {
 		and:
 		0 * mockUtil.attachMock(_, specification)
 	}
-
-	private ApplicationContext buildAppContext(Map<String, Object> beans) {
-		buildAppContext(null, beans)
-	}
-
-	private ApplicationContext buildAppContext(ApplicationContext parent, Map<String, Object> beans) {
-		final beanFactory = new DefaultListableBeanFactory()
-		final applicationContext = new GenericApplicationContext(beanFactory, parent)
-
-		beans.each { key, value ->
-			final factoryBean = "${key}_factory"
-			beanFactory.registerBeanDefinition(factoryBean, BeanDefinitionBuilder
-					.rootBeanDefinition(MockBeanHolder.class)
-					.addConstructorArgValue(value)
-					.getBeanDefinition())
-			beanFactory.registerBeanDefinition(key, BeanDefinitionBuilder
-					.rootBeanDefinition(value != null ? value.class : Object.class)
-					.setFactoryMethodOnBean("getBean", factoryBean)
-					.getBeanDefinition())
-		}
-		applicationContext.refresh()
-
-		return applicationContext
-	}
-
-	static class MockBeanHolder {
-		private final Object bean
-
-		MockBeanHolder(Object bean) {
-			this.bean = bean
-		}
-
-		Object getBean() {
-			return bean
-		}
-	}
-
 }

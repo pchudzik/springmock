@@ -1,7 +1,7 @@
 package com.pchudzik.springmock.infrastructure.spring.cache;
 
-import com.pchudzik.springmock.infrastructure.definition.MockDefinition;
-import com.pchudzik.springmock.infrastructure.definition.SpyDefinition;
+import com.pchudzik.springmock.infrastructure.ParseNothingConfigurationParser;
+import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import com.pchudzik.springmock.infrastructure.spring.MockContextCustomizer;
 import com.pchudzik.springmock.infrastructure.spring.MockContextCustomizerFactory;
@@ -43,6 +43,10 @@ class CachedContextBootstrapper extends DefaultTestContextBootstrapper {
 	}
 
 	private static class TestContextCustomizer extends MockContextCustomizerFactory {
+		public TestContextCustomizer() {
+			super(new ParseNothingConfigurationParser());
+		}
+
 		@Override
 		protected ContextCustomizer createContextCustomizer(DoubleRegistry doubleRegistry) {
 			return new MockContextCustomizer(FakeMockFactory.class, doubleRegistry, Collections.emptyMap());
@@ -51,12 +55,12 @@ class CachedContextBootstrapper extends DefaultTestContextBootstrapper {
 
 	private static class FakeMockFactory implements DoubleFactory {
 		@Override
-		public Object createMock(MockDefinition mockDefinition) {
+		public Object createMock(DoubleDefinition mockDefinition) {
 			return new Object();
 		}
 
 		@Override
-		public Object createSpy(Object bean, SpyDefinition spyDefinition) {
+		public Object createSpy(Object bean, DoubleDefinition spyDefinition) {
 			return bean;
 		}
 	}
