@@ -4,16 +4,14 @@
 
 ## Introduction
 
-Alternative spring mocking infrastructure. With pluggable mocking library support. Purpose is to
-allow you to easily create and inject mocks of any mocking library into your spring tests. Currently
+Alternative spring mocking infrastructure. With pluggable mocking library support. The purpose is to
+allow you to easily inject mocks created by any mocking library into your spring tests. Currently,
 mockito and spock mocks are supported.
 
-Why? Spring boot supports only mockito as mocking library which is great if you write tests in java.
-When using spock you might want to use spock mocks because of syntactic sugar they offer. My
-motivation was to extend @MockBean and @SpyBean behaviour of spring-boot-test and allow to easily
-inject mocks from library of your choice.
-
-Note that this is not yet final release so if you decide to use it you do it on your own risk.
+Why? Spring boot supports only mockito as mocks provider which is great if you write tests in java.
+When using spock you might want to use mocks created by spock because of syntactic sugar they offer. 
+It is similar to @MockBean any @SpyBean from spring-boot-test, but allows you to use mocks created 
+by a library of your choice.
 
 ## Contents
 
