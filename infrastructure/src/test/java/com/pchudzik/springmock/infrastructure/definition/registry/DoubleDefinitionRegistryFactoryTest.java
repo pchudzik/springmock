@@ -6,15 +6,20 @@ import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.lang.annotation.*;
+
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionMatchers.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.util.ReflectionUtils.findField;
 
 public class DoubleDefinitionRegistryFactoryTest {
+	private static final Annotation NO_CONFIGURATION = null;
+
 	private static final String ANY_SERVICE1_NAME = "anyService1";
 	private static final String SERVICE1_ALIAS_1 = "service1";
 	private static final String SERVICE1_ALIAS_2 = "service2";
@@ -89,37 +94,84 @@ public class DoubleDefinitionRegistryFactoryTest {
 	}
 
 	@Test
-	public void should_parse_mock_configuration() throws NoSuchFieldException {
+	public void should_generate_mock_configuration_when_config_annotation_missing() throws NoSuchFieldException {
 		//when
-		parseRegistry(RegisteredAliasesMocks.class);
+		parseRegistry(MockWithoutNameSpec.class);
 
 		//then
 		Mockito
 				.verify(configurationParser)
-				.parseDoubleConfiguration(findField(RegisteredAliasesMocks.class, RegisteredAliasesMocks.FIELD_NAME));
+				.parseMockConfiguration(MockWithoutNameSpec.FIELD_NAME, NO_CONFIGURATION);
 	}
 
 
 	@Test
-	public void should_parse_spy_configuration() throws NoSuchFieldException {
+	public void should_generate_spy_configuration_when_config_annotation_missing() throws NoSuchFieldException {
 		//when
 		parseRegistry(SpyWithoutNameSpec.class);
 
 		//then
 		Mockito
 				.verify(configurationParser)
-				.parseDoubleConfiguration(findField(SpyWithoutNameSpec.class, SpyWithoutNameSpec.FIELD_NAME));
+				.parseSpyConfiguration(SpyWithoutNameSpec.FIELD_NAME, NO_CONFIGURATION);
+	}
+
+	@Test
+	public void should_parse_mock_configuration_from_field() {
+		//given
+		final TestDoubleConfiguration configurationAnnotation = findAnnotation(findField(MockWithConfiguration.class, ANY_SERVICE1_NAME), TestDoubleConfiguration.class);
+
+		//when
+		parseRegistry(MockWithConfiguration.class);
+
+		//then
+		Mockito
+				.verify(configurationParser)
+				.parseMockConfiguration(ANY_SERVICE1_NAME, configurationAnnotation);
+		Mockito.verifyNoMoreInteractions(configurationParser);
+	}
+
+	@Test
+	public void should_parse_spy_configuration_from_field() {
+		//given
+		final TestDoubleConfiguration configurationAnnotation = findAnnotation(findField(SpyWithConfiguration.class, ANY_SERVICE1_NAME), TestDoubleConfiguration.class);
+
+		//when
+		parseRegistry(SpyWithConfiguration.class);
+
+		//then
+		Mockito
+				.verify(configurationParser)
+				.parseSpyConfiguration(ANY_SERVICE1_NAME, configurationAnnotation);
+		Mockito.verifyNoMoreInteractions(configurationParser);
 	}
 
 	public DoubleRegistry parseRegistry(Class<?> clazz) {
-		final DoubleDefinitionRegistryFactory definitionRegistryFactory = new DoubleDefinitionRegistryFactory(configurationParser);
+		final DoubleDefinitionRegistryFactory definitionRegistryFactory = new DoubleDefinitionRegistryFactory(TestDoubleConfiguration.class, configurationParser);
 		return definitionRegistryFactory.parse(clazz);
+	}
+
+	@Target(ElementType.FIELD)
+	@Retention(RetentionPolicy.RUNTIME)
+	private @interface TestDoubleConfiguration {
 	}
 
 	private interface AnyService1 {
 	}
 
 	private interface AnyService2 {
+	}
+
+	private static class MockWithConfiguration {
+		@AutowiredMock
+		@TestDoubleConfiguration
+		AnyService1 anyService1;
+	}
+
+	private static class SpyWithConfiguration {
+		@AutowiredSpy
+		@TestDoubleConfiguration
+		AnyService1 anyService1;
 	}
 
 	private static class RegisteredAliasesMocks {

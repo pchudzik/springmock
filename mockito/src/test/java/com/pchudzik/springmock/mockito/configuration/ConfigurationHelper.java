@@ -7,6 +7,10 @@ import com.pchudzik.springmock.infrastructure.definition.registry.DoubleSearch;
 import org.mockito.MockSettings;
 import org.mockito.Mockito;
 
+import java.util.Optional;
+
+import static org.junit.Assert.assertFalse;
+
 public class ConfigurationHelper {
 	public static MockSettings mockSettingsMock() {
 		return Mockito.spy(Mockito.withSettings());
@@ -14,6 +18,11 @@ public class ConfigurationHelper {
 
 	public static DoubleSearch findDoublesInClass(Class<?> clazz) {
 		return parseClass(clazz).doublesSearch();
+	}
+
+	public static void expectNoConfiguration(DoubleDefinition doubleDefinition) {
+		final Optional<MockitoDoubleConfiguration> configuration = doubleDefinition.getConfiguration(MockitoDoubleConfiguration.class);
+		assertFalse("no configuration", configuration.isPresent());
 	}
 
 	public static MockitoDoubleConfiguration getConfiguration(DoubleDefinition doubleDefinition) {
@@ -27,6 +36,6 @@ public class ConfigurationHelper {
 	}
 
 	private static DoubleDefinitionRegistryFactory createMockitoDefinitionRegistryFactory() {
-		return new DoubleDefinitionRegistryFactory(new MockitoDoubleConfigurationParser());
+		return new DoubleDefinitionRegistryFactory(MockitoDouble.class, new MockitoDoubleConfigurationParser());
 	}
 }

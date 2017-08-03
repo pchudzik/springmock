@@ -5,10 +5,12 @@ import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleNameResolver.resolveDoubleName;
 import static java.util.Arrays.asList;
@@ -20,9 +22,11 @@ import static org.springframework.util.ReflectionUtils.doWithFields;
  * the registry
  */
 public class DoubleDefinitionRegistryFactory {
-	private final DoubleConfigurationParser<?> configurationParser;
+	private final Class<? extends Annotation> configurationAnnotation;
+	private final DoubleConfigurationParser<?, Annotation> configurationParser;
 
-	public DoubleDefinitionRegistryFactory(DoubleConfigurationParser configurationParser) {
+	public DoubleDefinitionRegistryFactory(Class<? extends Annotation> configurationAnnotation, DoubleConfigurationParser configurationParser) {
+		this.configurationAnnotation = configurationAnnotation;
 		this.configurationParser = configurationParser;
 	}
 
@@ -39,21 +43,36 @@ public class DoubleDefinitionRegistryFactory {
 	}
 
 	protected DoubleDefinition createMockDefinition(Field field, AutowiredMock autowiredMock) {
-		return DoubleDefinition.builder()
+		final String doubleName = resolveDoubleName(field);
+		final DoubleDefinition.DoubleDefinitionBuilder definitionBuilder = DoubleDefinition.builder()
 				.doubleClass(field.getType())
-				.name(resolveDoubleName(field))
-				.aliases(asList(autowiredMock.alias()))
-				.doubleConfiguration(configurationParser.parseDoubleConfiguration(field))
-				.build();
+				.name(doubleName)
+				.aliases(asList(autowiredMock.alias()));
+
+		applyDoubleConfiguration(
+				field,
+				configuration -> definitionBuilder.doubleConfiguration(configurationParser.parseMockConfiguration(doubleName, configuration)));
+
+		return definitionBuilder.build();
+	}
+
+	private void applyDoubleConfiguration(Field field, Consumer<Annotation> configurationApplier) {
+		final Annotation configuration = getAnnotation(field, configurationAnnotation);
+		configurationApplier.accept(configuration);
 	}
 
 	protected DoubleDefinition createSpyDefinition(Field field, AutowiredSpy autowiredSpy) {
-		return DoubleDefinition.builder()
+		final String doubleName = resolveDoubleName(field);
+		final DoubleDefinition.DoubleDefinitionBuilder definitionBuilder = DoubleDefinition.builder()
 				.doubleClass(field.getType())
-				.name(resolveDoubleName(field))
-				.aliases(asList(autowiredSpy.alias()))
-				.doubleConfiguration(configurationParser.parseDoubleConfiguration(field))
-				.build();
+				.name(doubleName)
+				.aliases(asList(autowiredSpy.alias()));
+
+		applyDoubleConfiguration(
+				field,
+				configuration -> definitionBuilder.doubleConfiguration(configurationParser.parseSpyConfiguration(doubleName, configuration)));
+
+		return definitionBuilder.build();
 	}
 
 	private Optional<DoubleDefinition> extractMockDefinition(Field field) {

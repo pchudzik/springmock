@@ -1,26 +1,32 @@
 package com.pchudzik.springmock.spock.configuration;
 
 import com.pchudzik.springmock.infrastructure.DoubleConfigurationParser;
-import com.pchudzik.springmock.infrastructure.definition.registry.DoubleNameResolver;
 
-import java.lang.reflect.Field;
-import java.util.Optional;
-
-import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
-
-public class SpockDoubleConfigurationParser implements DoubleConfigurationParser<SpockDoubleConfiguration> {
+public class SpockDoubleConfigurationParser implements DoubleConfigurationParser<SpockDoubleConfiguration, SpockDouble> {
 	@Override
-	public SpockDoubleConfiguration parseDoubleConfiguration(Field field) {
-		return Optional.ofNullable(findAnnotation(field, SpockDouble.class))
-				.map(spockDouble -> SpockDoubleConfiguration.builder()
-						.defaultResponse(spockDouble.defaultResponse())
-						.constructorArgs(spockDouble.constructorArguments())
-						.stub(spockDouble.stub())
-						.useObjenesis(spockDouble.useObjenesis())
-						.implementation(spockDouble.mockImplementation())
-						.global(spockDouble.global()))
-				.orElseGet(SpockDoubleConfiguration::builder)
-				.name(DoubleNameResolver.resolveDoubleName(field))
+	public SpockDoubleConfiguration parseMockConfiguration(String doubleName, SpockDouble configuration) {
+		return parseDoubleConfiguration(doubleName, configuration);
+	}
+
+	@Override
+	public SpockDoubleConfiguration parseSpyConfiguration(String doubleName, SpockDouble configuration) {
+		return parseDoubleConfiguration(doubleName, configuration);
+	}
+
+	private SpockDoubleConfiguration parseDoubleConfiguration(String doubleName, SpockDouble spockDouble) {
+		final SpockDoubleConfiguration.SpockDoubleConfigurationBuilder configurationBuilder = SpockDoubleConfiguration.builder();
+
+		if (spockDouble != null) {
+			configurationBuilder.defaultResponse(spockDouble.defaultResponse())
+					.constructorArgs(spockDouble.constructorArguments())
+					.stub(spockDouble.stub())
+					.useObjenesis(spockDouble.useObjenesis())
+					.implementation(spockDouble.mockImplementation())
+					.global(spockDouble.global());
+		}
+
+		return configurationBuilder
+				.name(doubleName)
 				.build();
 	}
 }

@@ -4,6 +4,7 @@ import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry
 import com.pchudzik.springmock.infrastructure.spring.MockContextCustomizer;
 import com.pchudzik.springmock.infrastructure.spring.MockContextCustomizerFactory;
 import com.pchudzik.springmock.mockito.MockitoDoubleFactory;
+import com.pchudzik.springmock.mockito.configuration.MockitoDouble;
 import com.pchudzik.springmock.mockito.configuration.MockitoDoubleConfigurationParser;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -17,7 +18,7 @@ import static java.util.stream.Collectors.toMap;
 
 public class MockitoContextCustomizerFactory extends MockContextCustomizerFactory {
 	public MockitoContextCustomizerFactory() {
-		super(new MockitoDoubleConfigurationParser());
+		super(MockitoDouble.class, new MockitoDoubleConfigurationParser());
 	}
 
 	@Override

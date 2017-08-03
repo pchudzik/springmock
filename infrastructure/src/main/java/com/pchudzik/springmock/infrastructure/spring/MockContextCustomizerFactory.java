@@ -7,18 +7,24 @@ import org.springframework.test.context.ContextConfigurationAttributes;
 import org.springframework.test.context.ContextCustomizer;
 import org.springframework.test.context.ContextCustomizerFactory;
 
+import java.lang.annotation.Annotation;
 import java.util.List;
 
 public abstract class MockContextCustomizerFactory implements ContextCustomizerFactory {
-	private final DoubleConfigurationParser<?> configurationParser;
+	private final Class<? extends Annotation> configurationAnnotation;
+	private final DoubleConfigurationParser<?, Annotation> configurationParser;
 
-	public MockContextCustomizerFactory(DoubleConfigurationParser configurationParser) {
+	public MockContextCustomizerFactory(Class<? extends Annotation> configurationAnnotation, DoubleConfigurationParser configurationParser) {
+		this.configurationAnnotation = configurationAnnotation;
 		this.configurationParser = configurationParser;
 	}
 
 	@Override
 	public ContextCustomizer createContextCustomizer(Class<?> aClass, List<ContextConfigurationAttributes> list) {
-		return createContextCustomizer(new DoubleDefinitionRegistryFactory(configurationParser).parse(aClass));
+		final DoubleDefinitionRegistryFactory registryFactory = new DoubleDefinitionRegistryFactory(
+				configurationAnnotation,
+				configurationParser);
+		return createContextCustomizer(registryFactory.parse(aClass));
 	}
 
 	/**

@@ -15,7 +15,7 @@ class SpockConfigurationHelper {
 	}
 
 	static DoubleDefinitionRegistryFactory configurationParser() {
-		new DoubleDefinitionRegistryFactory(new SpockDoubleConfigurationParser())
+		new DoubleDefinitionRegistryFactory(SpockDouble.class, new SpockDoubleConfigurationParser())
 	}
 
 	static SpockDoubleConfiguration getConfig(DoubleDefinition definition) {

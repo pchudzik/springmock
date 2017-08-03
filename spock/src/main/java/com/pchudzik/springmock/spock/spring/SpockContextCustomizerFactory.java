@@ -4,6 +4,7 @@ import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry
 import com.pchudzik.springmock.infrastructure.spring.MockContextCustomizer;
 import com.pchudzik.springmock.infrastructure.spring.MockContextCustomizerFactory;
 import com.pchudzik.springmock.spock.SpockDoubleFactory;
+import com.pchudzik.springmock.spock.configuration.SpockDouble;
 import com.pchudzik.springmock.spock.configuration.SpockDoubleConfigurationParser;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -17,7 +18,7 @@ import static java.util.stream.Collectors.toMap;
 
 public class SpockContextCustomizerFactory extends MockContextCustomizerFactory {
 	public SpockContextCustomizerFactory() {
-		super(new SpockDoubleConfigurationParser());
+		super(SpockDouble.class, new SpockDoubleConfigurationParser());
 	}
 
 	@Override

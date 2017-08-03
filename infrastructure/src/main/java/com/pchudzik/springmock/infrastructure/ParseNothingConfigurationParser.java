@@ -1,12 +1,16 @@
 package com.pchudzik.springmock.infrastructure;
 
-import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
+import java.lang.annotation.Annotation;
 
-import java.lang.reflect.Field;
+public class ParseNothingConfigurationParser implements DoubleConfigurationParser<Object, Annotation> {
 
-public class ParseNothingConfigurationParser implements DoubleConfigurationParser<Object> {
 	@Override
-	public Object parseDoubleConfiguration(Field field) {
+	public Object parseMockConfiguration(String doubleName, Annotation configuration) {
+		return null;
+	}
+
+	@Override
+	public Object parseSpyConfiguration(String doubleName, Annotation configuration) {
 		return null;
 	}
 }

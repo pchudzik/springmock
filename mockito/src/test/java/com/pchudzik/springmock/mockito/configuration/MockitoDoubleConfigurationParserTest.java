@@ -10,6 +10,7 @@ import org.mockito.MockSettings;
 import org.mockito.Mockito;
 import org.mockito.internal.stubbing.answers.CallsRealMethods;
 import org.mockito.internal.stubbing.answers.DoesNothing;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.reflect.Field;
 
@@ -18,13 +19,14 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.never;
 
 public class MockitoDoubleConfigurationParserTest {
+	private static final String ANY_NAME = "any double name";
 	private MockSettings mockSettings = ConfigurationHelper.mockSettingsMock();
 	final MockitoDoubleConfigurationParser configurationParser = new MockitoDoubleConfigurationParser();
 
 	@Test
 	public void should_set_default_answer_for_spy_beans() {
 		//given
-		final MockitoDoubleConfiguration configuration = configurationParser.parseDoubleConfiguration(AnyTest.spy());
+		final MockitoDoubleConfiguration configuration = configurationParser.parseSpyConfiguration(ANY_NAME, AnyTest.spy());
 
 		//when
 		configuration.createMockSettings(mockSettings);
@@ -38,7 +40,7 @@ public class MockitoDoubleConfigurationParserTest {
 	@Test
 	public void should_override_default_answer_for_spy_beans() {
 		//given
-		final MockitoDoubleConfiguration configuration = configurationParser.parseDoubleConfiguration(AnyTest.withAnswer());
+		final MockitoDoubleConfiguration configuration = configurationParser.parseSpyConfiguration(ANY_NAME, AnyTest.withAnswer());
 
 		//when
 		configuration.createMockSettings(mockSettings);
@@ -57,7 +59,7 @@ public class MockitoDoubleConfigurationParserTest {
 	@Test
 	public void should_leave_default_answer_unmodified_for_mock_when_not_configured() {
 		//given
-		final MockitoDoubleConfiguration configuration = configurationParser.parseDoubleConfiguration(AnyTest.mock());
+		final MockitoDoubleConfiguration configuration = configurationParser.parseMockConfiguration(ANY_NAME, AnyTest.mock());
 
 		//when
 		configuration.createMockSettings(mockSettings);
@@ -69,9 +71,10 @@ public class MockitoDoubleConfigurationParserTest {
 	}
 
 	@Test
-	public void should_generate_mock_name_based_on_field_name() {
+	public void should_apply_mock_name_based_on_provided_argument() {
 		//given
-		final MockitoDoubleConfiguration configuration = configurationParser.parseDoubleConfiguration(AnyTest.mock());
+		final String mockName = ANY_NAME;
+		final MockitoDoubleConfiguration configuration = configurationParser.parseMockConfiguration(mockName, AnyTest.mock());
 
 		//when
 		configuration.createMockSettings(mockSettings);
@@ -79,13 +82,14 @@ public class MockitoDoubleConfigurationParserTest {
 		//then
 		Mockito
 				.verify(mockSettings)
-				.name("mock");
+				.name(mockName);
 	}
 
 	@Test
-	public void should_generate_spy_name_based_on_field_name() {
+	public void should_generate_spy_name_from_provided_argument() {
 		//given
-		final MockitoDoubleConfiguration configuration = configurationParser.parseDoubleConfiguration(AnyTest.spy());
+		final String spyName = ANY_NAME;
+		final MockitoDoubleConfiguration configuration = configurationParser.parseSpyConfiguration(spyName, AnyTest.spy());
 
 		//when
 		configuration.createMockSettings(mockSettings);
@@ -93,35 +97,7 @@ public class MockitoDoubleConfigurationParserTest {
 		//then
 		Mockito
 				.verify(mockSettings)
-				.name("spy");
-	}
-
-	@Test
-	public void should_take_mock_name_from_AutowiredMock_name() {
-		//given
-		final MockitoDoubleConfiguration configuration = configurationParser.parseDoubleConfiguration(AnyTest.namedMock());
-
-		//when
-		configuration.createMockSettings(mockSettings);
-
-		//then
-		Mockito
-				.verify(mockSettings)
-				.name("my mock");
-	}
-
-	@Test
-	public void should_take_spy_name_from_AutowiredSpy_name() {
-		//given
-		final MockitoDoubleConfiguration configuration = configurationParser.parseDoubleConfiguration(AnyTest.namedSpy());
-
-		//when
-		configuration.createMockSettings(mockSettings);
-
-		//then
-		Mockito
-				.verify(mockSettings)
-				.name("my spy");
+				.name(spyName);
 	}
 
 	private static class AnyTest {
@@ -141,28 +117,29 @@ public class MockitoDoubleConfigurationParserTest {
 		@AutowiredMock(name = "my mock")
 		Object namedMock;
 
-		public static Field namedSpy() {
+		public static MockitoDouble namedSpy() {
 			return getField("namedSpy");
 		}
 
-		public static Field namedMock() {
+		public static MockitoDouble namedMock() {
 			return getField("namedMock");
 		}
 
-		public static Field spy() {
+		public static MockitoDouble spy() {
 			return getField("spy");
 		}
 
-		public static Field withAnswer() {
+		public static MockitoDouble withAnswer() {
 			return getField("withAnswer");
 		}
 
-		public static Field mock() {
+		public static MockitoDouble mock() {
 			return getField("mock");
 		}
 
-		private static Field getField(String fieldName) {
-			return FieldUtils.getField(AnyTest.class, fieldName, true);
+		private static MockitoDouble getField(String fieldName) {
+			final Field field = FieldUtils.getField(AnyTest.class, fieldName, true);
+			return AnnotationUtils.getAnnotation(field, MockitoDouble.class);
 		}
 	}
 }

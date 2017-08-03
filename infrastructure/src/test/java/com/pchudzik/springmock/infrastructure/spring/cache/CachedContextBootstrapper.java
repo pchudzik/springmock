@@ -12,6 +12,7 @@ import org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDele
 import org.springframework.test.context.cache.DefaultContextCache;
 import org.springframework.test.context.support.DefaultTestContextBootstrapper;
 
+import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ class CachedContextBootstrapper extends DefaultTestContextBootstrapper {
 
 	private static class TestContextCustomizer extends MockContextCustomizerFactory {
 		public TestContextCustomizer() {
-			super(new ParseNothingConfigurationParser());
+			super(Annotation.class, new ParseNothingConfigurationParser());
 		}
 
 		@Override
