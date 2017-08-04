@@ -31,7 +31,7 @@ public class DoubleDefinitionRegistryFactoryTest {
 	@Test
 	public void should_find_all_mock_definitions_registered_in_class() {
 		//when
-		final DoubleRegistry registry = parseRegistry(MultipleAutowiredMocks.class);
+		final DoubleRegistry registry = parseClass(MultipleAutowiredMocks.class);
 
 		//then
 		assertEquals(registry.getMocks().size(), 2);
@@ -46,7 +46,7 @@ public class DoubleDefinitionRegistryFactoryTest {
 	@Test
 	public void should_find_all_defined_aliases_for_bean() {
 		//when
-		final DoubleRegistry doubleRegistry = parseRegistry(RegisteredAliasesMocks.class);
+		final DoubleRegistry doubleRegistry = parseClass(RegisteredAliasesMocks.class);
 
 		//then
 		assertEquals(1, doubleRegistry.getMocks().size());
@@ -58,7 +58,7 @@ public class DoubleDefinitionRegistryFactoryTest {
 	@Test
 	public void should_generate_mocked_bean_name_from_field_when_name_not_provided() {
 		//when
-		final DoubleRegistry doubleRegistry = parseRegistry(MockWithoutNameSpec.class);
+		final DoubleRegistry doubleRegistry = parseClass(MockWithoutNameSpec.class);
 
 		//then
 		assertEquals(1, doubleRegistry.getMocks().size());
@@ -70,7 +70,7 @@ public class DoubleDefinitionRegistryFactoryTest {
 	@Test
 	public void should_find_all_spies_registered_in_class() {
 		//when
-		final DoubleRegistry doubleRegistry = parseRegistry(MultipleRegisteredSpies.class);
+		final DoubleRegistry doubleRegistry = parseClass(MultipleRegisteredSpies.class);
 
 		//then
 		assertEquals(2, doubleRegistry.getSpies().size());
@@ -84,7 +84,7 @@ public class DoubleDefinitionRegistryFactoryTest {
 	@Test
 	public void should_generate_spy_bean_name_from_field_when_name_not_provided() {
 		//when
-		final DoubleRegistry doubleRegistry = parseRegistry(SpyWithoutNameSpec.class);
+		final DoubleRegistry doubleRegistry = parseClass(SpyWithoutNameSpec.class);
 
 		//then
 		assertEquals(1, doubleRegistry.getSpies().size());
@@ -96,7 +96,7 @@ public class DoubleDefinitionRegistryFactoryTest {
 	@Test
 	public void should_generate_mock_configuration_when_config_annotation_missing() throws NoSuchFieldException {
 		//when
-		parseRegistry(MockWithoutNameSpec.class);
+		parseClass(MockWithoutNameSpec.class);
 
 		//then
 		Mockito
@@ -108,7 +108,7 @@ public class DoubleDefinitionRegistryFactoryTest {
 	@Test
 	public void should_generate_spy_configuration_when_config_annotation_missing() throws NoSuchFieldException {
 		//when
-		parseRegistry(SpyWithoutNameSpec.class);
+		parseClass(SpyWithoutNameSpec.class);
 
 		//then
 		Mockito
@@ -122,7 +122,7 @@ public class DoubleDefinitionRegistryFactoryTest {
 		final TestDoubleConfiguration configurationAnnotation = findAnnotation(findField(MockWithConfiguration.class, ANY_SERVICE1_NAME), TestDoubleConfiguration.class);
 
 		//when
-		parseRegistry(MockWithConfiguration.class);
+		parseClass(MockWithConfiguration.class);
 
 		//then
 		Mockito
@@ -137,7 +137,7 @@ public class DoubleDefinitionRegistryFactoryTest {
 		final TestDoubleConfiguration configurationAnnotation = findAnnotation(findField(SpyWithConfiguration.class, ANY_SERVICE1_NAME), TestDoubleConfiguration.class);
 
 		//when
-		parseRegistry(SpyWithConfiguration.class);
+		parseClass(SpyWithConfiguration.class);
 
 		//then
 		Mockito
@@ -146,7 +146,7 @@ public class DoubleDefinitionRegistryFactoryTest {
 		Mockito.verifyNoMoreInteractions(configurationParser);
 	}
 
-	public DoubleRegistry parseRegistry(Class<?> clazz) {
+	public DoubleRegistry parseClass(Class<?> clazz) {
 		final DoubleDefinitionRegistryFactory definitionRegistryFactory = new DoubleDefinitionRegistryFactory(TestDoubleConfiguration.class, configurationParser);
 		return definitionRegistryFactory.parse(clazz);
 	}

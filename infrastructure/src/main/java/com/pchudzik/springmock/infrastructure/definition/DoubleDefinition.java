@@ -6,7 +6,6 @@ import org.springframework.util.Assert;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.Optional;
 
 public class DoubleDefinition {
 	public static final Object NO_CONFIGURATION = null;
@@ -45,13 +44,13 @@ public class DoubleDefinition {
 		return spyClass.isAssignableFrom(doubleClass);
 	}
 
-	public <T> Optional<T> getConfiguration(Class<T> configurationClass) {
+	public <T> T getConfiguration(Class<T> configurationClass) {
 		if (doubleConfiguration == null) {
-			return Optional.empty();
+			return null;
 		}
 
 		Assert.isInstanceOf(configurationClass, doubleConfiguration);
-		return Optional.of((T) doubleConfiguration);
+		return (T) doubleConfiguration;
 	}
 
 	@Override

@@ -43,9 +43,7 @@ public class MockitoMockResetTestExecutionListener extends AbstractTestExecution
 			final Object bean = applicationContext.getBean(beanName);
 			if (Mockito.mockingDetails(bean).isMock() && doubleSearch.containsExactlyOneDouble(beanName)) {
 				final DoubleDefinition definition = doubleSearch.findOneDefinition(beanName);
-				final MockitoDoubleConfiguration configuration = definition
-						.getConfiguration(MockitoDoubleConfiguration.class)
-						.orElseGet(MockitoDoubleConfiguration::defaultConfiguration);
+				final MockitoDoubleConfiguration configuration = definition.getConfiguration(MockitoDoubleConfiguration.class);
 
 				if (shouldResetPredicate.test(configuration)) {
 					mockResetExecutor.resetMock(bean);

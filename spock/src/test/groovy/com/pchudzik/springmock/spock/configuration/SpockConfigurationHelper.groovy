@@ -19,8 +19,6 @@ class SpockConfigurationHelper {
 	}
 
 	static SpockDoubleConfiguration getConfig(DoubleDefinition definition) {
-		definition
-				.getConfiguration(SpockDoubleConfiguration)
-				.orElseThrow({ -> new IllegalStateException("Expected double configuration to be present") })
+		definition.getConfiguration(SpockDoubleConfiguration)
 	}
 }

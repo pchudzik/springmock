@@ -4,10 +4,8 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class DoubleDefinitionTest {
 	@Test(expected = IllegalArgumentException.class)
@@ -24,7 +22,7 @@ public class DoubleDefinitionTest {
 	}
 
 	@Test
-	public void should_properly_return_empty_when_configuration_not_provided() {
+	public void should_return_empty_null_when_configuration_not_provided() {
 		//given
 		final DoubleDefinition withBuilderDefaultDefinition = DoubleDefinition.builder()
 				.name("mock")
@@ -32,9 +30,7 @@ public class DoubleDefinitionTest {
 				.build();
 
 		//expect
-		assertEquals(
-				Optional.empty(),
-				withBuilderDefaultDefinition.getConfiguration(Map.class));
+		assertNull(withBuilderDefaultDefinition.getConfiguration(Map.class));
 	}
 
 	@Test
@@ -47,9 +43,7 @@ public class DoubleDefinitionTest {
 				.build();
 
 		//expect
-		assertEquals(
-				Optional.empty(),
-				withNullDefinition.getConfiguration(Map.class));
+		assertNull(withNullDefinition.getConfiguration(Map.class));
 	}
 
 	@Test
@@ -64,10 +58,10 @@ public class DoubleDefinitionTest {
 				.build();
 
 		//expect
-		assertTrue(definition.getConfiguration(Map.class).isPresent());
+		assertNotNull(definition.getConfiguration(Map.class));
 		assertEquals(
 				configuration,
-				definition.getConfiguration(Map.class).get());
+				definition.getConfiguration(Map.class));
 	}
 
 }

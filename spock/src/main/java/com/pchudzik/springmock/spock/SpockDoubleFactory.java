@@ -8,7 +8,6 @@ import net.bytebuddy.ByteBuddy;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import spock.mock.DetachedMockFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class SpockDoubleFactory implements DoubleFactory {
@@ -30,9 +29,9 @@ public class SpockDoubleFactory implements DoubleFactory {
 	}
 
 	private Map<String, Object> resolveConfiguration(DoubleDefinition doubleDefinition) {
-		return doubleDefinition.getConfiguration(SpockDoubleConfiguration.class)
-				.map(SpockDoubleConfiguration::createDoubleConfiguration)
-				.orElseGet(HashMap::new);
+		return doubleDefinition
+				.getConfiguration(SpockDoubleConfiguration.class)
+				.createDoubleConfiguration();
 	}
 
 	/**

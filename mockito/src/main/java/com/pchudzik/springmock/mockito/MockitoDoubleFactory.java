@@ -46,7 +46,6 @@ public class MockitoDoubleFactory implements DoubleFactory {
 	private MockSettings prepareMockSettings(DoubleDefinition doubleDefinition) {
 		return doubleDefinition
 				.getConfiguration(MockitoDoubleConfiguration.class)
-				.map(config -> config.createMockSettings(defaultSettingsProvider.get()))
-				.orElseGet(defaultSettingsProvider::get);
+				.createMockSettings(defaultSettingsProvider.get());
 	}
 }
