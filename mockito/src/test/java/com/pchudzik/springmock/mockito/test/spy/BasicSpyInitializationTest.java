@@ -60,20 +60,6 @@ public class BasicSpyInitializationTest {
 		assertEquals(singletonList(methodArgument), interactionRecorder.getInteractions());
 	}
 
-	@Configuration
-	@Import(SpyConfig.class)
-	static class Config {
-		@Bean
-		public Service withConfigurationMock() {
-			return new Service(new ServiceInteractionRecorder());
-		}
-
-		@Bean
-		public Service withExtraInterface() {
-			return new Service(new ServiceInteractionRecorder());
-		}
-	}
-
 	@Test
 	public void should_configure_default_answer_for_mock() {
 		assertEquals(
@@ -86,6 +72,20 @@ public class BasicSpyInitializationTest {
 		isAssignable(
 				Closeable.class,
 				withExtraInterface.getClass());
+	}
+
+	@Configuration
+	@Import(SpyConfig.class)
+	static class Config {
+		@Bean
+		public Service withConfigurationMock() {
+			return new Service(new ServiceInteractionRecorder());
+		}
+
+		@Bean
+		public Service withExtraInterface() {
+			return new Service(new ServiceInteractionRecorder());
+		}
 	}
 
 	private static class ReturnsHelloSpy extends Returns {

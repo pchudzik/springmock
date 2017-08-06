@@ -1,5 +1,6 @@
 package com.pchudzik.springmock.infrastructure;
 
+import javax.annotation.Nullable;
 import java.lang.annotation.Annotation;
 
 /**
@@ -19,7 +20,7 @@ public interface DoubleConfigurationParser<T, A extends Annotation> {
 	 * @param configuration configuration annotation
 	 * @return proper doubleConfiguration object or null if configuration is missing
 	 */
-	T parseMockConfiguration(String doubleName, A configuration);
+	T parseMockConfiguration(String doubleName, @Nullable A configuration);
 
-	T parseSpyConfiguration(String doubleName, A configuration);
+	T parseSpyConfiguration(String doubleName, @Nullable A configuration);
 }

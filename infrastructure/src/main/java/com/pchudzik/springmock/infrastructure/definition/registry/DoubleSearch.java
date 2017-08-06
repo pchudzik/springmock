@@ -2,13 +2,15 @@ package com.pchudzik.springmock.infrastructure.definition.registry;
 
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.toList;
 
-public class DoubleSearch {
+public class DoubleSearch implements Iterable<DoubleDefinition> {
 	private final Collection<DoubleDefinition> doubles;
 
 	DoubleSearch(Collection<DoubleDefinition> doubles) {
@@ -72,5 +74,10 @@ public class DoubleSearch {
 
 	private static Predicate<DoubleDefinition> filterByClass(Class<?> beanClass) {
 		return doubleDefinition -> doubleDefinition.hasClass(beanClass);
+	}
+
+	@Override
+	public Iterator<DoubleDefinition> iterator() {
+		return new ArrayList<>(doubles).iterator();
 	}
 }

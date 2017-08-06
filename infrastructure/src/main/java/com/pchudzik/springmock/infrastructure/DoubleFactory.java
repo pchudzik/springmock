@@ -3,12 +3,15 @@ package com.pchudzik.springmock.infrastructure;
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.spring.SpyReplacingContextPostProcessor;
 
+import javax.annotation.Nullable;
+
 /**
  * <p>Interface responsible for creating properly initialized and working mocks and spies instances.</p>
  */
 public interface DoubleFactory {
 	String DOUBLE_FACTORY_BEAN_NAME = MockConstants.PACKAGE_PREFIX + "doubleFactory";
 	String CREATE_MOCK_FACTORY_METHOD = "createMock";
+	String CREATE_SPY_FACTORY_METHOD = "createSpy";
 
 	/**
 	 * <p>Creates mock instance.</p>
@@ -34,5 +37,5 @@ public interface DoubleFactory {
 	 * @param spyDefinition spy configuration
 	 * @return spy of bean
 	 */
-	Object createSpy(Object bean, DoubleDefinition spyDefinition);
+	Object createSpy(@Nullable Object bean, DoubleDefinition spyDefinition);
 }

@@ -52,6 +52,7 @@ public class MockContextCustomizer implements ContextCustomizer {
 
 	/**
 	 * Equals and hashCode are a must in order to propely cache created contexts by spring context cache layer
+	 *
 	 * @param o
 	 * @return
 	 */
@@ -73,6 +74,7 @@ public class MockContextCustomizer implements ContextCustomizer {
 
 	/**
 	 * Equals and hashCode are a must in order to propely cache created contexts by spring context cache layer
+	 *
 	 * @return
 	 */
 	@Override
@@ -89,6 +91,11 @@ public class MockContextCustomizer implements ContextCustomizer {
 	private void registerSpyRegistrationPostProcessor(BeanDefinitionRegistry registry) {
 		registry.registerBeanDefinition(SpyReplacingContextPostProcessor.BEAN_NAME, BeanDefinitionBuilder
 				.rootBeanDefinition(SpyReplacingContextPostProcessor.class)
+				.getBeanDefinition());
+
+		registry.registerBeanDefinition(SpyRegisteringWhenBeanMissingContextPostProcessor.BEAN_NAME, BeanDefinitionBuilder
+				.rootBeanDefinition(SpyRegisteringWhenBeanMissingContextPostProcessor.class)
+				.addConstructorArgValue(doubleRegistry)
 				.getBeanDefinition());
 	}
 
