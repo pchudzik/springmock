@@ -75,7 +75,8 @@ public class SpockDoubleConfiguration {
 				return this;
 			}
 
-			settings.put(SpockSettingsKeys.CONSTRUCTOR_ARGS, createObjectInstance(constructorArgumentsProviderClass));
+			final ConstructorArgumentsProvider argumentsProvider = createObjectInstance(constructorArgumentsProviderClass);
+			settings.put(SpockSettingsKeys.CONSTRUCTOR_ARGS, argumentsProvider.getConstructorArguments());
 			return this;
 		}
 

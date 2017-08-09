@@ -7,6 +7,7 @@ import org.mockito.MockSettings;
 import org.mockito.Mockito;
 import org.springframework.aop.framework.AbstractAdvisingBeanPostProcessor;
 
+import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public class MockitoDoubleFactory implements DoubleFactory {
@@ -29,7 +30,7 @@ public class MockitoDoubleFactory implements DoubleFactory {
 	}
 
 	@Override
-	public Object createSpy(Object bean, DoubleDefinition spyDefinition) {
+	public Object createSpy(@Nullable  Object bean, DoubleDefinition spyDefinition) {
 		return Mockito.mock(
 				spyDefinition.getDoubleClass(),
 				prepareMockSettings(spyDefinition).spiedInstance(bean));

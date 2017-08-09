@@ -282,10 +282,22 @@ issue description or as PR.
   
   * mocks configuration - @MockitoDouble
   * fixed mocks reset in context hierarchy  
+  * added possibility to create spies without real object present in context.
+
+    Word of warning. It will produce partial mock, which might not work as you'd expect it to work and might cause some
+    unexpected failures. In general yous should spy on existing bean instance, unless it is very trivial bean without 
+    any fields. 
 
 ### 1.1.0 springmock-spock - to be released
 
   * mocks configuration - @SpockDouble
+  * added possibility to create spies without real object present in context.
+  
+    Word of warning as in mockito it might produce not properly initialized object. In spock you have higher level of
+    control over mocks creation and you can initialize object properly using
+    [SpockDouble.constructorArguments](spock/src/main/java/com/pchudzik/springmock/spock/configuration/SpockDouble.java)
+    see [integration test
+    case](spock/src/test/groovy/com/pchudzik/springmock/spock/test/spy/SpyShouldBeCreatedWithoutExistingObjectInstanceTest.groovy).
 
 ### 1.0.0 - 2017.07.22
 

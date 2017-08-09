@@ -8,6 +8,7 @@ import net.bytebuddy.ByteBuddy;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import spock.mock.DetachedMockFactory;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class SpockDoubleFactory implements DoubleFactory {
@@ -22,7 +23,7 @@ public class SpockDoubleFactory implements DoubleFactory {
 	}
 
 	@Override
-	public Object createSpy(Object bean, DoubleDefinition spyDefinition) {
+	public Object createSpy(@Nullable Object bean, DoubleDefinition spyDefinition) {
 		final Map<String, Object> spyConfiguration = resolveConfiguration(spyDefinition);
 		spyConfiguration.put(SpockSettingsKeys.INSTANCE, bean);
 		return mockFactory.Spy(spyConfiguration, spyDefinition.getDoubleClass());

@@ -17,7 +17,7 @@ class DoubleConstructorArgumentsTest extends Specification {
 		final doubleConfiguration = getConfig(definition).createDoubleConfiguration()
 
 		then:
-		doubleConfiguration[SpockSettingsKeys.CONSTRUCTOR_ARGS].getClass() == FakeArgumentsProvider.class
+		doubleConfiguration[SpockSettingsKeys.CONSTRUCTOR_ARGS] == FakeArgumentsProvider.VALUES
 	}
 
 	def "mocks should be created using default mechanisms by default"() {
@@ -41,7 +41,7 @@ class DoubleConstructorArgumentsTest extends Specification {
 		final doubleConfiguration = getConfig(definition).createDoubleConfiguration()
 
 		then:
-		doubleConfiguration[SpockSettingsKeys.CONSTRUCTOR_ARGS].getClass() == FakeArgumentsProvider.class
+		doubleConfiguration[SpockSettingsKeys.CONSTRUCTOR_ARGS] == FakeArgumentsProvider.VALUES
 	}
 
 	private static class AnyTest {
@@ -57,11 +57,12 @@ class DoubleConstructorArgumentsTest extends Specification {
 	}
 
 	static class FakeArgumentsProvider implements SpockDouble.ConstructorArgumentsProvider {
+		public static final VALUES = ["a", "b"]
 		private FakeArgumentsProvider() {}
 
 		@Override
 		List<Object> getConstructorArguments() {
-			["a", "b"]
+			new ArrayList<>(VALUES)
 		}
 	}
 }
