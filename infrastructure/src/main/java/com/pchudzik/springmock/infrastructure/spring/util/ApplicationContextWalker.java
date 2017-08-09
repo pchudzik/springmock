@@ -2,7 +2,6 @@ package com.pchudzik.springmock.infrastructure.spring.util;
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
@@ -23,7 +22,7 @@ public class ApplicationContextWalker {
 	}
 
 	public BeanDefinition getBeanDefinition(String beanName) {
-		return walkContext(ctx -> tryToGetBeanDefinition((BeanDefinitionRegistry) ctx, beanName))
+		return walkContext(ctx -> new BeanDefinitionFinder(ctx).tryToFindBeanDefinition(beanName))
 				.stream()
 				.flatMap(selectOnlyPresentOptionals())
 				.findFirst()
@@ -52,13 +51,5 @@ public class ApplicationContextWalker {
 
 	private <T> Function<Optional<T>, Stream<? extends T>> selectOnlyPresentOptionals() {
 		return maybeDefinition -> maybeDefinition.map(Stream::of).orElse(Stream.empty());
-	}
-
-	private Optional<BeanDefinition> tryToGetBeanDefinition(BeanDefinitionRegistry registry, String beanName) {
-		try {
-			return Optional.of(registry.getBeanDefinition(beanName));
-		} catch (NoSuchBeanDefinitionException ex) {
-			return Optional.empty();
-		}
 	}
 }
