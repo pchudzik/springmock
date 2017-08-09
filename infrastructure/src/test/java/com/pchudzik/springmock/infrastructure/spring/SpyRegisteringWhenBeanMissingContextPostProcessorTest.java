@@ -121,8 +121,10 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessorTest {
 	}
 
 	private SpyRegisteringWhenBeanMissingContextPostProcessor createPostProcessor(Collection<DoubleDefinition> spies) {
-		return new SpyRegisteringWhenBeanMissingContextPostProcessor(new DoubleRegistry(
-				emptyList(),
-				spies));
+		return new SpyRegisteringWhenBeanMissingContextPostProcessor(
+				new DoubleRegistry(
+						emptyList(),
+						spies),
+				new DoubleDefinitionsRegistrationContext());
 	}
 }

@@ -3,7 +3,6 @@ package com.pchudzik.springmock.infrastructure.spring;
 import com.pchudzik.springmock.infrastructure.MockConstants;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
-import com.pchudzik.springmock.infrastructure.spring.util.BeanDefinitionRegistrationHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -17,17 +16,19 @@ public class MockRegisteringContextPostProcessor implements BeanFactoryPostProce
 	public static final String BEAN_NAME = MockConstants.PACKAGE_PREFIX + "mockRegistrationContextPostProcessor";
 
 	private final DoubleRegistry doubleRegistry;
+	private final DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext;
 
-	public MockRegisteringContextPostProcessor(DoubleRegistry doubleRegistry) {
+	public MockRegisteringContextPostProcessor(DoubleRegistry doubleRegistry, DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext) {
 		this.doubleRegistry = doubleRegistry;
+		this.doubleDefinitionsRegistrationContext = doubleDefinitionsRegistrationContext;
 	}
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
-		final BeanDefinitionRegistrationHelper registrationHelper = new BeanDefinitionRegistrationHelper((BeanDefinitionRegistry) configurableListableBeanFactory);
-
 		doubleRegistry
 				.getMocks()
-				.forEach(registrationHelper::registerMock);
+				.forEach(definition -> doubleDefinitionsRegistrationContext.registerMock(
+						(BeanDefinitionRegistry) configurableListableBeanFactory,
+						definition));
 	}
 }

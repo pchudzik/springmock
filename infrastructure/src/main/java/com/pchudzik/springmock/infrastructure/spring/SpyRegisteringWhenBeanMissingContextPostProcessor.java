@@ -3,15 +3,14 @@ package com.pchudzik.springmock.infrastructure.spring;
 import com.pchudzik.springmock.infrastructure.MockConstants;
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
-import com.pchudzik.springmock.infrastructure.definition.registry.DoubleSearch;
 import com.pchudzik.springmock.infrastructure.spring.util.BeanDefinitionFinder;
-import com.pchudzik.springmock.infrastructure.spring.util.BeanDefinitionRegistrationHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -19,19 +18,20 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessor implements BeanFa
 	public static final String BEAN_NAME = MockConstants.PACKAGE_PREFIX + "spyRegisteringContextPostProcessor";
 
 	private final DoubleRegistry doubleRegistry;
+	private final DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext;
 
-	public SpyRegisteringWhenBeanMissingContextPostProcessor(DoubleRegistry doubleRegistry) {
+	public SpyRegisteringWhenBeanMissingContextPostProcessor(DoubleRegistry doubleRegistry, DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext) {
 		this.doubleRegistry = doubleRegistry;
+		this.doubleDefinitionsRegistrationContext = doubleDefinitionsRegistrationContext;
 	}
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		final DoubleSearch spies = doubleRegistry.spySearch();
-		final BeanDefinitionRegistrationHelper registrationHelper = new BeanDefinitionRegistrationHelper((BeanDefinitionRegistry) beanFactory);
+		final Collection<DoubleDefinition> spies = doubleRegistry.getSpies();
 		for (DoubleDefinition spy : spies) {
 			final Optional<BeanDefinition> beanDefinition = findBeanDefinition(beanFactory, spy);
 			if (!beanDefinition.isPresent()) {
-				registrationHelper.registerSpy(spy);
+				doubleDefinitionsRegistrationContext.registerSpy((BeanDefinitionRegistry) beanFactory, spy);
 			}
 		}
 	}
@@ -47,7 +47,10 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessor implements BeanFa
 				.map(Optional::get)
 				.findFirst();
 
-		if (!definition.isPresent() && beanFactory.getParentBeanFactory() != null) {
+		final boolean noDefinitionFound = !definition.isPresent();
+		final boolean hasParentBeanFactory = beanFactory.getParentBeanFactory() != null;
+
+		if (noDefinitionFound && hasParentBeanFactory) {
 			return findBeanDefinition((ConfigurableListableBeanFactory) beanFactory.getParentBeanFactory(), spy);
 		}
 

@@ -24,11 +24,13 @@ public class SpyReplacingContextPostProcessor extends InstantiationAwareBeanPost
 
 	private final DoubleRegistry doubleRegistry;
 	private final DoubleFactory doubleFactory;
+	private final DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext;
 	private final ApplicationContext applicationContext;
 
-	public SpyReplacingContextPostProcessor(ApplicationContext applicationContext, DoubleRegistry doubleRegistry, DoubleFactory doubleFactory) {
+	public SpyReplacingContextPostProcessor(ApplicationContext applicationContext, DoubleRegistry doubleRegistry, DoubleFactory doubleFactory, DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext) {
 		this.doubleRegistry = doubleRegistry;
 		this.doubleFactory = doubleFactory;
+		this.doubleDefinitionsRegistrationContext = doubleDefinitionsRegistrationContext;
 		this.applicationContext = applicationContext;
 	}
 
@@ -58,6 +60,10 @@ public class SpyReplacingContextPostProcessor extends InstantiationAwareBeanPost
 	}
 
 	private Object createSpy(Object bean, DoubleDefinition spyDefinition) {
+		if(doubleDefinitionsRegistrationContext.isBeanDefinitionRegisteredForDouble(spyDefinition)) {
+			return bean;
+		}
+
 		return doubleFactory.createSpy(unwrapAopProxy(bean), spyDefinition);
 	}
 

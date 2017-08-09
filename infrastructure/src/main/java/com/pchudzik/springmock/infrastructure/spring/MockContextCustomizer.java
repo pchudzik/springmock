@@ -30,7 +30,7 @@ public class MockContextCustomizer implements ContextCustomizer {
 
 	/**
 	 * <p>Will register mock factory and all additional beans required by springmock.</p>
-	 *
+	 * <p>
 	 * <p>It is possible to register and inject more beans passing additionalDefinitions to the constructor</p>
 	 *
 	 * @param configurableApplicationContext
@@ -96,6 +96,7 @@ public class MockContextCustomizer implements ContextCustomizer {
 		registry.registerBeanDefinition(SpyRegisteringWhenBeanMissingContextPostProcessor.BEAN_NAME, BeanDefinitionBuilder
 				.rootBeanDefinition(SpyRegisteringWhenBeanMissingContextPostProcessor.class)
 				.addConstructorArgValue(doubleRegistry)
+				.addConstructorArgReference(DoubleDefinitionsRegistrationContext.BEAN_NAME)
 				.getBeanDefinition());
 	}
 
@@ -116,6 +117,10 @@ public class MockContextCustomizer implements ContextCustomizer {
 				.rootBeanDefinition(DoubleRegistry.class)
 				.setFactoryMethodOnBean(DoubleRegistryHolder.REGISTRY_FACTORY_METHOD, DoubleRegistryHolder.BEAN_NAME)
 				.getBeanDefinition());
+
+		registry.registerBeanDefinition(DoubleDefinitionsRegistrationContext.BEAN_NAME, BeanDefinitionBuilder
+				.rootBeanDefinition(DoubleDefinitionsRegistrationContext.class)
+				.getRawBeanDefinition());
 	}
 
 	private void registerDoubleFactory(BeanDefinitionRegistry registry) {
@@ -128,6 +133,7 @@ public class MockContextCustomizer implements ContextCustomizer {
 		registry.registerBeanDefinition(MockRegisteringContextPostProcessor.BEAN_NAME, BeanDefinitionBuilder
 				.rootBeanDefinition(MockRegisteringContextPostProcessor.class)
 				.addConstructorArgReference(DoubleRegistry.BEAN_NAME)
+				.addConstructorArgReference(DoubleDefinitionsRegistrationContext.BEAN_NAME)
 				.getBeanDefinition());
 	}
 }

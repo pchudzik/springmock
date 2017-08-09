@@ -1,6 +1,5 @@
-package com.pchudzik.springmock.infrastructure.definition;
+package com.pchudzik.springmock.infrastructure.definition.registry;
 
-import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -34,6 +33,11 @@ public class DoubleRegistryTest {
 		//then
 		assertEquals(4, mockNames.size());
 		assertThat(mockNames, containsInAnyOrder(firstMockName, secondMockName, firstSpyName, secondSpyName));
+	}
+
+	@Test
+	public void should_detect_when_definition_was_registered_in_context() {
+
 	}
 
 	private static class Service {

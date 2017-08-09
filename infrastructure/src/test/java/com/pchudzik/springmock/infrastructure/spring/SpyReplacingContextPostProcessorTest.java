@@ -5,6 +5,7 @@ import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
@@ -132,12 +133,37 @@ public class SpyReplacingContextPostProcessorTest {
 				.createSpy(otherService, spyDefinition);
 	}
 
+	@Test
+	public void should_not_spy_on_spy() {
+		//given
+		final String spyName = "myService";
+		final Service spy = Mockito.spy(new Service());
+		final DoubleDefinition spyDefinition = doubleDefinition(Service.class, spyName);
+		final SpyReplacingContextPostProcessor postProcessor = new SpyProcessorBuilder()
+				.withSpyBean(spyName, spy, spyDefinition)
+				.withSpy(spyDefinition)
+				.build();
+
+		//when
+		postProcessor.postProcessAfterInitialization(spy, spyName);
+
+		//then
+		Mockito.verifyZeroInteractions(doubleFactory);
+	}
+
 	private class SpyProcessorBuilder {
+		private final DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext = new DoubleDefinitionsRegistrationContext();
 		private List<TestBeanDefinition> beans = new LinkedList<>();
 		private List<DoubleDefinition> spies = new LinkedList<>();
 
 		public SpyProcessorBuilder withBean(String name, Object bean) {
 			beans.add(new TestBeanDefinition(name, bean));
+			return this;
+		}
+
+		public SpyProcessorBuilder withSpyBean(String name, Object bean, DoubleDefinition doubleDefinition) {
+			beans.add(new TestBeanDefinition(name, bean));
+			doubleDefinitionsRegistrationContext.registerSpy(Mockito.mock(BeanDefinitionRegistry.class), doubleDefinition);
 			return this;
 		}
 
@@ -149,10 +175,9 @@ public class SpyReplacingContextPostProcessorTest {
 		public SpyReplacingContextPostProcessor build() {
 			return new SpyReplacingContextPostProcessor(
 					createContext(beans),
-					new DoubleRegistry(
-							emptyList(),
-							spies),
-					doubleFactory);
+					new DoubleRegistry(emptyList(), spies),
+					doubleFactory,
+					doubleDefinitionsRegistrationContext);
 		}
 
 		private ApplicationContext createContext(Collection<TestBeanDefinition> beans) {
