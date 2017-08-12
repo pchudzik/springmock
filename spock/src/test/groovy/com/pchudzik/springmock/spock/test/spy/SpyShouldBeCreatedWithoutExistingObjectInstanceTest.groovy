@@ -23,7 +23,6 @@ class SpyShouldBeCreatedWithoutExistingObjectInstanceTest extends Specification 
 		final response = simpleService.hello()
 
 		then:
-
 		response == SimpleService.DEFAULT_RESPONSE
 
 		1 * simpleService.hello()
