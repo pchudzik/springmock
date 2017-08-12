@@ -1,6 +1,11 @@
 language: java
 jdk: oraclejdk8
 
+env:
+  global:
+    - secure: pazlldPQ4nkV4ATH8Nh2Kx1WpgFKeV+Gr4jFRdh54u2qZ8SggIqGBEFRBZzLYOHtoSsqs/IGlgwOuPjZZY6PsYhmcpAcZIt5KGk8j+VlJyiPeT5/weiJcsV9IUpaQnfsuIUrAhW1Jc02wZacUfa60mRF5jOW9VES4kJvScX4ud3EtWMH2I2pl9I5lS6Wwt4USsOhXeg/UfS4z25n7Zq9JAcKTEy/dAUYGLmyEjawLUlndN13Yd8CH8m3T6ZYCorQxjCB7qmjyibopIaPdIiLaBsbvEhh3+ejDfGeQCxMpjQsQESnU//GZeqE1V7NCWEEoyeYM7gjGk5hRWI+4eKYbioW4vFv5maIlr3ssImJVJJEg/YBjFWqmnElW0OTClSPm346yN/2rvxADFAzNWOt3dvknG4LqbDQiotoFjsUW0y4KUlJ6BvdyxOuksUV15h+z68irxNtl3Nc99Hk+W3yqSavHusNYQsPXBBRo2xhin85msWIUx4RJaHaIqEVbD6Qp2N3PN7HWFyO6MBQePOHue2woP66gmomdyeCjMYbedtgeS4hljGiYcivDN6YEflKBeixcq1RJyh5sK/3YLwIr3HPRqhhvw9nJfVyR2kMZbN7ulFFqgHmQnqdrathSJXsjC/gJfZTyu0Q4h9b97c9AdD7zE423wlQZ8qhtQvF2nA=
+    - secure: LPSgvGP9Y3iA488DqZXD/L4ZNztmX6iKcFMVpNA0cpB9LiAGK8obrS60cqvBMBguuxAkagVCmf7PIRjM/GO3jA/jYHxkE0HG4YkC7Z8NmfPGLGU8gne9tOc+ES67vbesIv9eSA2hYhEN3mS1xcPNOxb5IlANwPkpQpl1HLbOxSdCs+lSzGzMlr7x658BBsh4tLa6Qb8cKCTM8+GYC4V2iqq2I7zVd5jX14DQ+dcq73ixWwxP0FPr6sb5cjtPEV5qHgfgIhfMfxwEB9UDgkyhvJJ/zhaZo+XyhLi2/EJm3e/yPMxOIvV3k3dB8pq8JbNcU8BWi3wwNtcTz2ow5y9mkVrLNCdN/b5uwmC4baEz1hJ4aQcxrdU2KfMItVaTBzvUbNIabVr7FXWm4lzaZxHe9CG4YY0A6TVS0FLHiD6e3Q05aKnbxgmWnGVWt1nh9D5BddphFME1AYhBosH/694fm/FhOHPQpChDJrypIOcoFzlRskRql2CUAtEwE5QYjKRXQkGBorKYA44xyGwlrfItGF5hi3RG59tdkrQvmAF4qpCp6IpJ+NWc9K/GyV38LAebOqab69Nrl/OU6GU2PmHOaRvDQAkEPs8qQF4YTw/4u6xjfgEMzbaPADjauEeb4hJYkt4aqLpeMWBJ+Khut6qhDq5UkVY1EEg1VcIplrcecOE=
+
 cache:
   directories:
     - $HOME/.m2/repositories
@@ -9,3 +14,6 @@ cache:
 install: true  #skip ./mvwn install it's not required
 
 script: ./mvnw -B clean verify
+
+after_success:
+  - "[[ $TRAVIS_BRANCH == \"master\" ]] && ./mvnw -DskipTests -B --settings .mvn/settings.xml deploy"
