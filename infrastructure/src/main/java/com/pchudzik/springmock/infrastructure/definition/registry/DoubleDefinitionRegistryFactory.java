@@ -4,13 +4,17 @@ import com.pchudzik.springmock.infrastructure.DoubleConfigurationParser;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
+import org.springframework.context.annotation.Configuration;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleNameResolver.resolveDoubleName;
 import static java.util.Arrays.asList;
@@ -34,10 +38,14 @@ public class DoubleDefinitionRegistryFactory {
 		final Set<DoubleDefinition> mocks = new HashSet<>();
 		final Set<DoubleDefinition> spies = new HashSet<>();
 
-		doWithFields(clazz, (Field field) -> {
-			extractMockDefinition(field).ifPresent(mocks::add);
-			extractSpyDefinition(field).ifPresent(spies::add);
-		});
+		Stream
+				.concat(
+						findParsableClasses(clazz),
+						Stream.of(clazz))
+				.forEach(parsableClass -> {
+					mocks.addAll(extractDoubleDefinition(parsableClass, this::extractMockDefinition));
+					spies.addAll(extractDoubleDefinition(parsableClass, this::extractSpyDefinition));
+				});
 
 		return new DoubleRegistry(mocks, spies);
 	}
@@ -56,11 +64,6 @@ public class DoubleDefinitionRegistryFactory {
 		return definitionBuilder.build();
 	}
 
-	private void applyDoubleConfiguration(Field field, Consumer<Annotation> configurationApplier) {
-		final Annotation configuration = getAnnotation(field, configurationAnnotation);
-		configurationApplier.accept(configuration);
-	}
-
 	protected DoubleDefinition createSpyDefinition(Field field, AutowiredSpy autowiredSpy) {
 		final String doubleName = resolveDoubleName(field);
 		final DoubleDefinition.DoubleDefinitionBuilder definitionBuilder = DoubleDefinition.builder()
@@ -73,6 +76,26 @@ public class DoubleDefinitionRegistryFactory {
 				configuration -> definitionBuilder.doubleConfiguration(configurationParser.parseSpyConfiguration(doubleName, configuration)));
 
 		return definitionBuilder.build();
+	}
+
+	private void applyDoubleConfiguration(Field field, Consumer<Annotation> configurationApplier) {
+		final Annotation configuration = getAnnotation(field, configurationAnnotation);
+		configurationApplier.accept(configuration);
+	}
+
+	private Collection<DoubleDefinition> extractDoubleDefinition(Class<?> clazz, Function<Field, Optional<DoubleDefinition>> fieldParser) {
+		final Set<DoubleDefinition> spies = new HashSet<>();
+
+		doWithFields(clazz, (Field field) -> {
+			fieldParser.apply(field).ifPresent(spies::add);
+		});
+
+		return spies;
+	}
+	private Stream<Class<?>> findParsableClasses(Class<?> clazz) {
+		return Stream
+				.of(clazz.getDeclaredClasses())
+				.filter(declaredClass -> getAnnotation(declaredClass, Configuration.class) != null);
 	}
 
 	private Optional<DoubleDefinition> extractMockDefinition(Field field) {

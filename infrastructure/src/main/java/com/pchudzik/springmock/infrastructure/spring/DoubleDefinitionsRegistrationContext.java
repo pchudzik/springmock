@@ -5,6 +5,7 @@ import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,15 +35,19 @@ public class DoubleDefinitionsRegistrationContext {
 	}
 
 	public void registerSpy(BeanDefinitionRegistry registry, DoubleDefinition spyDefinition) {
+		final RootBeanDefinition beanDefinition = (RootBeanDefinition) BeanDefinitionBuilder
+				.rootBeanDefinition(spyDefinition.getDoubleClass())
+				.setFactoryMethodOnBean(CREATE_SPY_FACTORY_METHOD, DOUBLE_FACTORY_BEAN_NAME)
+				.addConstructorArgValue(null)
+				.addConstructorArgValue(spyDefinition)
+				.getBeanDefinition();
+
+		beanDefinition.setTargetType(spyDefinition.getDoubleClass());
+
 		registerBeanDefinition(
 				spyDefinition,
 				registry,
-				BeanDefinitionBuilder
-						.rootBeanDefinition(spyDefinition.getDoubleClass())
-						.setFactoryMethodOnBean(CREATE_SPY_FACTORY_METHOD, DOUBLE_FACTORY_BEAN_NAME)
-						.addConstructorArgValue(null)
-						.addConstructorArgValue(spyDefinition)
-						.getBeanDefinition());
+				beanDefinition);
 	}
 
 	public boolean isBeanDefinitionRegisteredForDouble(DoubleDefinition definition) {

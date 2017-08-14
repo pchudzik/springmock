@@ -9,6 +9,8 @@ import org.mockito.Mockito;
 import java.lang.annotation.*;
 
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionMatchers.*;
+import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleDefinitionTestFactory.parseClass;
+import static com.pchudzik.springmock.infrastructure.definition.registry.IterableHelper.getFirstElement;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -96,7 +98,7 @@ public class DoubleDefinitionRegistryFactoryTest {
 	@Test
 	public void should_generate_mock_configuration_when_config_annotation_missing() throws NoSuchFieldException {
 		//when
-		parseClass(MockWithoutNameSpec.class);
+		parseClass(MockWithoutNameSpec.class, configurationParser);
 
 		//then
 		Mockito
@@ -108,7 +110,7 @@ public class DoubleDefinitionRegistryFactoryTest {
 	@Test
 	public void should_generate_spy_configuration_when_config_annotation_missing() throws NoSuchFieldException {
 		//when
-		parseClass(SpyWithoutNameSpec.class);
+		parseClass(SpyWithoutNameSpec.class, configurationParser);
 
 		//then
 		Mockito
@@ -119,10 +121,10 @@ public class DoubleDefinitionRegistryFactoryTest {
 	@Test
 	public void should_parse_mock_configuration_from_field() {
 		//given
-		final TestDoubleConfiguration configurationAnnotation = findAnnotation(findField(MockWithConfiguration.class, ANY_SERVICE1_NAME), TestDoubleConfiguration.class);
+		final DoubleDefinitionTestConfiguration configurationAnnotation = findAnnotation(findField(MockWithConfiguration.class, ANY_SERVICE1_NAME), DoubleDefinitionTestConfiguration.class);
 
 		//when
-		parseClass(MockWithConfiguration.class);
+		parseClass(MockWithConfiguration.class, configurationParser);
 
 		//then
 		Mockito
@@ -134,26 +136,16 @@ public class DoubleDefinitionRegistryFactoryTest {
 	@Test
 	public void should_parse_spy_configuration_from_field() {
 		//given
-		final TestDoubleConfiguration configurationAnnotation = findAnnotation(findField(SpyWithConfiguration.class, ANY_SERVICE1_NAME), TestDoubleConfiguration.class);
+		final DoubleDefinitionTestConfiguration configurationAnnotation = findAnnotation(findField(SpyWithConfiguration.class, ANY_SERVICE1_NAME), DoubleDefinitionTestConfiguration.class);
 
 		//when
-		parseClass(SpyWithConfiguration.class);
+		parseClass(SpyWithConfiguration.class, configurationParser);
 
 		//then
 		Mockito
 				.verify(configurationParser)
 				.parseSpyConfiguration(ANY_SERVICE1_NAME, configurationAnnotation);
 		Mockito.verifyNoMoreInteractions(configurationParser);
-	}
-
-	public DoubleRegistry parseClass(Class<?> clazz) {
-		final DoubleDefinitionRegistryFactory definitionRegistryFactory = new DoubleDefinitionRegistryFactory(TestDoubleConfiguration.class, configurationParser);
-		return definitionRegistryFactory.parse(clazz);
-	}
-
-	@Target(ElementType.FIELD)
-	@Retention(RetentionPolicy.RUNTIME)
-	private @interface TestDoubleConfiguration {
 	}
 
 	private interface AnyService1 {
@@ -164,13 +156,13 @@ public class DoubleDefinitionRegistryFactoryTest {
 
 	private static class MockWithConfiguration {
 		@AutowiredMock
-		@TestDoubleConfiguration
+		@DoubleDefinitionTestConfiguration
 		AnyService1 anyService1;
 	}
 
 	private static class SpyWithConfiguration {
 		@AutowiredSpy
-		@TestDoubleConfiguration
+		@DoubleDefinitionTestConfiguration
 		AnyService1 anyService1;
 	}
 
@@ -209,13 +201,5 @@ public class DoubleDefinitionRegistryFactoryTest {
 
 		@AutowiredSpy
 		AnyService1 spiedFieldName;
-	}
-
-	private static <T> T getFirstElement(Iterable<T> iterable) {
-		if (!iterable.iterator().hasNext()) {
-			throw new IllegalStateException("Expected at leas one element");
-		}
-
-		return iterable.iterator().next();
 	}
 }
