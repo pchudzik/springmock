@@ -38,7 +38,7 @@ public class ShouldReuseSpiesInjectedInConfigurationClass {
 		Service service;
 
 		@PostConstruct
-		public void bean() {
+		public void postConstruct() {
 			assertEquals(
 					Service.DEFAULT_RESPONSE,
 					service.hello());

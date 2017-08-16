@@ -31,7 +31,6 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessor implements BeanFa
 		for (DoubleDefinition spy : spies) {
 			final Optional<BeanDefinition> beanDefinition = findBeanDefinition(beanFactory, spy);
 			if (!beanDefinition.isPresent()) {
-				beanFactory.registerSingleton(spy.getName(), null);
 				doubleDefinitionsRegistrationContext.registerSpy((BeanDefinitionRegistry) beanFactory, spy);
 			}
 		}

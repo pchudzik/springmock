@@ -1,6 +1,7 @@
 package com.pchudzik.springmock.spock.test.spy
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy
+import org.spockframework.mock.MockUtil
 import org.springframework.context.annotation.Configuration
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
@@ -9,15 +10,9 @@ import javax.annotation.PostConstruct
 
 @ContextConfiguration
 class ShouldInjectSpiesInConfigurationClass extends Specification {
-	@AutowiredSpy
-	Service service
-
 	def "should setup context"() {
-		when:
-		noop()
-
-		then:
-		1 * service.hello()
+		expect:
+		true
 	}
 
 	def noop() {}
@@ -28,8 +23,9 @@ class ShouldInjectSpiesInConfigurationClass extends Specification {
 		Service service
 
 		@PostConstruct
-		public void bean() {
-			service.hello()
+		void postConstruct() {
+			assert service != null
+			assert new MockUtil().isMock(service)
 		}
 	}
 

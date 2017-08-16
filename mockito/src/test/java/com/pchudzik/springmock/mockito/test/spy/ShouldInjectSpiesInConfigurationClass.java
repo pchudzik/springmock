@@ -26,7 +26,7 @@ public class ShouldInjectSpiesInConfigurationClass {
 		@PostConstruct
 		public void bean() {
 			assertEquals(
-					SpyShouldBeCreatedWithoutExistingObjectInstanceTest.Service.DEFAULT_RESPONSE,
+					Service.DEFAULT_RESPONSE,
 					service.hello());
 
 			Mockito

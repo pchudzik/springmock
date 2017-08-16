@@ -21,16 +21,14 @@ public class ShouldReuseMocksInjectedInConfigurationClass {
 	Config config;
 
 	@AutowiredMock
-	AnyService anyService;
+	AnyService service;
 
 	@Test
 	public void should_reuse_mocks_in_configuration_and_test_class() {
-		assertTrue(mockingDetails(anyService).isMock());
+		assertTrue(mockingDetails(service).isMock());
 		assertSame(
 				config.service,
-				anyService);
-
-
+				service);
 	}
 
 	@Configuration
@@ -39,7 +37,7 @@ public class ShouldReuseMocksInjectedInConfigurationClass {
 		AnyService service;
 
 		@PostConstruct
-		public void bean() {
+		public void postConstruct() {
 			Assert.assertTrue(mockingDetails(service).isMock());
 		}
 	}

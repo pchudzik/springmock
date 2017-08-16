@@ -15,11 +15,13 @@ import static com.pchudzik.springmock.infrastructure.DoubleFactory.*;
 /**
  * <p>Registers and stores information about {@link DoubleDefinition doubleDefinitions} registered as {@link
  * BeanDefinition}.</p>
- *
+ * <p>
  * <p>It's required to track registered bean definitions to avoid for example creation spy of the spy</p>
  */
 public class DoubleDefinitionsRegistrationContext {
 	public static final String BEAN_NAME = MockConstants.PACKAGE_PREFIX + "doubleDefinitionsRegistrationContext";
+
+	private static final Object NULL_OBJECT_TO_SPY_ON = null;
 
 	private final Set<DoubleDefinition> doublesRegisteredInContext = new HashSet<>();
 
@@ -27,27 +29,14 @@ public class DoubleDefinitionsRegistrationContext {
 		registerBeanDefinition(
 				mockDefinition,
 				registry,
-				BeanDefinitionBuilder
-						.rootBeanDefinition(mockDefinition.getDoubleClass())
-						.setFactoryMethodOnBean(CREATE_MOCK_FACTORY_METHOD, DOUBLE_FACTORY_BEAN_NAME)
-						.addConstructorArgValue(mockDefinition)
-						.getBeanDefinition());
+				buildBeanDefinition(CREATE_MOCK_FACTORY_METHOD, mockDefinition, mockDefinition));
 	}
 
 	public void registerSpy(BeanDefinitionRegistry registry, DoubleDefinition spyDefinition) {
-		final RootBeanDefinition beanDefinition = (RootBeanDefinition) BeanDefinitionBuilder
-				.rootBeanDefinition(spyDefinition.getDoubleClass())
-				.setFactoryMethodOnBean(CREATE_SPY_FACTORY_METHOD, DOUBLE_FACTORY_BEAN_NAME)
-				.addConstructorArgValue(null)
-				.addConstructorArgValue(spyDefinition)
-				.getBeanDefinition();
-
-		beanDefinition.setTargetType(spyDefinition.getDoubleClass());
-
 		registerBeanDefinition(
 				spyDefinition,
 				registry,
-				beanDefinition);
+				buildBeanDefinition(CREATE_SPY_FACTORY_METHOD, spyDefinition, NULL_OBJECT_TO_SPY_ON, spyDefinition));
 	}
 
 	public boolean isBeanDefinitionRegisteredForDouble(DoubleDefinition definition) {
@@ -59,5 +48,20 @@ public class DoubleDefinitionsRegistrationContext {
 		doubleDefinition.getAliases().forEach(alias -> beanDefinitionRegistry.registerAlias(doubleDefinition.getName(), alias));
 
 		doublesRegisteredInContext.add(doubleDefinition);
+	}
+
+	private BeanDefinition buildBeanDefinition(String factoryMethod, DoubleDefinition doubleDefinition, Object... constructorArgs) {
+		final BeanDefinitionBuilder definitionBuilder = BeanDefinitionBuilder
+				.rootBeanDefinition(doubleDefinition.getDoubleClass())
+				.setFactoryMethodOnBean(factoryMethod, DOUBLE_FACTORY_BEAN_NAME);
+
+		for (Object constructorArg : constructorArgs) {
+			definitionBuilder.addConstructorArgValue(constructorArg);
+		}
+
+		final RootBeanDefinition beanDefinition = (RootBeanDefinition) definitionBuilder.getBeanDefinition();
+		beanDefinition.setTargetType(doubleDefinition.getDoubleClass());
+
+		return beanDefinition;
 	}
 }
