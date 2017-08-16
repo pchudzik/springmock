@@ -22,7 +22,7 @@ class ShouldInjectMocksInConfigurationClass extends Specification {
 		AnyService service
 
 		@PostConstruct
-		void bean() {
+		void initialize() {
 			assert new MockUtil().isMock(service)
 		}
 	}

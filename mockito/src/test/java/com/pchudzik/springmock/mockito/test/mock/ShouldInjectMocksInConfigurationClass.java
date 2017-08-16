@@ -25,7 +25,7 @@ public class ShouldInjectMocksInConfigurationClass {
 		AnyService service;
 
 		@PostConstruct
-		public void bean() {
+		public void initialize() {
 			Assert.assertTrue(mockingDetails(service).isMock());
 		}
 	}

@@ -24,7 +24,7 @@ public class ShouldInjectSpiesInConfigurationClass {
 		Service service;
 
 		@PostConstruct
-		public void bean() {
+		public void initialize() {
 			assertEquals(
 					Service.DEFAULT_RESPONSE,
 					service.hello());
