@@ -9,7 +9,8 @@ import java.lang.annotation.*;
  * Annotation which notifies springmock infrastructure to process the field annotated with it
  * and locate bean matching field and annotation definition and create spy from it.
  */
-@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+@Repeatable(AutowiredSpies.class)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Autowired
@@ -22,5 +23,12 @@ public @interface AutowiredSpy {
 	/**
 	 * Optional list of aliases for to match spy definition to spring bean.
 	 */
-	String [] alias() default {};
+	String[] alias() default {};
+
+	/**
+	 * Optional class of the mock. If present
+	 *
+	 * @return
+	 */
+	Class<?> doubleClass() default Void.class;
 }
