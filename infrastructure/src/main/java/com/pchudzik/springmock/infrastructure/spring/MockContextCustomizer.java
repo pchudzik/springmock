@@ -1,8 +1,11 @@
 package com.pchudzik.springmock.infrastructure.spring;
 
 import com.pchudzik.springmock.infrastructure.DoubleFactory;
+import com.pchudzik.springmock.infrastructure.DoubleFactoryCreator;
+import com.pchudzik.springmock.infrastructure.NewInstanceDoubleFactoryCreator;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -18,14 +21,18 @@ import java.util.Objects;
  * and spies in tests
  */
 public class MockContextCustomizer implements ContextCustomizer {
-	protected final Class<? extends DoubleFactory> mockFactoryClass;
+	protected final DoubleFactoryCreator doubleFactoryCreator;
 	protected final DoubleRegistry doubleRegistry;
 	protected final Map<String, BeanDefinition> additionalDefinitions;
 
-	public MockContextCustomizer(Class<? extends DoubleFactory> mockFactoryClass, DoubleRegistry doubleRegistry, Map<String, BeanDefinition> additionalDefinitions) {
-		this.mockFactoryClass = mockFactoryClass;
+	public MockContextCustomizer(DoubleFactoryCreator doubleFactoryCreator, DoubleRegistry doubleRegistry, Map<String, BeanDefinition> additionalDefinitions) {
+		this.doubleFactoryCreator = doubleFactoryCreator;
 		this.doubleRegistry = doubleRegistry;
 		this.additionalDefinitions = new HashMap<>(additionalDefinitions);
+	}
+
+	public MockContextCustomizer(Class<? extends DoubleFactory> mockFactoryClass, DoubleRegistry doubleRegistry, Map<String, BeanDefinition> additionalDefinitions) {
+		this(new NewInstanceDoubleFactoryCreator(mockFactoryClass), doubleRegistry, additionalDefinitions);
 	}
 
 	/**
@@ -40,7 +47,7 @@ public class MockContextCustomizer implements ContextCustomizer {
 		final BeanDefinitionRegistry registry = (BeanDefinitionRegistry) configurableApplicationContext;
 
 		registerDoubleRegistry(registry);
-		registerDoubleFactory(registry);
+		registerDoubleFactory(configurableApplicationContext.getBeanFactory(), registry);
 
 		registerMockRegistrationPostProcessor(registry);
 		registerMockClassResolver(registry);
@@ -67,7 +74,7 @@ public class MockContextCustomizer implements ContextCustomizer {
 		}
 
 		final MockContextCustomizer that = (MockContextCustomizer) o;
-		return Objects.equals(mockFactoryClass, that.mockFactoryClass) &&
+		return Objects.equals(doubleFactoryCreator, that.doubleFactoryCreator) &&
 				Objects.equals(doubleRegistry, that.doubleRegistry) &&
 				Objects.equals(additionalDefinitions, that.additionalDefinitions);
 	}
@@ -79,7 +86,7 @@ public class MockContextCustomizer implements ContextCustomizer {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(mockFactoryClass, doubleRegistry, additionalDefinitions);
+		return Objects.hash(doubleFactoryCreator, doubleRegistry, additionalDefinitions);
 	}
 
 	protected void registerAdditionalBeanDefinitions(BeanDefinitionRegistry registry, Map<String, BeanDefinition> additionalDefinitions) {
@@ -123,9 +130,11 @@ public class MockContextCustomizer implements ContextCustomizer {
 				.getRawBeanDefinition());
 	}
 
-	private void registerDoubleFactory(BeanDefinitionRegistry registry) {
+	private void registerDoubleFactory(ConfigurableListableBeanFactory beanFactory, BeanDefinitionRegistry registry) {
+		beanFactory.registerSingleton(DoubleFactoryCreator.BEAN_NAME, doubleFactoryCreator);
 		registry.registerBeanDefinition(DoubleFactory.DOUBLE_FACTORY_BEAN_NAME, BeanDefinitionBuilder
-				.rootBeanDefinition(mockFactoryClass)
+				.rootBeanDefinition(DoubleFactory.class)
+				.setFactoryMethodOnBean(DoubleFactoryCreator.FACTORY_METHOD_NAME, DoubleFactoryCreator.BEAN_NAME)
 				.getBeanDefinition());
 	}
 
