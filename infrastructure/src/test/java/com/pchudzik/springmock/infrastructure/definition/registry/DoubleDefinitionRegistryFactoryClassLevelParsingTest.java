@@ -69,14 +69,14 @@ public class DoubleDefinitionRegistryFactoryClassLevelParsingTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getMocks(),
+				doubleRegistry.getSpies(),
 				containsInAnyOrder(
 						doubleWithName(RepetableSpiesTestCase.SPY_1_NAME),
 						doubleWithName(RepetableSpiesTestCase.SPY_2_NAME)));
 	}
 
 	@Test
-	public void double_class_should_be_required_when_parsing_class_level_autowired_mock() {
+	public void mock_class_should_be_required_when_parsing_class_level_mock() {
 		try {
 			parseClass(MockWithoutClassTestCase.class);
 			fail("should not go here");
@@ -88,29 +88,29 @@ public class DoubleDefinitionRegistryFactoryClassLevelParsingTest {
 	}
 
 	@Test
-	public void double_name_should_be_generated_based_on_double_class_for_mock() {
+	public void mock_name_should_be_generated_based_on_double_class_for() {
 		//when
 		final DoubleRegistry doubleRegistry = parseClass(MockWithoutNameTestCase.class);
 
 		//then
 		assertThat(
-				doubleRegistry.getSpies(),
+				doubleRegistry.getMocks(),
 				contains(doubleWithName(MockWithoutNameTestCase.EXPECTED_MOCK_NAME)));
 	}
 
 	@Test
-	public void double_name_should_be_used_from_param_when_present_on_mock() {
+	public void mock_name_should_be_used_from_param_when_present() {
 		//when
 		final DoubleRegistry doubleRegistry = parseClass(MockWithCustomNameTestCase.class);
 
 		//then
 		assertThat(
-				doubleRegistry.getSpies(),
+				doubleRegistry.getMocks(),
 				contains(doubleWithName(MockWithCustomNameTestCase.MOCK_NAME)));
 	}
 
 	@Test
-	public void double_class_should_be_required_when_parsing_class_level_autowired_spy() {
+	public void spy_class_should_be_required_when_parsing_class_level_spy() {
 		try {
 			parseClass(SpyWithoutClassTestCase.class);
 			fail("should not go here");
@@ -122,7 +122,7 @@ public class DoubleDefinitionRegistryFactoryClassLevelParsingTest {
 	}
 
 	@Test
-	public void double_name_should_be_generated_based_on_double_class_for_spy() {
+	public void spy_name_should_be_generated_based_on_double_class() {
 		//when
 		final DoubleRegistry doubleRegistry = parseClass(SpyWithoutNameTestCase.class);
 
@@ -133,7 +133,7 @@ public class DoubleDefinitionRegistryFactoryClassLevelParsingTest {
 	}
 
 	@Test
-	public void double_name_should_be_used_from_param_when_present_for_spy() {
+	public void spy_name_should_be_used_from_param_when_present() {
 		//when
 		final DoubleRegistry doubleRegistry = parseClass(SpyWithCustomNameTestCase.class);
 

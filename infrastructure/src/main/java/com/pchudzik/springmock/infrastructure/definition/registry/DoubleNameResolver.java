@@ -11,6 +11,18 @@ import java.lang.reflect.Field;
 import java.util.Optional;
 
 public class DoubleNameResolver {
+	public static String resolveDoubleName(AutowiredMock mockDefinition) {
+		return StringUtils.isNotBlank(mockDefinition.name())
+				? mockDefinition.name()
+				: generateBeanNameFromClass(mockDefinition.doubleClass());
+	}
+
+	public static String resolveDoubleName(AutowiredSpy spyDefinition) {
+		return StringUtils.isNotBlank(spyDefinition.name())
+				? spyDefinition.name()
+				: generateBeanNameFromClass(spyDefinition.doubleClass());
+	}
+
 	public static String resolveDoubleName(Field field) {
 		final AutowiredMock autowiredMockAnnotation = getAnnotation(field, AutowiredMock.class);
 		final AutowiredSpy autowiredSpyAnnotation = getAnnotation(field, AutowiredSpy.class);
@@ -36,5 +48,10 @@ public class DoubleNameResolver {
 		return StringUtils.isNotBlank(maybeName)
 				? Optional.of(maybeName)
 				: Optional.empty();
+	}
+
+	private static String generateBeanNameFromClass(Class<?> clazz) {
+		final String name = clazz.getSimpleName();
+		return ("" + name.charAt(0)).toLowerCase() + name.substring(1);
 	}
 }

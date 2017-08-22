@@ -18,7 +18,10 @@ import static org.junit.Assert.assertSame;
 @BootstrapWith(TestCaseConfigurationClassLevelDoublesShouldBeRegisteredTest.ContextBootstrap.class)
 public class TestCaseConfigurationClassLevelDoublesShouldBeRegisteredTest {
 	public static final String MOCK_NAME = "mock";
-	public static final String SPY_NAME = "mock";
+	public static final String SPY_NAME = "spy";
+
+	private static final MockService aMock = new MockService();
+	private static final SpyService aSpy = new SpyService();
 
 	@Autowired
 	ApplicationContext applicationContext;
@@ -26,29 +29,35 @@ public class TestCaseConfigurationClassLevelDoublesShouldBeRegisteredTest {
 	@Test
 	public void should_inject_mocks_into_application_context() {
 		assertSame(
-				new Object(),
+				aMock,
 				applicationContext.getBean(MOCK_NAME));
 	}
 
 	@Test
 	public void should_inject_spies_into_application_context() {
 		assertSame(
-				new Object(),
+				aSpy,
 				applicationContext.getBean(SPY_NAME));
 	}
 
 	@Configuration
-	@AutowiredMock(name = MOCK_NAME, doubleClass = TestCaseConfigurationClassLevelDoublesShouldBeRegisteredTest.MyService.class)
-	@AutowiredSpy(name = SPY_NAME, doubleClass = TestCaseConfigurationClassLevelDoublesShouldBeRegisteredTest.MyService.class)
+	@AutowiredMock(name = MOCK_NAME, doubleClass = MockService.class)
+	@AutowiredSpy(name = SPY_NAME, doubleClass = SpyService.class)
 	static class Config {
 	}
 
-	static class MyService {
+	static class MockService {
+	}
+
+	static class SpyService {
 	}
 
 	static class ContextBootstrap extends SpringMockContextBootstrapper {
 		protected ContextBootstrap() {
-			super(FixedDoubleFactory::instance);
+			super(() -> FixedDoubleFactory.builder()
+					.mock(aMock)
+					.spy(aSpy)
+					.build());
 		}
 	}
 }

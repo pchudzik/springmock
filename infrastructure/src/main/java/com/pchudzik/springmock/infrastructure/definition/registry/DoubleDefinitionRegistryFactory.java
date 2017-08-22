@@ -14,11 +14,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleNameResolver.resolveDoubleName;
 import static java.util.Arrays.asList;
 import static org.springframework.core.annotation.AnnotationUtils.getAnnotation;
+import static org.springframework.core.annotation.AnnotationUtils.getRepeatableAnnotations;
 import static org.springframework.util.ReflectionUtils.doWithFields;
 
 /**
@@ -44,7 +46,10 @@ public class DoubleDefinitionRegistryFactory {
 						Stream.of(clazz))
 				.forEach(parsableClass -> {
 					mocks.addAll(extractDoubleDefinition(parsableClass, this::extractMockDefinition));
+					mocks.addAll(extractMocksDefinition(parsableClass));
+
 					spies.addAll(extractDoubleDefinition(parsableClass, this::extractSpyDefinition));
+					spies.addAll(extractSpiesDefinition(parsableClass));
 				});
 
 		return new DoubleRegistry(mocks, spies);
@@ -92,6 +97,7 @@ public class DoubleDefinitionRegistryFactory {
 
 		return spies;
 	}
+
 	private Stream<Class<?>> findParsableClasses(Class<?> clazz) {
 		return Stream
 				.of(clazz.getDeclaredClasses())
@@ -108,5 +114,51 @@ public class DoubleDefinitionRegistryFactory {
 		return Optional
 				.ofNullable(getAnnotation(field, AutowiredSpy.class))
 				.map(autowiredSpy -> createSpyDefinition(field, autowiredSpy));
+	}
+
+	private Collection<DoubleDefinition> extractSpiesDefinition(Class<?> clazz) {
+		return getRepeatableAnnotations(clazz, AutowiredSpy.class)
+				.stream()
+				.map(this::createSpy)
+				.collect(Collectors.toSet());
+	}
+
+	private Collection<DoubleDefinition> extractMocksDefinition(Class<?> clazz) {
+		return getRepeatableAnnotations(clazz, AutowiredMock.class)
+				.stream()
+				.map(this::createMock)
+				.collect(Collectors.toSet());
+	}
+
+	private DoubleDefinition createMock(AutowiredMock autowiredMock) {
+		final Class<?> doubleClass = autowiredMock.doubleClass();
+		final String name = resolveDoubleName(autowiredMock);
+
+		checkDoubleClassPresent(doubleClass);
+
+		return DoubleDefinition.builder()
+				.aliases(asList(autowiredMock.alias()))
+				.name(name)
+				.doubleClass(doubleClass)
+				.build();
+	}
+
+	private DoubleDefinition createSpy(AutowiredSpy autowiredSpy) {
+		final Class<?> doubleClass = autowiredSpy.doubleClass();
+		final String name = resolveDoubleName(autowiredSpy);
+
+		checkDoubleClassPresent(doubleClass);
+
+		return DoubleDefinition.builder()
+				.aliases(asList(autowiredSpy.alias()))
+				.name(name)
+				.doubleClass(doubleClass)
+				.build();
+	}
+
+	private void checkDoubleClassPresent(Class<?> doubleClass) {
+		if(Void.class.equals(doubleClass)) {
+			throw new IllegalArgumentException("Double class is required for class level mocks");
+		}
 	}
 }
