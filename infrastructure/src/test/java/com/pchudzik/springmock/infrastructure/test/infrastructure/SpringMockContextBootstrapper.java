@@ -1,4 +1,4 @@
-package com.pchudzik.springmock.infrastructure.test;
+package com.pchudzik.springmock.infrastructure.test.infrastructure;
 
 import com.pchudzik.springmock.infrastructure.ParseNothingConfigurationParser;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-abstract class SpringMockContextBootstrapper extends DefaultTestContextBootstrapper {
+public abstract class SpringMockContextBootstrapper extends DefaultTestContextBootstrapper {
 	private final DoubleFactoryCreator doubleFactoryCreator;
 
 	protected SpringMockContextBootstrapper(DoubleFactoryCreator doubleFactoryCreator) {

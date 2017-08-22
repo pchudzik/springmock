@@ -1,11 +1,11 @@
-package com.pchudzik.springmock.infrastructure.test;
+package com.pchudzik.springmock.infrastructure.test.infrastructure;
 
 import com.pchudzik.springmock.infrastructure.DoubleFactory;
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 
 import javax.annotation.Nullable;
 
-class FixedDoubleFactory implements DoubleFactory {
+public class FixedDoubleFactory implements DoubleFactory {
 	private final Object mock;
 	private final Object spy;
 

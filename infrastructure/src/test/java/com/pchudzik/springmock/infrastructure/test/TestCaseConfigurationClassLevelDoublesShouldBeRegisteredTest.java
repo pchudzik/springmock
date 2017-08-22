@@ -2,6 +2,8 @@ package com.pchudzik.springmock.infrastructure.test;
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
+import com.pchudzik.springmock.infrastructure.test.infrastructure.FixedDoubleFactory;
+import com.pchudzik.springmock.infrastructure.test.infrastructure.SpringMockContextBootstrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +15,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertSame;
 
 @RunWith(SpringRunner.class)
-@BootstrapWith(TestCaseConfigurationClassLevelDoublesShouldBeRegistered.ContextBootstrap.class)
-public class TestCaseConfigurationClassLevelDoublesShouldBeRegistered {
+@BootstrapWith(TestCaseConfigurationClassLevelDoublesShouldBeRegisteredTest.ContextBootstrap.class)
+public class TestCaseConfigurationClassLevelDoublesShouldBeRegisteredTest {
 	public static final String MOCK_NAME = "mock";
 	public static final String SPY_NAME = "mock";
 
@@ -36,8 +38,8 @@ public class TestCaseConfigurationClassLevelDoublesShouldBeRegistered {
 	}
 
 	@Configuration
-	@AutowiredMock(name = MOCK_NAME, doubleClass = TestCaseConfigurationClassLevelDoublesShouldBeRegistered.MyService.class)
-	@AutowiredSpy(name = SPY_NAME, doubleClass = TestCaseConfigurationClassLevelDoublesShouldBeRegistered.MyService.class)
+	@AutowiredMock(name = MOCK_NAME, doubleClass = TestCaseConfigurationClassLevelDoublesShouldBeRegisteredTest.MyService.class)
+	@AutowiredSpy(name = SPY_NAME, doubleClass = TestCaseConfigurationClassLevelDoublesShouldBeRegisteredTest.MyService.class)
 	static class Config {
 	}
 
