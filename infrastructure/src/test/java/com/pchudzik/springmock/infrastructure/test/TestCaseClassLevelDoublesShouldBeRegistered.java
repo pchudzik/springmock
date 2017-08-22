@@ -28,14 +28,14 @@ public class TestCaseClassLevelDoublesShouldBeRegistered {
 	@Test
 	public void should_inject_mocks_into_application_context() {
 		assertSame(
-				FixedDoubleFactory.MOCK,
+				new Object(),
 				applicationContext.getBean(MOCK_NAME));
 	}
 
 	@Test
 	public void should_inject_spies_into_application_context() {
 		assertSame(
-				FixedDoubleFactory.SPY,
+				new Object(),
 				applicationContext.getBean(SPY_NAME));
 	}
 
@@ -44,7 +44,7 @@ public class TestCaseClassLevelDoublesShouldBeRegistered {
 
 	static class ContextBootstrapper extends SpringMockContextBootstrapper {
 		ContextBootstrapper() {
-			super(FixedDoubleFactory::new);
+			super(FixedDoubleFactory::instance);
 		}
 	}
 }
