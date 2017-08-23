@@ -6,20 +6,19 @@ import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
 
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionMatchers.*;
-import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleDefinitionTestFactory.parseClass;
+import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistryTestParser.parseClass;
 import static com.pchudzik.springmock.infrastructure.definition.registry.IterableHelper.getFirstElement;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.util.ReflectionUtils.findField;
 
-public class DoubleDefinitionRegistryFactoryTest {
+public class DoubleRegistryParserTest {
 	private static final Annotation NO_CONFIGURATION = null;
 
 	private static final String ANY_SERVICE1_NAME = "anyService1";
@@ -97,55 +96,77 @@ public class DoubleDefinitionRegistryFactoryTest {
 
 	@Test
 	public void should_generate_mock_configuration_when_config_annotation_missing() throws NoSuchFieldException {
+		//given
+		final Object configuration = new Object();
+		Mockito
+				.when(configurationParser.parseMockConfiguration(MockWithoutNameSpec.FIELD_NAME, NO_CONFIGURATION))
+				.thenReturn(configuration);
+
 		//when
-		parseClass(MockWithoutNameSpec.class, configurationParser);
+		final DoubleRegistry doubleRegistry = parseClass(MockWithoutNameSpec.class, configurationParser);
 
 		//then
-		Mockito
-				.verify(configurationParser)
-				.parseMockConfiguration(MockWithoutNameSpec.FIELD_NAME, NO_CONFIGURATION);
+		assertThat(
+				doubleRegistry.getMocks(),
+				hasItem(doubleWithConfiguration(configuration)));
 	}
 
 
 	@Test
 	public void should_generate_spy_configuration_when_config_annotation_missing() throws NoSuchFieldException {
+		//given
+		final Object configuration = new Object();
+		Mockito
+				.when(configurationParser.parseSpyConfiguration(SpyWithoutNameSpec.FIELD_NAME, NO_CONFIGURATION))
+				.thenReturn(configuration);
+
 		//when
-		parseClass(SpyWithoutNameSpec.class, configurationParser);
+		final DoubleRegistry doubleRegistry = parseClass(SpyWithoutNameSpec.class, configurationParser);
 
 		//then
-		Mockito
-				.verify(configurationParser)
-				.parseSpyConfiguration(SpyWithoutNameSpec.FIELD_NAME, NO_CONFIGURATION);
+		assertThat(
+				doubleRegistry.getSpies(),
+				hasItem(doubleWithConfiguration(configuration)));
 	}
 
 	@Test
 	public void should_parse_mock_configuration_from_field() {
 		//given
-		final DoubleDefinitionTestConfiguration configurationAnnotation = findAnnotation(findField(MockWithConfiguration.class, ANY_SERVICE1_NAME), DoubleDefinitionTestConfiguration.class);
+		final Object configuration = new Object();
+		final DoubleDefinitionTestConfiguration configurationAnnotation = findAnnotation(
+				findField(MockWithConfiguration.class, ANY_SERVICE1_NAME),
+				DoubleDefinitionTestConfiguration.class);
+		Mockito
+				.when(configurationParser.parseMockConfiguration(ANY_SERVICE1_NAME, configurationAnnotation))
+				.thenReturn(configuration);
 
 		//when
-		parseClass(MockWithConfiguration.class, configurationParser);
+		final DoubleRegistry doubleRegistry = parseClass(MockWithConfiguration.class, configurationParser);
 
 		//then
-		Mockito
-				.verify(configurationParser)
-				.parseMockConfiguration(ANY_SERVICE1_NAME, configurationAnnotation);
-		Mockito.verifyNoMoreInteractions(configurationParser);
+		assertThat(
+				doubleRegistry.getMocks(),
+				hasItem(doubleWithConfiguration(configuration)));
 	}
 
 	@Test
 	public void should_parse_spy_configuration_from_field() {
 		//given
-		final DoubleDefinitionTestConfiguration configurationAnnotation = findAnnotation(findField(SpyWithConfiguration.class, ANY_SERVICE1_NAME), DoubleDefinitionTestConfiguration.class);
+		final Object configuration = Mockito.mock(Object.class);
+		final DoubleDefinitionTestConfiguration configurationAnnotation = findAnnotation(
+				findField(SpyWithConfiguration.class, ANY_SERVICE1_NAME),
+				DoubleDefinitionTestConfiguration.class);
+		Mockito
+				.when(configurationParser.parseSpyConfiguration(ANY_SERVICE1_NAME, configurationAnnotation))
+				.thenReturn(configuration);
 
 		//when
-		parseClass(SpyWithConfiguration.class, configurationParser);
+		final DoubleRegistry doubleRegistry = parseClass(SpyWithConfiguration.class, configurationParser);
 
 		//then
-		Mockito
-				.verify(configurationParser)
-				.parseSpyConfiguration(ANY_SERVICE1_NAME, configurationAnnotation);
-		Mockito.verifyNoMoreInteractions(configurationParser);
+		assertThat(
+				doubleRegistry.getSpies(),
+				hasItem(doubleWithConfiguration(configuration)));
 	}
 
 	private interface AnyService1 {

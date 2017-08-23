@@ -30,5 +30,5 @@ public @interface AutowiredSpy {
 	 *
 	 * @return
 	 */
-	Class<?> doubleClass() default Void.class;
+	Class<?> doubleClass() default NoDoubleClassDefined.class;
 }

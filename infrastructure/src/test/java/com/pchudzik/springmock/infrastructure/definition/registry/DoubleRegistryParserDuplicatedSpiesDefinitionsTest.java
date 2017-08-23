@@ -12,23 +12,23 @@ import java.util.Collection;
 
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionMatchers.doubleForClass;
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionMatchers.doubleWithName;
-import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleDefinitionTestFactory.parseClass;
+import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistryTestParser.parseClass;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Parameterized.class)
-public class DoubleDefinitionRegistryFactoryDuplicatedMockDefinitionsTest {
-	private static final String MOCK_NAME = "mockService";
+public class DoubleRegistryParserDuplicatedSpiesDefinitionsTest {
+	private static final String SPY_NAME = "spyService";
 
 	@Parameters
 	public static Collection<Object> parameters() {
 		return asList(
-				DuplicatedMockOnTestCaseAndInTestCase_TestCase.class,
-				DuplicatedMockOnConfigurationClassAndInTestCase_TestCase.class,
-				DuplicatedMockOnTestCaseConfigurationAndInTestCase_TestCase.class,
-				DuplicatedMockOnTestCaseAndOnConfiguration_TestCase.class
+				DuplicatedSpyOnTestCaseAndInTestCase_TestCase.class,
+				DuplicatedSpyOnConfigurationClassAndInTestCase_TestCase.class,
+				DuplicatedSpyOnTestCaseConfigurationAndInTestCase_TestCase.class,
+				DuplicatedSpyOnTestCaseAndOnConfiguration_TestCase.class
 		);
 	}
 
@@ -44,46 +44,46 @@ public class DoubleDefinitionRegistryFactoryDuplicatedMockDefinitionsTest {
 		assertThat(
 				doubleRegistry.getMocks(),
 				contains(allOf(
-						doubleForClass(MockService.class),
-						doubleWithName(MOCK_NAME))));
+						doubleForClass(SpyService.class),
+						doubleWithName(SPY_NAME))));
 
 	}
 
-	@AutowiredMock(doubleClass = MockService.class)
-	static class DuplicatedMockOnTestCaseAndInTestCase_TestCase {
+	@AutowiredMock(doubleClass = SpyService.class)
+	static class DuplicatedSpyOnTestCaseAndInTestCase_TestCase {
 		@AutowiredMock
-		MockService mockService;
+		SpyService spyService;
 	}
 
-	static class DuplicatedMockOnConfigurationClassAndInTestCase_TestCase {
+	static class DuplicatedSpyOnConfigurationClassAndInTestCase_TestCase {
 		@AutowiredMock
-		MockService mockService;
+		SpyService spyService;
 
 		@Configuration
-		@AutowiredMock(doubleClass = MockService.class)
+		@AutowiredMock(doubleClass = SpyService.class)
 		static class Config {
 		}
 	}
 
-	@AutowiredMock(doubleClass = MockService.class)
-	static class DuplicatedMockOnTestCaseConfigurationAndInTestCase_TestCase {
+	@AutowiredMock(doubleClass = SpyService.class)
+	static class DuplicatedSpyOnTestCaseConfigurationAndInTestCase_TestCase {
 		@AutowiredMock
-		MockService mockService;
+		SpyService spyService;
 
 		@Configuration
-		@AutowiredMock(doubleClass = MockService.class)
+		@AutowiredMock(doubleClass = SpyService.class)
 		static class Config {
 		}
 	}
 
-	@AutowiredMock(doubleClass = MockService.class)
-	static class DuplicatedMockOnTestCaseAndOnConfiguration_TestCase {
+	@AutowiredMock(doubleClass = SpyService.class)
+	static class DuplicatedSpyOnTestCaseAndOnConfiguration_TestCase {
 		@Configuration
-		@AutowiredMock(doubleClass = MockService.class)
+		@AutowiredMock(doubleClass = SpyService.class)
 		static class Config {
 		}
 	}
 
-	interface MockService {
+	interface SpyService {
 	}
 }

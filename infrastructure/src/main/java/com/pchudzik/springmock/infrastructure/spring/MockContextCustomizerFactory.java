@@ -1,8 +1,9 @@
 package com.pchudzik.springmock.infrastructure.spring;
 
 import com.pchudzik.springmock.infrastructure.DoubleConfigurationParser;
-import com.pchudzik.springmock.infrastructure.definition.registry.DoubleDefinitionRegistryFactory;
+import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistryParser;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
+import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistryParserFactory;
 import org.springframework.test.context.ContextConfigurationAttributes;
 import org.springframework.test.context.ContextCustomizer;
 import org.springframework.test.context.ContextCustomizerFactory;
@@ -21,9 +22,7 @@ public abstract class MockContextCustomizerFactory implements ContextCustomizerF
 
 	@Override
 	public ContextCustomizer createContextCustomizer(Class<?> aClass, List<ContextConfigurationAttributes> list) {
-		final DoubleDefinitionRegistryFactory registryFactory = new DoubleDefinitionRegistryFactory(
-				configurationAnnotation,
-				configurationParser);
+		final DoubleRegistryParser registryFactory = new DoubleRegistryParserFactory(configurationAnnotation, configurationParser).doubleRegistryParser();
 		return createContextCustomizer(registryFactory.parse(aClass));
 	}
 

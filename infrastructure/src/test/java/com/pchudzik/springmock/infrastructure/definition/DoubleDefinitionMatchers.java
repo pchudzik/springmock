@@ -54,4 +54,19 @@ public class DoubleDefinitionMatchers {
 			}
 		};
 	}
+
+	public static Matcher<DoubleDefinition> doubleWithConfiguration(Object configuration) {
+		return new BaseMatcher<DoubleDefinition>() {
+			@Override
+			public boolean matches(Object item) {
+				final DoubleDefinition definition = (DoubleDefinition) item;
+				return definition.getConfiguration(configuration.getClass()) == configuration;
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("doubleConfiguration ").appendText(configuration.toString());
+			}
+		};
+	}
 }

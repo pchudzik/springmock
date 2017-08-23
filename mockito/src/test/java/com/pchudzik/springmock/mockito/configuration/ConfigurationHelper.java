@@ -1,8 +1,9 @@
 package com.pchudzik.springmock.mockito.configuration;
 
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
-import com.pchudzik.springmock.infrastructure.definition.registry.DoubleDefinitionRegistryFactory;
+import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistryParser;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
+import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistryParserFactory;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleSearch;
 import org.mockito.MockSettings;
 import org.mockito.Mockito;
@@ -24,7 +25,7 @@ public class ConfigurationHelper {
 		return createMockitoDefinitionRegistryFactory().parse(clazz);
 	}
 
-	private static DoubleDefinitionRegistryFactory createMockitoDefinitionRegistryFactory() {
-		return new DoubleDefinitionRegistryFactory(MockitoDouble.class, new MockitoDoubleConfigurationParser());
+	private static DoubleRegistryParser createMockitoDefinitionRegistryFactory() {
+		return new DoubleRegistryParserFactory(MockitoDouble.class, new MockitoDoubleConfigurationParser()).doubleRegistryParser();
 	}
 }

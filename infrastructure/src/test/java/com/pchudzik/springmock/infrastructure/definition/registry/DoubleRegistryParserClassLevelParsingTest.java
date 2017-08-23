@@ -7,12 +7,11 @@ import org.springframework.context.annotation.Configuration;
 
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionMatchers.doubleForClass;
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionMatchers.doubleWithName;
-import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleDefinitionTestFactory.parseClass;
+import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistryTestParser.parseClass;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
-public class DoubleDefinitionRegistryFactoryClassLevelParsingTest {
+public class DoubleRegistryParserClassLevelParsingTest {
 	@Test
 	public void should_find_doubles_declared_on_test_class() {
 		//when
@@ -76,18 +75,6 @@ public class DoubleDefinitionRegistryFactoryClassLevelParsingTest {
 	}
 
 	@Test
-	public void mock_class_should_be_required_when_parsing_class_level_mock() {
-		try {
-			parseClass(MockWithoutClassTestCase.class);
-			fail("should not go here");
-		} catch (IllegalArgumentException ex) {
-			assertThat(
-					ex.getMessage().toLowerCase(),
-					containsString("double class is required"));
-		}
-	}
-
-	@Test
 	public void mock_name_should_be_generated_based_on_double_class_for() {
 		//when
 		final DoubleRegistry doubleRegistry = parseClass(MockWithoutNameTestCase.class);
@@ -107,18 +94,6 @@ public class DoubleDefinitionRegistryFactoryClassLevelParsingTest {
 		assertThat(
 				doubleRegistry.getMocks(),
 				contains(doubleWithName(MockWithCustomNameTestCase.MOCK_NAME)));
-	}
-
-	@Test
-	public void spy_class_should_be_required_when_parsing_class_level_spy() {
-		try {
-			parseClass(SpyWithoutClassTestCase.class);
-			fail("should not go here");
-		} catch (IllegalArgumentException ex) {
-			assertThat(
-					ex.getMessage().toLowerCase(),
-					containsString("double class is required"));
-		}
 	}
 
 	@Test

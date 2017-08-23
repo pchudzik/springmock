@@ -14,13 +14,17 @@ public interface DoubleConfigurationParser<T, A extends Annotation> {
 
 	/**
 	 * <p>Will parse annotations and build mock configuration object from it.</p>
-	 * <p>
-	 * <p>When you are not yet ready to introduce mock configuration then it's ok to return null from this method which will mean that there is no configuration available and {@link DoubleFactory} should handle it from here.
 	 *
 	 * @param configuration configuration annotation
 	 * @return proper doubleConfiguration object or null if configuration is missing
 	 */
 	T parseMockConfiguration(String doubleName, @Nullable A configuration);
 
+	/**
+	 * <p>Will parse annotations and build spy configuration object from it.</p>
+	 *
+	 * @param configuration configuration annotation
+	 * @return proper doubleConfiguration object or null if configuration is missing
+	 */
 	T parseSpyConfiguration(String doubleName, @Nullable A configuration);
 }

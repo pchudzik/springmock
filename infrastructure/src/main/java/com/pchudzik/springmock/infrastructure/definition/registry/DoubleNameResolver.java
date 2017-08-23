@@ -1,57 +1,38 @@
 package com.pchudzik.springmock.infrastructure.definition.registry;
 
-import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
-import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
+import org.apache.commons.lang3.CharUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.annotation.AnnotationUtils;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
+import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-public class DoubleNameResolver {
-	public static String resolveDoubleName(AutowiredMock mockDefinition) {
-		return StringUtils.isNotBlank(mockDefinition.name())
-				? mockDefinition.name()
-				: generateBeanNameFromClass(mockDefinition.doubleClass());
+class DoubleNameResolver {
+	private static final String NO_FIELD = null;
+
+	public String resolveDoubleName(AnnotationDetails details) {
+		return resolveDoubleName(details, NO_FIELD);
 	}
 
-	public static String resolveDoubleName(AutowiredSpy spyDefinition) {
-		return StringUtils.isNotBlank(spyDefinition.name())
-				? spyDefinition.name()
-				: generateBeanNameFromClass(spyDefinition.doubleClass());
+	public String resolveDoubleName(AnnotationDetails details, @Nullable String fieldName) {
+		final Supplier<IllegalStateException> nameGenerationErrorSupplier = () -> new IllegalStateException("Can not generate double name");
+		return Stream
+				.of(
+						details.getName(),
+						Optional.ofNullable(fieldName),
+						details.getDoubleClass().map(this::generateNameFromClass))
+				.filter(Optional::isPresent)
+				.map(maybeName -> maybeName.orElseThrow(nameGenerationErrorSupplier))
+				.findFirst()
+				.orElseThrow(nameGenerationErrorSupplier);
 	}
 
-	public static String resolveDoubleName(Field field) {
-		final AutowiredMock autowiredMockAnnotation = getAnnotation(field, AutowiredMock.class);
-		final AutowiredSpy autowiredSpyAnnotation = getAnnotation(field, AutowiredSpy.class);
+	private String generateNameFromClass(Class<?> doubleClass) {
+		final String className = doubleClass.getSimpleName();
+		final String classFirstLetter = CharUtils.toString(className.charAt(0));
+		final String restOfClassName =StringUtils.substring(doubleClass.getSimpleName(), 1);
 
-		Optional<String> resolvedName = Optional.empty();
-
-		if(autowiredMockAnnotation != null) {
-			resolvedName = getName(autowiredMockAnnotation.name());
-		}
-
-		if(autowiredSpyAnnotation != null) {
-			resolvedName = getName(autowiredSpyAnnotation.name());
-		}
-
-		return resolvedName.orElseGet(field::getName);
-	}
-
-	private static <A extends Annotation> A getAnnotation(AnnotatedElement field, Class<A> annotation) {
-		return AnnotationUtils.findAnnotation(field, annotation);
-	}
-
-	private static Optional<String> getName(String maybeName) {
-		return StringUtils.isNotBlank(maybeName)
-				? Optional.of(maybeName)
-				: Optional.empty();
-	}
-
-	private static String generateBeanNameFromClass(Class<?> clazz) {
-		final String name = clazz.getSimpleName();
-		return ("" + name.charAt(0)).toLowerCase() + name.substring(1);
+		return classFirstLetter.toLowerCase() + restOfClassName;
 	}
 }

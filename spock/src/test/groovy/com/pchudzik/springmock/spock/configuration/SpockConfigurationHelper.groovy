@@ -1,8 +1,9 @@
 package com.pchudzik.springmock.spock.configuration
 
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition
-import com.pchudzik.springmock.infrastructure.definition.registry.DoubleDefinitionRegistryFactory
+import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistryParser
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry
+import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistryParserFactory
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleSearch
 
 class SpockConfigurationHelper {
@@ -14,8 +15,8 @@ class SpockConfigurationHelper {
 		configurationParser().parse(aClass)
 	}
 
-	static DoubleDefinitionRegistryFactory configurationParser() {
-		new DoubleDefinitionRegistryFactory(SpockDouble.class, new SpockDoubleConfigurationParser())
+	static DoubleRegistryParser configurationParser() {
+		new DoubleRegistryParserFactory(SpockDouble.class, new SpockDoubleConfigurationParser()).doubleRegistryParser()
 	}
 
 	static SpockDoubleConfiguration getConfig(DoubleDefinition definition) {

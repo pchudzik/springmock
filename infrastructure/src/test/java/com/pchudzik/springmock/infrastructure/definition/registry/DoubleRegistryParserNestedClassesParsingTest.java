@@ -11,11 +11,11 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class DoubleDefinitionRegistryFactoryNestedClassesParsingTest {
+public class DoubleRegistryParserNestedClassesParsingTest {
 	@Test
 	public void should_detect_spy_and_mock_registered_only_in_configuration_class() {
 		//when
-		final DoubleRegistry doubleRegistry = DoubleDefinitionTestFactory.parseClass(SpyAndMockOnlyInConfiguration_TestCase.class);
+		final DoubleRegistry doubleRegistry = DoubleRegistryTestParser.parseClass(SpyAndMockOnlyInConfiguration_TestCase.class);
 
 		//then
 		assertEquals(1, doubleRegistry.getMocks().size());
@@ -32,7 +32,7 @@ public class DoubleDefinitionRegistryFactoryNestedClassesParsingTest {
 	@Test
 	public void should_reuse_spy_and_mock_definitions_defined_in_config_and_test() {
 		//when
-		final DoubleRegistry doubleRegistry = DoubleDefinitionTestFactory.parseClass(SameSpyAndMockInConfigurationAndTest_TestCase.class);
+		final DoubleRegistry doubleRegistry = DoubleRegistryTestParser.parseClass(SameSpyAndMockInConfigurationAndTest_TestCase.class);
 
 		//then
 		assertEquals(1, doubleRegistry.getMocks().size());
@@ -49,7 +49,7 @@ public class DoubleDefinitionRegistryFactoryNestedClassesParsingTest {
 	@Test
 	public void should_create_new_spy_and_mock_definitions_defined_for_config_and_tests_definitions() {
 		//when
-		final DoubleRegistry doubleRegistry = DoubleDefinitionTestFactory.parseClass(DifferentSpyAndMockInConfigurationAndTest_TestCase.class);
+		final DoubleRegistry doubleRegistry = DoubleRegistryTestParser.parseClass(DifferentSpyAndMockInConfigurationAndTest_TestCase.class);
 
 		//then
 		assertEquals(2, doubleRegistry.getMocks().size());

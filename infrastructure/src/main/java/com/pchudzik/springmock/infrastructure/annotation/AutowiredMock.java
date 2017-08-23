@@ -28,5 +28,5 @@ public @interface AutowiredMock {
 	 * Optional class of the mock. If present
 	 * @return
 	 */
-	Class<?> doubleClass() default Void.class;
+	Class<?> doubleClass() default NoDoubleClassDefined.class;
 }
