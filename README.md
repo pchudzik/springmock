@@ -282,6 +282,8 @@ issue description or as PR.
   
   * mocks configuration - @MockitoDouble
   * fixed mocks reset in context hierarchy
+  * class level mocks 
+    [sample](infrastructure/src/test/java/com/pchudzik/springmock/infrastructure/test/TestCaseClassLevelDoublesShouldBeRegisteredTest.java)
   * mocks and spies can be created and injected into @Configuration classes
     ([mock injection example](mockito/src/test/java/com/pchudzik/springmock/mockito/test/mock/ShouldInjectMocksInConfigurationClass.java),
     [spy injection example](mockito/src/test/java/com/pchudzik/springmock/mockito/test/spy/ShouldInjectSpiesInConfigurationClass.java))
@@ -294,6 +296,8 @@ issue description or as PR.
 ### 1.1.0 springmock-spock - to be released
 
   * mocks configuration - @SpockDouble
+  * class level mocks 
+    [sample](infrastructure/src/test/java/com/pchudzik/springmock/infrastructure/test/TestCaseClassLevelDoublesShouldBeRegisteredTest.java)
   * mocks and spies can be created and injected into @Configuration classes
     ([mock injection example](spock/src/test/groovy/com/pchudzik/springmock/spock/test/mock/ShouldInjectMocksInConfigurationClass.groovy),
     [spy injection example](spock/src/test/groovy/com/pchudzik/springmock/spock/test/spy/ShouldInjectSpiesInConfigurationClass.groovy)) 
