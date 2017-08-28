@@ -1,4 +1,4 @@
-package com.pchudzik.springmock.infrastructure.test;
+package com.pchudzik.springmock.infrastructure.test.placement;
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
@@ -15,8 +15,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertSame;
 
 @RunWith(SpringRunner.class)
-@BootstrapWith(TestCaseConfigurationClassLevelDoublesShouldBeRegisteredTest.ContextBootstrap.class)
-public class TestCaseConfigurationClassLevelDoublesShouldBeRegisteredTest {
+@BootstrapWith(ConfigurationClassLevelDoublesShouldBeRegistered.ContextBootstrap.class)
+public class ConfigurationClassLevelDoublesShouldBeRegistered {
 	public static final String MOCK_NAME = "mock";
 	public static final String SPY_NAME = "spy";
 

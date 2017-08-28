@@ -1,4 +1,4 @@
-package com.pchudzik.springmock.infrastructure.test;
+package com.pchudzik.springmock.infrastructure.test.placement;
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
@@ -11,16 +11,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static com.pchudzik.springmock.infrastructure.test.TestCaseClassLevelDoublesShouldBeRegisteredTest.MOCK_NAME;
-import static com.pchudzik.springmock.infrastructure.test.TestCaseClassLevelDoublesShouldBeRegisteredTest.SPY_NAME;
+import static com.pchudzik.springmock.infrastructure.test.placement.TestCaseLevelDoublesShouldBeRegistered.MOCK_NAME;
+import static com.pchudzik.springmock.infrastructure.test.placement.TestCaseLevelDoublesShouldBeRegistered.SPY_NAME;
 import static org.junit.Assert.assertSame;
 
 @RunWith(SpringRunner.class)
-@BootstrapWith(TestCaseClassLevelDoublesShouldBeRegisteredTest.ContextBootstrapper.class)
+@BootstrapWith(TestCaseLevelDoublesShouldBeRegistered.ContextBootstrapper.class)
 
-@AutowiredMock(name = MOCK_NAME, doubleClass = TestCaseClassLevelDoublesShouldBeRegisteredTest.MockService.class)
-@AutowiredSpy(name = SPY_NAME, doubleClass = TestCaseClassLevelDoublesShouldBeRegisteredTest.SpyService.class)
-public class TestCaseClassLevelDoublesShouldBeRegisteredTest {
+@AutowiredMock(name = MOCK_NAME, doubleClass = TestCaseLevelDoublesShouldBeRegistered.MockService.class)
+@AutowiredSpy(name = SPY_NAME, doubleClass = TestCaseLevelDoublesShouldBeRegistered.SpyService.class)
+public class TestCaseLevelDoublesShouldBeRegistered {
 	public static final String MOCK_NAME = "mock";
 	public static final String SPY_NAME = "spy";
 

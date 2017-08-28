@@ -1,4 +1,4 @@
-package com.pchudzik.springmock.infrastructure.test;
+package com.pchudzik.springmock.infrastructure.test.duplicates;
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
@@ -18,10 +18,10 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.times;
 
 @RunWith(SpringRunner.class)
-@BootstrapWith(DuplicatedDoubleShouldBeCreatedOnlyOnceTest.TestContextBootstrap.class)
-@AutowiredMock(doubleClass = DuplicatedDoubleShouldBeCreatedOnlyOnceTest.MockService.class)
-@AutowiredSpy(doubleClass = DuplicatedDoubleShouldBeCreatedOnlyOnceTest.SpyService.class)
-public class DuplicatedDoubleShouldBeCreatedOnlyOnceTest {
+@BootstrapWith(DuplicatedDoubleShouldBeCreatedOnlyOnce.TestContextBootstrap.class)
+@AutowiredMock(doubleClass = DuplicatedDoubleShouldBeCreatedOnlyOnce.MockService.class)
+@AutowiredSpy(doubleClass = DuplicatedDoubleShouldBeCreatedOnlyOnce.SpyService.class)
+public class DuplicatedDoubleShouldBeCreatedOnlyOnce {
 	@Autowired
 	MockitoBasedDoubleFactory doubleFactory;
 

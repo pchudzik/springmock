@@ -17,7 +17,7 @@ import java.util.List;
 public abstract class SpringMockContextBootstrapper extends DefaultTestContextBootstrapper {
 	private final DoubleFactoryCreator doubleFactoryCreator;
 
-	protected SpringMockContextBootstrapper(DoubleFactoryCreator doubleFactoryCreator) {
+	public SpringMockContextBootstrapper(DoubleFactoryCreator doubleFactoryCreator) {
 		this.doubleFactoryCreator = doubleFactoryCreator;
 	}
 

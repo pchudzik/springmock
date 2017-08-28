@@ -1,4 +1,4 @@
-package com.pchudzik.springmock.infrastructure.test;
+package com.pchudzik.springmock.infrastructure.test.duplicates;
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
@@ -16,8 +16,8 @@ import static org.junit.Assert.assertSame;
 
 @Ignore("https://github.com/pchudzik/springmock/issues/8")
 @RunWith(SpringRunner.class)
-@BootstrapWith(SpyAndMockOfTheSameClassShouldBeDistinguishableTest.TestContextBootstrap.class)
-public class SpyAndMockOfTheSameClassShouldBeDistinguishableTest {
+@BootstrapWith(SpyAndMockOfTheSameClassShouldBeDistinguishable.TestContextBootstrap.class)
+public class SpyAndMockOfTheSameClassShouldBeDistinguishable {
 	private static final MyService aMock = Mockito.mock(MyService.class, "a mock");
 	private static final MyService aSpy = Mockito.mock(MyService.class, "a spy");
 	private static final FixedDoubleFactory doubleFactory = FixedDoubleFactory.builder()
