@@ -17,6 +17,7 @@ by a library of your choice.
 
 * [Introduction](#introduction)
 * [Contents](#contents)
+* [Features](#features)
 * [Requirements](#requirements)
   * [Mockito](#mockito)
   * [Spock](#spock)
@@ -42,6 +43,20 @@ by a library of your choice.
 * [Changelog](#changelog)
   * [1.0.0 - 2017.07.22](#100---20170722)
 
+## Features
+
+* inject mocks created by spock/mockito into test case ([spock
+  samples](spock/src/test/groovy/com/pchudzik/springmock/spock/test), [mockito
+  samples](mockito/src/test/java/com/pchudzik/springmock/mockito/test))
+* extended mocks and spies configuration ([spock configuration
+  options](spock/src/main/java/com/pchudzik/springmock/spock/configuration/SpockDouble.java),
+  [mockito configuration
+  options](mockito/src/main/java/com/pchudzik/springmock/mockito/configuration/MockitoDouble.java))
+* registration of mocks declared on configuration/test class in spring context (just place @AutowiredMock @AutowiredSpy on class)
+* partial mocks ([spock
+  sample](spock/src/test/groovy/com/pchudzik/springmock/spock/test/spy/SpyShouldBeCreatedWithoutExistingObjectInstanceTest.groovy),
+  [mockito
+  sample](mockito/src/test/java/com/pchudzik/springmock/mockito/test/spy/SpyShouldBeCreatedWithoutExistingObjectInstanceTest.java))
 
 ## Requirements
 
@@ -288,7 +303,6 @@ issue description or as PR.
     ([mock injection example](mockito/src/test/java/com/pchudzik/springmock/mockito/test/mock/ShouldInjectMocksInConfigurationClass.java),
     [spy injection example](mockito/src/test/java/com/pchudzik/springmock/mockito/test/spy/ShouldInjectSpiesInConfigurationClass.java))
   * added possibility to create spies without real object present in context.
-
     Word of warning. It will produce partial mock, which might not work as you'd expect it to work and might cause some
     unexpected failures. In general yous should spy on existing bean instance, unless it is very trivial bean without 
     any fields. 
@@ -302,7 +316,6 @@ issue description or as PR.
     ([mock injection example](spock/src/test/groovy/com/pchudzik/springmock/spock/test/mock/ShouldInjectMocksInConfigurationClass.groovy),
     [spy injection example](spock/src/test/groovy/com/pchudzik/springmock/spock/test/spy/ShouldInjectSpiesInConfigurationClass.groovy)) 
   * added possibility to create spies without real object present in context.
-  
     Word of warning as in mockito it might produce not properly initialized object. In spock you have higher level of
     control over mocks creation and you can initialize object properly using
     [SpockDouble.constructorArguments](spock/src/main/java/com/pchudzik/springmock/spock/configuration/SpockDouble.java)
