@@ -22,10 +22,11 @@ public @interface AutowiredMock {
 	/**
 	 * Optional list of aliases for created bean.
 	 */
-	String [] alias() default {};
+	String[] alias() default {};
 
 	/**
 	 * Optional class of the mock. If present
+	 *
 	 * @return
 	 */
 	Class<?> doubleClass() default NoDoubleClassDefined.class;
