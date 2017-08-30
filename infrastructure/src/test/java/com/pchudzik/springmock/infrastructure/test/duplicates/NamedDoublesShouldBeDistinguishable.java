@@ -36,10 +36,10 @@ public class NamedDoublesShouldBeDistinguishable {
 	MockService mock2;
 
 	@AutowiredSpy(name = SPY1)
-	SpyService spyService1;
+	SpyService spy1;
 
 	@AutowiredSpy(name = SPY2)
-	SpyService spyService2;
+	SpyService spy2;
 
 	@Test
 	public void named_mocks_should_be_distinguishable() {
@@ -52,11 +52,11 @@ public class NamedDoublesShouldBeDistinguishable {
 
 	@Test
 	public void named_spies_should_be_distinguishable() {
-		assertNotNull(spyService1);
-		assertEquals(aSpy1, spyService1);
+		assertNotNull(spy1);
+		assertEquals(aSpy1, spy1);
 
-		assertNotNull(spyService2);
-		assertEquals(aSpy2, spyService2);
+		assertNotNull(spy2);
+		assertEquals(aSpy2, spy2);
 	}
 
 	private interface MockService {

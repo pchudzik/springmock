@@ -10,12 +10,14 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public class MatchingDoubleFactory implements DoubleFactory {
-	private final Map<MockMatcher, Object> mocksMatcher;
-	private final Map<SpyMatcher, Object> spiesMatcher;
+	private final Map<MockMatcher, Supplier<Object>> mocksMatcher;
+	private final Map<SpyMatcher, Supplier<Object>> spiesMatcher;
 
-	private MatchingDoubleFactory(Map<MockMatcher, Object> mocksMatcher, Map<SpyMatcher, Object> spiesMatcher) {
+	private MatchingDoubleFactory(Map<MockMatcher, Supplier<Object>> mocksMatcher, Map<SpyMatcher, Supplier<Object>> spiesMatcher) {
 		this.mocksMatcher = mocksMatcher;
 		this.spiesMatcher = spiesMatcher;
 	}
@@ -26,45 +28,56 @@ public class MatchingDoubleFactory implements DoubleFactory {
 
 	@Override
 	public Object createMock(DoubleDefinition mockDefinition) {
-		return mocksMatcher.entrySet().stream()
-				.filter(entry -> entry.getKey().test(mockDefinition))
-				.findFirst()
-				.map(Entry::getValue)
-				.orElseThrow(() -> new NoSuchElementException("No mock matching " + mockDefinition));
+		return findDouble(
+				mocksMatcher.entrySet().stream().filter(entry -> entry.getKey().test(mockDefinition)).map(Entry::getValue),
+				mockDefinition);
 	}
 
 	@Override
 	public Object createSpy(@Nullable Object bean, DoubleDefinition spyDefinition) {
-		return spiesMatcher.entrySet().stream()
-				.filter(entry -> entry.getKey().test(bean, spyDefinition))
+		return findDouble(
+				spiesMatcher.entrySet().stream().filter(entry -> entry.getKey().test(bean, spyDefinition)).map(Entry::getValue),
+				spyDefinition);
+	}
+
+	private Object findDouble(Stream<Supplier<Object>> filteredDoubles, DoubleDefinition doubleDefinition) {
+		return filteredDoubles
 				.findFirst()
-				.map(Entry::getValue)
-				.orElseThrow(() -> new NoSuchElementException("No spy definition for " + bean + " with definition " + spyDefinition));
+				.map(Supplier::get)
+				.orElseThrow(() -> new NoSuchElementException("missing double definition " + doubleDefinition));
 	}
 
 	public static class MatchingDoubleFactoryBuilder {
-		private final Map<MockMatcher, Object> mocks = new LinkedHashMap<>();
-		private final Map<SpyMatcher, Object> spies = new LinkedHashMap<>();
+		private final Map<MockMatcher, Supplier<Object>> mocks = new LinkedHashMap<>();
+		private final Map<SpyMatcher, Supplier<Object>> spies = new LinkedHashMap<>();
 
 		private MatchingDoubleFactoryBuilder() {
 		}
 
 		public static MockMatcher byNameMockMatcher(String name) {
-			return def -> name.equals(def.getName());
+			return def -> def.hasNameOrAlias(name);
 		}
 
 		public static SpyMatcher byNameSpyMatcher(String name) {
 			return (object, def) -> byNameMockMatcher(name).test(def);
 		}
 
+		public MatchingDoubleFactoryBuilder mock(Supplier<Object> mock, MockMatcher matcher) {
+			this.mocks.put(matcher, mock);
+			return this;
+		}
+
 		public MatchingDoubleFactoryBuilder mock(Object mock, MockMatcher matcher) {
-			mocks.put(matcher, mock);
+			return mock(() -> mock, matcher);
+		}
+
+		public MatchingDoubleFactoryBuilder spy(Supplier<Object> spySupplier, SpyMatcher spyMatcher) {
+			this.spies.put(spyMatcher, spySupplier);
 			return this;
 		}
 
 		public MatchingDoubleFactoryBuilder spy(Object spy, SpyMatcher spyMatcher) {
-			spies.put(spyMatcher, spy);
-			return this;
+			return spy(() -> spy, spyMatcher);
 		}
 
 		public MatchingDoubleFactory build() {
