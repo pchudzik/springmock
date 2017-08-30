@@ -4,7 +4,6 @@ import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
 import com.pchudzik.springmock.infrastructure.test.infrastructure.FixedDoubleFactory;
 import com.pchudzik.springmock.infrastructure.test.infrastructure.SpringMockContextBootstrapper;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -14,7 +13,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
-@Ignore("https://github.com/pchudzik/springmock/issues/8")
 @RunWith(SpringRunner.class)
 @BootstrapWith(SpyAndMockOfTheSameClassShouldBeDistinguishable.TestContextBootstrap.class)
 public class SpyAndMockOfTheSameClassShouldBeDistinguishable {
@@ -50,7 +48,6 @@ public class SpyAndMockOfTheSameClassShouldBeDistinguishable {
 	}
 
 	static class TestContextBootstrap extends SpringMockContextBootstrapper {
-
 		protected TestContextBootstrap() {
 			super(() -> doubleFactory);
 		}

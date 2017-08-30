@@ -2,6 +2,7 @@ package com.pchudzik.springmock.mockito.spring;
 
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
+import com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.*;
 import com.pchudzik.springmock.mockito.configuration.MockitoDouble.DoubleResetMode;
 import com.pchudzik.springmock.mockito.configuration.MockitoDoubleConfiguration;
 import com.pchudzik.springmock.mockito.spring.MockitoMockResetTestExecutionListener.MockResetExecutor;
@@ -10,12 +11,9 @@ import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestContext;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Map.Entry;
 import java.util.stream.Stream;
 
-import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.buildAppContext;
-import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.withDoubleRegistry;
+import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -30,8 +28,8 @@ public class MockitoMockResetTestExecutionListenerTest {
 		final TestContext testContext = createTestContext(
 				new DoubleRegistry(emptyList(), emptyList()),
 				Stream.of(
-						new SimpleEntry<>("string1", "first string"),
-						new SimpleEntry<>("string2", "second string")));
+						bean("string1", "first string"),
+						bean("string2", "second string")));
 
 		//when
 		executionListener.beforeTestMethod(testContext);
@@ -61,9 +59,9 @@ public class MockitoMockResetTestExecutionListenerTest {
 										.build()),
 						emptyList()),
 				Stream.of(
-						new SimpleEntry<>("string", "first string"),
-						new SimpleEntry<>("mock1", mock1),
-						new SimpleEntry<>("mock2", mock2)));
+						bean("string", "first string"),
+						bean("mock1", mock1),
+						bean("mock2", mock2)));
 
 		//when
 		executionListener.afterTestMethod(testContext);
@@ -98,9 +96,9 @@ public class MockitoMockResetTestExecutionListenerTest {
 										.doubleConfiguration(resetAfterTestMethod())
 										.build())),
 				Stream.of(
-						new SimpleEntry<>("string", "first string"),
-						new SimpleEntry<>("spy1", spy1),
-						new SimpleEntry<>("spy2", spy2)));
+						bean("string", "first string"),
+						bean("spy1", spy1),
+						bean("spy2", spy2)));
 
 		//when
 		executionListener.afterTestMethod(testContext);
@@ -136,8 +134,8 @@ public class MockitoMockResetTestExecutionListenerTest {
 										.build()),
 						emptyList()),
 				Stream.of(
-						new SimpleEntry<>(noResetMockName, Mockito.mock(Object.class)),
-						new SimpleEntry<>(mockName, mock)));
+						bean(noResetMockName, Mockito.mock(Object.class)),
+						bean(mockName, mock)));
 
 		//when
 		executionListener.beforeTestMethod(testContext);
@@ -163,7 +161,7 @@ public class MockitoMockResetTestExecutionListenerTest {
 										.doubleConfiguration(neverReset())
 										.build()),
 						emptyList()),
-				Stream.of(new SimpleEntry<>(noResetMockName, mock)));
+				Stream.of(bean(noResetMockName, mock)));
 
 		//when
 		executionListener.beforeTestMethod(testContext);
@@ -189,8 +187,8 @@ public class MockitoMockResetTestExecutionListenerTest {
 						.doubleClass(Object.class)
 						.doubleConfiguration(resetAfterTestMethod())
 						.build()));
-		final ApplicationContext parentContext = buildAppContext(Stream.of(new SimpleEntry<>("parentMock", parentMock)));
-		final ApplicationContext middleContext = buildAppContext(parentContext, Stream.of(new SimpleEntry<>("childSpy", childSpy)));
+		final ApplicationContext parentContext = buildAppContext(Stream.of(bean("parentMock", parentMock)));
+		final ApplicationContext middleContext = buildAppContext(parentContext, Stream.of(bean("childSpy", childSpy)));
 		final ApplicationContext childContext = buildAppContext(middleContext, Stream.of(withDoubleRegistry(doubleRegistry)));
 		final TestContext testContext = mockTestContext(childContext);
 
@@ -225,7 +223,7 @@ public class MockitoMockResetTestExecutionListenerTest {
 				.build();
 	}
 
-	private TestContext createTestContext(DoubleRegistry doubleRegistry, Stream<Entry<String, Object>> beanDefinitions) {
+	private TestContext createTestContext(DoubleRegistry doubleRegistry, Stream<TestBean> beanDefinitions) {
 		return mockTestContext(buildAppContext(
 				Stream.concat(
 						Stream.of(withDoubleRegistry(doubleRegistry)),

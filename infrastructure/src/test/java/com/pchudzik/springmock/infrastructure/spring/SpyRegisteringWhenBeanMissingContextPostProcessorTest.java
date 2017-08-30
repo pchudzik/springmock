@@ -3,17 +3,17 @@ package com.pchudzik.springmock.infrastructure.spring;
 import com.pchudzik.springmock.infrastructure.DoubleFactory;
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
+import com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.context.ApplicationContext;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
-import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import static com.pchudzik.springmock.infrastructure.DoubleFactory.DOUBLE_FACTORY_BEAN_NAME;
+import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.bean;
 import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.buildAppContext;
 import static java.util.Collections.*;
 
@@ -52,7 +52,7 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessorTest {
 		//when
 		final ApplicationContext applicationContext = createApplicationContext(
 				postProcessor,
-				Stream.of(new SimpleEntry<>(beanName, new Object())));
+				Stream.of(bean(beanName, new Object())));
 		applicationContext.getBean(beanName);
 
 		//then
@@ -71,7 +71,7 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessorTest {
 				.build()));
 
 		//when
-		final ApplicationContext applicationContext = createApplicationContext(postProcessor, Stream.of(new SimpleEntry<>(beanName, new Object())));
+		final ApplicationContext applicationContext = createApplicationContext(postProcessor, Stream.of(bean(beanName, new Object())));
 		applicationContext.getBean(beanName);
 
 		//then
@@ -86,8 +86,8 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessorTest {
 				.name(spyName)
 				.doubleClass(Object.class)
 				.build()));
-		final ApplicationContext parentContext = buildAppContext(null, Stream.of(new SimpleEntry<>(spyName, new Object())));
-		final ApplicationContext childContext = buildAppContext(parentContext, Stream.of(new SimpleEntry<>(DOUBLE_FACTORY_BEAN_NAME, doubleFactory)), singletonList(postProcessor));
+		final ApplicationContext parentContext = buildAppContext(null, Stream.of(bean(spyName, new Object())));
+		final ApplicationContext childContext = buildAppContext(parentContext, Stream.of(bean(DOUBLE_FACTORY_BEAN_NAME, doubleFactory)), singletonList(postProcessor));
 
 		//when
 		childContext.getBean(spyName);
@@ -105,18 +105,18 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessorTest {
 		//when
 		final ApplicationContext applicationContext = createApplicationContext(
 				postProcessor,
-				Stream.of(new SimpleEntry<>(beanName, new Object())));
+				Stream.of(bean(beanName, new Object())));
 		applicationContext.getBean(beanName);
 
 		//then
 		Mockito.verifyZeroInteractions(doubleFactory);
 	}
 
-	private ApplicationContext createApplicationContext(BeanFactoryPostProcessor postProcessor, Stream<Entry<String, Object>> beans) {
+	private ApplicationContext createApplicationContext(BeanFactoryPostProcessor postProcessor, Stream<ApplicationContextCreator.TestBean> beans) {
 		return buildAppContext(
 				Stream.concat(
 						beans,
-						Stream.of(new SimpleEntry<>(DOUBLE_FACTORY_BEAN_NAME, doubleFactory))),
+						Stream.of(bean(DOUBLE_FACTORY_BEAN_NAME, doubleFactory))),
 				singletonList(postProcessor));
 	}
 

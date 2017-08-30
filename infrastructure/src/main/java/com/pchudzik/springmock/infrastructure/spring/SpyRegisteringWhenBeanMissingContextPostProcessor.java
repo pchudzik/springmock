@@ -37,7 +37,7 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessor implements BeanFa
 	}
 
 	private Optional<BeanDefinition> findBeanDefinition(ConfigurableListableBeanFactory beanFactory, DoubleDefinition spy) {
-		final BeanDefinitionFinder definitionFinder = new BeanDefinitionFinder(beanFactory);
+		final BeanDefinitionFinder definitionFinder = new BeanDefinitionFinder(beanFactory, doubleRegistry);
 		final Optional<BeanDefinition> definition = Stream
 				.concat(
 						Stream.of(spy.getName()),

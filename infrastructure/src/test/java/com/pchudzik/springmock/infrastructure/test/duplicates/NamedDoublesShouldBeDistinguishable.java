@@ -20,8 +20,8 @@ import static org.junit.Assert.assertNotNull;
 public class NamedDoublesShouldBeDistinguishable {
 	private static final MockService aMock1 = Mockito.mock(MockService.class);
 	private static final MockService aMock2 = Mockito.mock(MockService.class);
-	private static final SpyService1 aSpy1 = Mockito.mock(SpyService1.class);
-	private static final SpyService2 aSpy2 = Mockito.mock(SpyService2.class);
+	private static final SpyService aSpy1 = Mockito.mock(SpyService.class);
+	private static final SpyService aSpy2 = Mockito.mock(SpyService.class);
 
 	private static final String MOCK1 = "mock1";
 	private static final String MOCK2 = "mock2";
@@ -36,10 +36,10 @@ public class NamedDoublesShouldBeDistinguishable {
 	MockService mock2;
 
 	@AutowiredSpy(name = SPY1)
-	SpyService1 spyService1;
+	SpyService spyService1;
 
 	@AutowiredSpy(name = SPY2)
-	SpyService2 spyService2;
+	SpyService spyService2;
 
 	@Test
 	public void named_mocks_should_be_distinguishable() {
@@ -62,11 +62,7 @@ public class NamedDoublesShouldBeDistinguishable {
 	private interface MockService {
 	}
 
-	private static class SpyService1 {
-
-	}
-
-	private static class SpyService2 {
+	private static class SpyService {
 	}
 
 	static class TestContextBootstrapper extends SpringMockContextBootstrapper {

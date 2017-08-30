@@ -3,7 +3,6 @@ package com.pchudzik.springmock.infrastructure.test.duplicates;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
 import com.pchudzik.springmock.infrastructure.test.infrastructure.MatchingDoubleFactory;
 import com.pchudzik.springmock.infrastructure.test.infrastructure.SpringMockContextBootstrapper;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.BootstrapWith;
@@ -13,7 +12,6 @@ import static com.pchudzik.springmock.infrastructure.test.infrastructure.Matchin
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@Ignore("https://github.com/pchudzik/springmock/issues/8")
 @RunWith(SpringRunner.class)
 @BootstrapWith(PartialMocksShouldBeDistinguishable.TestContextBootstrapper.class)
 public class PartialMocksShouldBeDistinguishable {

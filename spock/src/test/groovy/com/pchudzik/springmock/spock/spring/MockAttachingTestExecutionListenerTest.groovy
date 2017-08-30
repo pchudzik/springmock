@@ -5,7 +5,9 @@ import org.springframework.beans.factory.FactoryBean
 import org.springframework.test.context.TestContext
 import spock.lang.Specification
 
+import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.bean
 import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.buildAppContext
+import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.withEmptyDoubleRegistry
 import static com.pchudzik.springmock.spock.spring.MockAttachingTestExecutionListener.MOCKED_BEANS_NAMES
 
 class MockAttachingTestExecutionListenerTest extends Specification {
@@ -37,9 +39,10 @@ class MockAttachingTestExecutionListenerTest extends Specification {
 		final mock = Mock(Object)
 		final spy = Spy(new Object())
 		testContext.getApplicationContext() >> buildAppContext([
-				"notMock": new Object(),
-				"mock"   : mock,
-				"spy"    : spy
+				bean("notMock", new Object()),
+				bean("mock", mock),
+				bean("spy", spy),
+				withEmptyDoubleRegistry()
 		])
 
 		when:
@@ -58,8 +61,9 @@ class MockAttachingTestExecutionListenerTest extends Specification {
 		given:
 		final factoryBeanMock = Mock(FactoryBean)
 		testContext.getApplicationContext() >> buildAppContext([
-				"notAMock"   : new Object(),
-				"factoryBean": factoryBeanMock
+				bean("notAMock", new Object()),
+				bean("factoryBean", factoryBeanMock),
+				withEmptyDoubleRegistry()
 		])
 
 		when:
@@ -79,10 +83,11 @@ class MockAttachingTestExecutionListenerTest extends Specification {
 		final regularMock = Mock(Object)
 		final regularSpy = Spy(new Object())
 		testContext.getApplicationContext() >> buildAppContext([
-				"notMock"        : new Object(),
-				"factoryBeanMock": factoryBeanMock,
-				"regularMock"    : regularMock,
-				"regularSpy"     : regularSpy
+				bean("notMock", new Object()),
+				bean("factoryBeanMock", factoryBeanMock),
+				bean("regularMock", regularMock),
+				bean("regularSpy", regularSpy),
+				withEmptyDoubleRegistry()
 		])
 		listener.beforeTestMethod(testContext)
 
@@ -113,9 +118,10 @@ class MockAttachingTestExecutionListenerTest extends Specification {
 		final childMock = Mock(Object)
 		final childSpy = Spy(new Object())
 		final parentContext = buildAppContext([
-				parentMock    : parentMock,
-				parentSpy     : parentSpy,
-				parentNotAMock: new Object()
+				bean("parentMock", parentMock),
+				bean("parentSpy", parentSpy),
+				bean("parentNotAMock", new Object()),
+				withEmptyDoubleRegistry()
 		])
 		final childContext = buildAppContext(parentContext, [
 				childMock    : childMock,

@@ -7,42 +7,54 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toMap;
 
 public class ApplicationContextCreator {
-	public static ApplicationContext buildAppContext(Stream<Entry<String, Object>> beans, Collection<BeanFactoryPostProcessor> postProcessors) {
+	public static ApplicationContext buildAppContext(Stream<TestBean> beans, Collection<BeanFactoryPostProcessor> postProcessors) {
 		return buildAppContext(null, asMap(beans), postProcessors);
 	}
 
-	public static ApplicationContext buildAppContext(Stream<Entry<String, Object>> beans) {
-		return buildAppContext(null, asMap(beans));
+	public static ApplicationContext buildAppContext(Collection<TestBean> beans) {
+		return buildAppContext(beans.stream());
 	}
 
-	public static ApplicationContext buildAppContext(Map<String, Object> beans) {
+	public static ApplicationContext buildAppContext(Stream<TestBean> beans) {
 		return buildAppContext(null, beans);
 	}
 
-	public static ApplicationContext buildAppContext(ApplicationContext parent, Stream<Entry<String, Object>> beans) {
+	public static ApplicationContext buildAppContext(ApplicationContext parent, Stream<TestBean> beans) {
 		return buildAppContext(parent, asMap(beans));
 	}
 
-	public static Entry<String, Object>  withDoubleRegistry(DoubleRegistry registry) {
-		return new SimpleEntry<>(DoubleRegistry.BEAN_NAME, registry);
+	public static TestBean withEmptyDoubleRegistry() {
+		return withDoubleRegistry(emptyDoubleRegistry());
+	}
+
+	public static DoubleRegistry emptyDoubleRegistry() {
+		return new DoubleRegistry(
+				emptyList(),
+				emptyList());
+	}
+
+	public static TestBean bean(String name, Object bean) {
+		return new TestBean(name, bean);
+	}
+
+	public static TestBean withDoubleRegistry(DoubleRegistry registry) {
+		return bean(DoubleRegistry.BEAN_NAME, registry);
 	}
 
 	public static ApplicationContext buildAppContext(ApplicationContext parent, Map<String, Object> beans) {
-		return buildAppContext(parent, beans, Collections.emptyList());
+		return buildAppContext(parent, beans, emptyList());
 	}
 
-	public static ApplicationContext buildAppContext(ApplicationContext parent, Stream<Entry<String, Object>> beans, Collection<BeanFactoryPostProcessor> postProcessors) {
+	public static ApplicationContext buildAppContext(ApplicationContext parent, Stream<TestBean> beans, Collection<BeanFactoryPostProcessor> postProcessors) {
 		return buildAppContext(parent, asMap(beans), postProcessors);
 	}
 
@@ -67,7 +79,25 @@ public class ApplicationContextCreator {
 		return applicationContext;
 	}
 
-	private static Map<String, Object> asMap(Stream<Entry<String, Object>> beans) {
-		return beans.collect(toMap(Entry::getKey, Entry::getValue));
+	private static Map<String, Object> asMap(Stream<TestBean> beans) {
+		return beans.collect(toMap(TestBean::getName, TestBean::getBean));
+	}
+
+	public static class TestBean {
+		final String name;
+		final Object bean;
+
+		private TestBean(String name, Object bean) {
+			this.name = name;
+			this.bean = bean;
+		}
+
+		private String getName() {
+			return name;
+		}
+
+		private Object getBean() {
+			return bean;
+		}
 	}
 }

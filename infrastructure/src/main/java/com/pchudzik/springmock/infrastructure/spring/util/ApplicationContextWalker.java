@@ -1,5 +1,6 @@
 package com.pchudzik.springmock.infrastructure.spring.util;
 
+import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -22,7 +23,8 @@ public class ApplicationContextWalker {
 	}
 
 	public BeanDefinition getBeanDefinition(String beanName) {
-		return walkContext(ctx -> new BeanDefinitionFinder(ctx).tryToFindBeanDefinition(beanName))
+		final DoubleRegistry doubleRegistry = applicationContext.getBean(DoubleRegistry.BEAN_NAME, DoubleRegistry.class);
+		return walkContext(ctx -> new BeanDefinitionFinder(ctx, doubleRegistry).tryToFindBeanDefinition(beanName))
 				.stream()
 				.flatMap(selectOnlyPresentOptionals())
 				.findFirst()
