@@ -18,16 +18,16 @@ import java.util.logging.Logger;
  * Post processor which detects if created object instance should be spied on. If true then replace
  * newly created bean with spy created by {@link DoubleFactory}.
  */
-public class SpyReplacingContextPostProcessor extends InstantiationAwareBeanPostProcessorAdapter {
+public class ToSpyReplacingProcessor extends InstantiationAwareBeanPostProcessorAdapter {
 	public static final String BEAN_NAME = MockConstants.PACKAGE_PREFIX + "spyRegistrationContextPostProcessor";
-	private static final Logger log = Logger.getLogger(SpyReplacingContextPostProcessor.class.getName());
+	private static final Logger log = Logger.getLogger(ToSpyReplacingProcessor.class.getName());
 
 	private final DoubleRegistry doubleRegistry;
 	private final DoubleFactory doubleFactory;
 	private final DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext;
 	private final ApplicationContext applicationContext;
 
-	public SpyReplacingContextPostProcessor(ApplicationContext applicationContext, DoubleRegistry doubleRegistry, DoubleFactory doubleFactory, DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext) {
+	public ToSpyReplacingProcessor(ApplicationContext applicationContext, DoubleRegistry doubleRegistry, DoubleFactory doubleFactory, DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext) {
 		this.doubleRegistry = doubleRegistry;
 		this.doubleFactory = doubleFactory;
 		this.doubleDefinitionsRegistrationContext = doubleDefinitionsRegistrationContext;

@@ -20,7 +20,7 @@ import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-public class SpyReplacingContextPostProcessorTest {
+public class ToSpyReplacingProcessorTest {
 	private DoubleFactory doubleFactory = Mockito.mock(DoubleFactory.class);
 
 	@Test
@@ -28,7 +28,7 @@ public class SpyReplacingContextPostProcessorTest {
 		//given
 		final Object anyBean = new Object();
 		final String anyBeanName = "any bean";
-		final SpyReplacingContextPostProcessor postProcessor = new SpyProcessorBuilder().build();
+		final ToSpyReplacingProcessor postProcessor = new SpyProcessorBuilder().build();
 
 		//when
 		final Object processedBean = postProcessor.postProcessAfterInitialization(anyBean, anyBeanName);
@@ -51,7 +51,7 @@ public class SpyReplacingContextPostProcessorTest {
 				.name(serviceName)
 				.build();
 
-		final SpyReplacingContextPostProcessor processor = new SpyProcessorBuilder()
+		final ToSpyReplacingProcessor processor = new SpyProcessorBuilder()
 				.withBean(serviceName, service1)
 				.withSpy(definition)
 
@@ -76,7 +76,7 @@ public class SpyReplacingContextPostProcessorTest {
 		final String serviceName = "service";
 		final String spyName = "spy";
 		final DoubleDefinition definition = doubleDefinition(Service.class, spyName);
-		final SpyReplacingContextPostProcessor postProcessor = new SpyProcessorBuilder()
+		final ToSpyReplacingProcessor postProcessor = new SpyProcessorBuilder()
 				.withBean(serviceName, service)
 				.withSpy(definition)
 				.build();
@@ -98,7 +98,7 @@ public class SpyReplacingContextPostProcessorTest {
 		final Service service = new Service();
 		final String childServiceName = "childService";
 		final ChildService childService = new ChildService();
-		final SpyReplacingContextPostProcessor postProcessor = new SpyProcessorBuilder()
+		final ToSpyReplacingProcessor postProcessor = new SpyProcessorBuilder()
 				.withBean(serviceName, service)
 				.withBean(childServiceName, childService)
 				.withSpy(doubleDefinition(Service.class))
@@ -119,7 +119,7 @@ public class SpyReplacingContextPostProcessorTest {
 		final String serviceName = "service";
 		final OtherService otherService = new OtherService();
 		final DoubleDefinition spyDefinition = doubleDefinition(Service.class, serviceName);
-		final SpyReplacingContextPostProcessor postProcessor = new SpyProcessorBuilder()
+		final ToSpyReplacingProcessor postProcessor = new SpyProcessorBuilder()
 				.withBean(serviceName, otherService)
 				.withSpy(spyDefinition)
 				.build();
@@ -139,7 +139,7 @@ public class SpyReplacingContextPostProcessorTest {
 		final String spyName = "myService";
 		final Service spy = Mockito.spy(new Service());
 		final DoubleDefinition spyDefinition = doubleDefinition(Service.class, spyName);
-		final SpyReplacingContextPostProcessor postProcessor = new SpyProcessorBuilder()
+		final ToSpyReplacingProcessor postProcessor = new SpyProcessorBuilder()
 				.withSpyBean(spyName, spy, spyDefinition)
 				.withSpy(spyDefinition)
 				.build();
@@ -172,8 +172,8 @@ public class SpyReplacingContextPostProcessorTest {
 			return this;
 		}
 
-		public SpyReplacingContextPostProcessor build() {
-			return new SpyReplacingContextPostProcessor(
+		public ToSpyReplacingProcessor build() {
+			return new ToSpyReplacingProcessor(
 					createContext(beans),
 					new DoubleRegistry(emptyList(), spies),
 					doubleFactory,

@@ -96,12 +96,12 @@ public class MockContextCustomizer implements ContextCustomizer {
 	}
 
 	private void registerSpyRegistrationPostProcessor(BeanDefinitionRegistry registry) {
-		registry.registerBeanDefinition(SpyReplacingContextPostProcessor.BEAN_NAME, BeanDefinitionBuilder
-				.rootBeanDefinition(SpyReplacingContextPostProcessor.class)
+		registry.registerBeanDefinition(ToSpyReplacingProcessor.BEAN_NAME, BeanDefinitionBuilder
+				.rootBeanDefinition(ToSpyReplacingProcessor.class)
 				.getBeanDefinition());
 
-		registry.registerBeanDefinition(SpyRegisteringWhenBeanMissingContextPostProcessor.BEAN_NAME, BeanDefinitionBuilder
-				.rootBeanDefinition(SpyRegisteringWhenBeanMissingContextPostProcessor.class)
+		registry.registerBeanDefinition(SpyDefinitionRegisteringProcessor.BEAN_NAME, BeanDefinitionBuilder
+				.rootBeanDefinition(SpyDefinitionRegisteringProcessor.class)
 				.addConstructorArgValue(doubleRegistry)
 				.addConstructorArgReference(DoubleDefinitionsRegistrationContext.BEAN_NAME)
 				.getBeanDefinition());
@@ -139,8 +139,8 @@ public class MockContextCustomizer implements ContextCustomizer {
 	}
 
 	private void registerMockRegistrationPostProcessor(BeanDefinitionRegistry registry) {
-		registry.registerBeanDefinition(MockRegisteringContextPostProcessor.BEAN_NAME, BeanDefinitionBuilder
-				.rootBeanDefinition(MockRegisteringContextPostProcessor.class)
+		registry.registerBeanDefinition(MockDefinitionsRegisteringProcessor.BEAN_NAME, BeanDefinitionBuilder
+				.rootBeanDefinition(MockDefinitionsRegisteringProcessor.class)
 				.addConstructorArgReference(DoubleRegistry.BEAN_NAME)
 				.addConstructorArgReference(DoubleDefinitionsRegistrationContext.BEAN_NAME)
 				.getBeanDefinition());

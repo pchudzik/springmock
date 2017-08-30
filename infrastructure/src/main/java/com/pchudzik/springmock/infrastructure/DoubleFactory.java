@@ -1,7 +1,7 @@
 package com.pchudzik.springmock.infrastructure;
 
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
-import com.pchudzik.springmock.infrastructure.spring.SpyReplacingContextPostProcessor;
+import com.pchudzik.springmock.infrastructure.spring.ToSpyReplacingProcessor;
 
 import javax.annotation.Nullable;
 
@@ -31,7 +31,7 @@ public interface DoubleFactory {
 	/**
 	 * <p>Creates spy instance</p>
 	 * <p>
-	 * <p>Spies are created by {@link SpyReplacingContextPostProcessor#postProcessAfterInitialization(Object, String)}</p>
+	 * <p>Spies are created by {@link ToSpyReplacingProcessor#postProcessAfterInitialization(Object, String)}</p>
 	 *
 	 * @param bean          object instance to spy on
 	 * @param spyDefinition spy configuration

@@ -12,13 +12,13 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
  * Add {@link org.springframework.beans.factory.config.BeanDefinition BeanDefinitions} to the context for all the fields annotated
  * with {@link AutowiredMock @AutowiredMock}
  */
-public class MockRegisteringContextPostProcessor implements BeanFactoryPostProcessor {
+public class MockDefinitionsRegisteringProcessor implements BeanFactoryPostProcessor {
 	public static final String BEAN_NAME = MockConstants.PACKAGE_PREFIX + "mockRegistrationContextPostProcessor";
 
 	private final DoubleRegistry doubleRegistry;
 	private final DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext;
 
-	public MockRegisteringContextPostProcessor(DoubleRegistry doubleRegistry, DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext) {
+	public MockDefinitionsRegisteringProcessor(DoubleRegistry doubleRegistry, DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext) {
 		this.doubleRegistry = doubleRegistry;
 		this.doubleDefinitionsRegistrationContext = doubleDefinitionsRegistrationContext;
 	}

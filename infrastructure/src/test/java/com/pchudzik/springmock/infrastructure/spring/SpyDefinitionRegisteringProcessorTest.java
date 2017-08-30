@@ -17,7 +17,7 @@ import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationCont
 import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.buildAppContext;
 import static java.util.Collections.*;
 
-public class SpyRegisteringWhenBeanMissingContextPostProcessorTest {
+public class SpyDefinitionRegisteringProcessorTest {
 	private DoubleFactory doubleFactory = Mockito.mock(DoubleFactory.class);
 
 	@Test
@@ -28,7 +28,7 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessorTest {
 				.name(spyName)
 				.doubleClass(Object.class)
 				.build();
-		final SpyRegisteringWhenBeanMissingContextPostProcessor postProcessor = createPostProcessor(singleton(spyDefinition));
+		final SpyDefinitionRegisteringProcessor postProcessor = createPostProcessor(singleton(spyDefinition));
 
 		//when
 		final ApplicationContext context = createApplicationContext(postProcessor, Stream.empty());
@@ -44,7 +44,7 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessorTest {
 	public void should_not_replace_existing_bean_definition_with_spy() {
 		//given
 		final String beanName = "existingObject";
-		final SpyRegisteringWhenBeanMissingContextPostProcessor postProcessor = createPostProcessor(singleton(DoubleDefinition.builder()
+		final SpyDefinitionRegisteringProcessor postProcessor = createPostProcessor(singleton(DoubleDefinition.builder()
 				.name(beanName)
 				.doubleClass(Object.class)
 				.build()));
@@ -64,7 +64,7 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessorTest {
 		//given
 		final String beanName = "beanName";
 		final String spyName = "spy";
-		final SpyRegisteringWhenBeanMissingContextPostProcessor postProcessor = createPostProcessor(singleton(DoubleDefinition.builder()
+		final SpyDefinitionRegisteringProcessor postProcessor = createPostProcessor(singleton(DoubleDefinition.builder()
 				.name(spyName)
 				.aliases(singletonList(beanName))
 				.doubleClass(Object.class)
@@ -82,7 +82,7 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessorTest {
 	public void should_not_replace_existing_bean_definition_when_bean_defined_in_parent_context() {
 		//given
 		final String spyName = "rootSpy";
-		final SpyRegisteringWhenBeanMissingContextPostProcessor postProcessor = createPostProcessor(singletonList(DoubleDefinition.builder()
+		final SpyDefinitionRegisteringProcessor postProcessor = createPostProcessor(singletonList(DoubleDefinition.builder()
 				.name(spyName)
 				.doubleClass(Object.class)
 				.build()));
@@ -100,7 +100,7 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessorTest {
 	public void should_do_nothing_when_no_spies_registered() {
 		//given
 		final String beanName = "bean";
-		final SpyRegisteringWhenBeanMissingContextPostProcessor postProcessor = createPostProcessor(emptyList());
+		final SpyDefinitionRegisteringProcessor postProcessor = createPostProcessor(emptyList());
 
 		//when
 		final ApplicationContext applicationContext = createApplicationContext(
@@ -120,8 +120,8 @@ public class SpyRegisteringWhenBeanMissingContextPostProcessorTest {
 				singletonList(postProcessor));
 	}
 
-	private SpyRegisteringWhenBeanMissingContextPostProcessor createPostProcessor(Collection<DoubleDefinition> spies) {
-		return new SpyRegisteringWhenBeanMissingContextPostProcessor(
+	private SpyDefinitionRegisteringProcessor createPostProcessor(Collection<DoubleDefinition> spies) {
+		return new SpyDefinitionRegisteringProcessor(
 				new DoubleRegistry(
 						emptyList(),
 						spies),

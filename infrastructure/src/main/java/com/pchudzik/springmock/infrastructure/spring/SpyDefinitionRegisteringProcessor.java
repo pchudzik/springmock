@@ -14,13 +14,13 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class SpyRegisteringWhenBeanMissingContextPostProcessor implements BeanFactoryPostProcessor {
+public class SpyDefinitionRegisteringProcessor implements BeanFactoryPostProcessor {
 	public static final String BEAN_NAME = MockConstants.PACKAGE_PREFIX + "spyRegisteringContextPostProcessor";
 
 	private final DoubleRegistry doubleRegistry;
 	private final DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext;
 
-	public SpyRegisteringWhenBeanMissingContextPostProcessor(DoubleRegistry doubleRegistry, DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext) {
+	public SpyDefinitionRegisteringProcessor(DoubleRegistry doubleRegistry, DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext) {
 		this.doubleRegistry = doubleRegistry;
 		this.doubleDefinitionsRegistrationContext = doubleDefinitionsRegistrationContext;
 	}
