@@ -21,17 +21,19 @@ class MockAttachingTestExecutionListenerTest extends Specification {
 	}
 	def listener = new MockAttachingTestExecutionListener(mockUtil)
 
-	def "should fail when executing on non spock.lang.Specification test case"() {
+	def "should do nothing when executing on non spock.lang.Specification test case"() {
 		given:
-		final testContext = Mock(TestContext) {
-			getTestInstance() >> new Object()
-		}
+		final testContext = Mock(TestContext)
 
 		when:
 		listener.beforeTestMethod(testContext)
 
 		then:
-		thrown IllegalArgumentException
+		1 * testContext.getTestInstance() >> new Object()
+
+		and:
+		0 * testContext._
+		0 * mockUtil._
 	}
 
 	def "should attach detached mocks to specification"() {

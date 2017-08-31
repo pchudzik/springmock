@@ -41,7 +41,7 @@ public class MockAttachingTestExecutionListener extends AbstractTestExecutionLis
 	public void beforeTestMethod(TestContext testContext) throws Exception {
 		final Object testInstance = testContext.getTestInstance();
 		if (!(testInstance instanceof Specification)) {
-			throw new IllegalArgumentException(getClass().getSimpleName() + " can be applied only for spock specifications");
+			return;
 		}
 
 		final Specification specification = (Specification) testInstance;
