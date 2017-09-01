@@ -93,12 +93,10 @@ public class ShouldReplaceFactoryBeanWithDoubles {
 
 	static class TestContextBootstrapper extends SpringMockContextBootstrapper {
 		public TestContextBootstrapper() {
-			super(() -> {
-				return MatchingDoubleFactory.builder()
-						.mock(aMock, byNameMockMatcher(MOCK))
-						.spy(aSpy, byNameSpyMatcher(SPY))
-						.build();
-			});
+			super(() -> MatchingDoubleFactory.builder()
+					.mock(aMock, byNameMockMatcher(MOCK))
+					.spy(aSpy, byNameSpyMatcher(SPY))
+					.build());
 		}
 	}
 
