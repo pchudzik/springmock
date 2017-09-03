@@ -1,14 +1,17 @@
 package com.pchudzik.springmock.spock.spring
 
+import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition
+import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry
 import org.spockframework.mock.MockUtil
 import org.springframework.beans.factory.FactoryBean
 import org.springframework.test.context.TestContext
 import spock.lang.Specification
 
-import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.bean
-import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.buildAppContext
-import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.withEmptyDoubleRegistry
+import java.util.stream.Stream
+
+import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.*
 import static com.pchudzik.springmock.spock.spring.MockAttachingTestExecutionListener.MOCKED_BEANS_NAMES
+import static java.util.Collections.emptyList
 
 class MockAttachingTestExecutionListenerTest extends Specification {
 	def specification = new Specification() {}
@@ -38,22 +41,27 @@ class MockAttachingTestExecutionListenerTest extends Specification {
 
 	def "should attach detached mocks to specification"() {
 		given:
-		final mock = Mock(Object)
-		final spy = Spy(new Object())
+		final aMock = Mock(Object)
+		final aSpy = Spy(new Object())
+		final mockName = "mock"
+		final spyName = "spy"
 		testContext.getApplicationContext() >> buildAppContext([
 				bean("notMock", new Object()),
-				bean("mock", mock),
-				bean("spy", spy),
-				withEmptyDoubleRegistry()
+				bean(mockName, aMock),
+				bean(spyName, aSpy),
+				withDoubleRegistry(new DoubleRegistry(
+						mocks([doubleDefinition(mockName)]),
+						spies([doubleDefinition(spyName)])
+				))
 		])
 
 		when:
 		listener.beforeTestMethod(testContext)
 
 		then:
-		1 * testContext.setAttribute(MOCKED_BEANS_NAMES, [mock, spy])
-		1 * mockUtil.attachMock(mock, specification)
-		1 * mockUtil.attachMock(spy, specification)
+		1 * testContext.setAttribute(MOCKED_BEANS_NAMES, [aMock, aSpy])
+		1 * mockUtil.attachMock(aMock, specification)
+		1 * mockUtil.attachMock(aSpy, specification)
 
 		and:
 		0 * mockUtil.attachMock(_, specification)
@@ -62,10 +70,14 @@ class MockAttachingTestExecutionListenerTest extends Specification {
 	def "should attach mocked factory beans to context"() {
 		given:
 		final factoryBeanMock = Mock(FactoryBean)
+		final factoryBeanMockName = "factoryBean"
 		testContext.getApplicationContext() >> buildAppContext([
 				bean("notAMock", new Object()),
-				bean("factoryBean", factoryBeanMock),
-				withEmptyDoubleRegistry()
+				bean(factoryBeanMockName, factoryBeanMock),
+				withDoubleRegistry(new DoubleRegistry(
+						mocks([doubleDefinition(factoryBeanMockName, FactoryBean)]),
+						spies(emptyList())
+				))
 		])
 
 		when:
@@ -84,12 +96,18 @@ class MockAttachingTestExecutionListenerTest extends Specification {
 		final factoryBeanMock = Mock(FactoryBean)
 		final regularMock = Mock(Object)
 		final regularSpy = Spy(new Object())
+		final factoryBeanMockName = "factoryBeanMock"
+		final mockName = "regularMock"
+		final spyName = "regularSpy"
 		testContext.getApplicationContext() >> buildAppContext([
 				bean("notMock", new Object()),
-				bean("factoryBeanMock", factoryBeanMock),
-				bean("regularMock", regularMock),
-				bean("regularSpy", regularSpy),
-				withEmptyDoubleRegistry()
+				bean(factoryBeanMockName, factoryBeanMock),
+				bean(mockName, regularMock),
+				bean(spyName, regularSpy),
+				withDoubleRegistry(new DoubleRegistry(
+						mocks([doubleDefinition(mockName), doubleDefinition(factoryBeanMockName, FactoryBean)]),
+						spies([doubleDefinition(spyName)])
+				))
 		])
 		listener.beforeTestMethod(testContext)
 
@@ -119,17 +137,33 @@ class MockAttachingTestExecutionListenerTest extends Specification {
 		final parentSpy = Spy(new Object())
 		final childMock = Mock(Object)
 		final childSpy = Spy(new Object())
+		final parentMockName = "parentMock"
+		final parentSpyName = "parentSpy"
+		final childMockName = "childMock"
+		final childSpyName = "childSpy"
+		final doubleRegistry = withDoubleRegistry(new DoubleRegistry(
+				mocks([
+						doubleDefinition(parentMockName),
+						doubleDefinition(childMockName)
+				]),
+				spies([
+						doubleDefinition(parentSpyName),
+						doubleDefinition(childSpyName)
+				])
+		))
+
+		and:
 		final parentContext = buildAppContext([
-				bean("parentMock", parentMock),
-				bean("parentSpy", parentSpy),
-				bean("parentNotAMock", new Object()),
-				withEmptyDoubleRegistry()
+				bean(parentMockName, parentMock),
+				bean(parentSpyName, parentSpy),
+				bean("parentNotAMock", new Object())
 		])
-		final childContext = buildAppContext(parentContext, [
-				childMock    : childMock,
-				childSpy     : childSpy,
-				childNotAMock: new Object()
-		])
+		final childContext = buildAppContext(parentContext, Stream.of(
+				bean(childMockName, childMock),
+				bean(childSpyName, childSpy),
+				bean("childNotAMock", new Object()),
+				doubleRegistry
+		))
 		testContext.getApplicationContext() >> childContext
 
 		when:
@@ -142,5 +176,17 @@ class MockAttachingTestExecutionListenerTest extends Specification {
 
 		and:
 		0 * mockUtil.attachMock(_, specification)
+	}
+
+	private DoubleDefinition doubleDefinition(String name, Class<?> clazz = Object.class) {
+		DoubleDefinition.builder().name(name).doubleClass(clazz).build()
+	}
+
+	private Collection<DoubleDefinition> mocks(Collection<DoubleDefinition> mocksDefinitions) {
+		return mocksDefinitions
+	}
+
+	private Collection<DoubleDefinition> spies(Collection<DoubleDefinition> spiesDefinitions) {
+		return spiesDefinitions
 	}
 }

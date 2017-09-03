@@ -17,7 +17,7 @@ import static java.util.stream.Collectors.toMap;
 
 public class ApplicationContextCreator {
 	public static ApplicationContext buildAppContext(Stream<TestBean> beans, Collection<BeanFactoryPostProcessor> postProcessors) {
-		return buildAppContext(null, asMap(beans), postProcessors);
+		return buildAppContext(null, beans, postProcessors);
 	}
 
 	public static ApplicationContext buildAppContext(Collection<TestBean> beans) {
@@ -29,7 +29,7 @@ public class ApplicationContextCreator {
 	}
 
 	public static ApplicationContext buildAppContext(ApplicationContext parent, Stream<TestBean> beans) {
-		return buildAppContext(parent, asMap(beans));
+		return buildAppContext(parent, beans, emptyList());
 	}
 
 	public static TestBean withEmptyDoubleRegistry() {
@@ -50,29 +50,20 @@ public class ApplicationContextCreator {
 		return bean(DoubleRegistry.BEAN_NAME, registry);
 	}
 
-	public static ApplicationContext buildAppContext(ApplicationContext parent, Map<String, Object> beans) {
-		return buildAppContext(parent, beans, emptyList());
-	}
-
 	public static ApplicationContext buildAppContext(ApplicationContext parent, Stream<TestBean> beans, Collection<BeanFactoryPostProcessor> postProcessors) {
-		return buildAppContext(parent, asMap(beans), postProcessors);
-	}
-
-	public static ApplicationContext buildAppContext(ApplicationContext parent, Map<String, Object> beans, Collection<BeanFactoryPostProcessor> postProcessors) {
 		final DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
 		final GenericApplicationContext applicationContext = new GenericApplicationContext(beanFactory, parent);
 
 		postProcessors.forEach(applicationContext::addBeanFactoryPostProcessor);
 
-		beans.entrySet()
-				.forEach(entry -> {
-					final String factoryBean = entry.getKey() + "_factory";
-					beanFactory.registerSingleton(factoryBean, (Supplier<Object>) entry::getValue);
-					beanFactory.registerBeanDefinition(entry.getKey(), BeanDefinitionBuilder
-							.rootBeanDefinition(entry.getValue() != null ? entry.getValue().getClass() : Object.class)
-							.setFactoryMethodOnBean("get", factoryBean)
-							.getBeanDefinition());
-				});
+		beans.forEach(entry -> {
+			final String factoryBean = entry.getName() + "_factory";
+			beanFactory.registerSingleton(factoryBean, (Supplier<Object>) entry::getBean);
+			beanFactory.registerBeanDefinition(entry.getName(), BeanDefinitionBuilder
+					.rootBeanDefinition(entry.getBean() != null ? entry.getBean().getClass() : Object.class)
+					.setFactoryMethodOnBean("get", factoryBean)
+					.getBeanDefinition());
+		});
 
 		applicationContext.refresh();
 

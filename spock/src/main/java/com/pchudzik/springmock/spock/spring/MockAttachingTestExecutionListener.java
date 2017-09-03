@@ -1,11 +1,12 @@
 package com.pchudzik.springmock.spock.spring;
 
-import com.pchudzik.springmock.infrastructure.spring.util.ApplicationContextWalker;
+import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
+import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import com.pchudzik.springmock.spock.SpockConstants;
 import org.spockframework.mock.MockUtil;
 import org.springframework.beans.factory.BeanIsNotAFactoryException;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
@@ -14,7 +15,6 @@ import spock.lang.Specification;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.springframework.beans.factory.BeanFactory.FACTORY_BEAN_PREFIX;
 
@@ -47,21 +47,16 @@ public class MockAttachingTestExecutionListener extends AbstractTestExecutionLis
 		final Specification specification = (Specification) testInstance;
 		final List<Object> mocks = new LinkedList<>();
 		final ApplicationContext applicationContext = testContext.getApplicationContext();
-		final ApplicationContextWalker contextWalker = new ApplicationContextWalker(applicationContext);
+		final DoubleRegistry doubleRegistry = applicationContext.getBean(DoubleRegistry.BEAN_NAME, DoubleRegistry.class);
 
-		for (String beanName : contextWalker.getBeanDefinitionNames()) {
-			final BeanDefinition beanDefinition = contextWalker.getBeanDefinition(beanName);
-			if (!beanDefinition.isAbstract() && beanDefinition.isSingleton()) {
-				Stream
-						.of(
-								tryToGetBean(applicationContext, beanName),
-								tryToGetBean(applicationContext, FACTORY_BEAN_PREFIX + beanName))
-						.filter(mockUtil::isMock)
-						.forEach(mock -> {
-							mocks.add(mock);
-							mockUtil.attachMock(mock, specification);
-						});
-			}
+		for (DoubleDefinition doubleDefinition : doubleRegistry.doublesSearch()) {
+			final String doubleNameInSpringContext = isFactoryBeanMock(doubleDefinition)
+					? FACTORY_BEAN_PREFIX + doubleDefinition.getName()
+					: doubleDefinition.getName();
+			final Object doubleBean = tryToGetBean(applicationContext, doubleNameInSpringContext);
+
+			mocks.add(doubleBean);
+			mockUtil.attachMock(doubleBean, specification);
 		}
 
 		testContext.setAttribute(MOCKED_BEANS_NAMES, mocks);
@@ -81,10 +76,15 @@ public class MockAttachingTestExecutionListener extends AbstractTestExecutionLis
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<Object> getMocksFromContext(TestContext testContext) {
 		return Optional
 				.ofNullable((List<Object>) testContext.getAttribute(MOCKED_BEANS_NAMES))
 				.orElseGet(LinkedList::new);
 
+	}
+
+	private boolean isFactoryBeanMock(DoubleDefinition doubleDefinition) {
+		return FactoryBean.class.isAssignableFrom(doubleDefinition.getDoubleClass());
 	}
 }
