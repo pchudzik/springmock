@@ -42,7 +42,7 @@ public class DoubleRegistryParserDuplicatedMockDefinitionsTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getMocks(),
+				doubleRegistry.mockSearch(),
 				contains(allOf(
 						doubleForClass(MockService.class),
 						doubleWithName(MOCK_NAME))));

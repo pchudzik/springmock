@@ -1,6 +1,7 @@
 package com.pchudzik.springmock.infrastructure.definition.registry;
 
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,5 +80,12 @@ public class DoubleSearch implements Iterable<DoubleDefinition> {
 	@Override
 	public Iterator<DoubleDefinition> iterator() {
 		return new ArrayList<>(doubles).iterator();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+				.append("doubles", doubles)
+				.toString();
 	}
 }

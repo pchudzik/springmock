@@ -42,7 +42,7 @@ public class DoubleRegistryParserDuplicatedSpiesDefinitionsTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getMocks(),
+				doubleRegistry.mockSearch(),
 				contains(allOf(
 						doubleForClass(SpyService.class),
 						doubleWithName(SPY_NAME))));

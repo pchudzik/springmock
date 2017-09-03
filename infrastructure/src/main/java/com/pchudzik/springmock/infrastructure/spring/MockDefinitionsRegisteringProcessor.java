@@ -26,7 +26,7 @@ public class MockDefinitionsRegisteringProcessor implements BeanFactoryPostProce
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
 		doubleRegistry
-				.getMocks()
+				.mockSearch()
 				.forEach(definition -> doubleDefinitionsRegistrationContext.registerMock(
 						(BeanDefinitionRegistry) configurableListableBeanFactory,
 						definition));

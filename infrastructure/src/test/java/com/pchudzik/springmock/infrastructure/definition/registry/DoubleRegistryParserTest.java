@@ -10,10 +10,10 @@ import java.lang.annotation.Annotation;
 
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionMatchers.*;
 import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistryTestParser.parseClass;
-import static com.pchudzik.springmock.infrastructure.definition.registry.IterableHelper.getFirstElement;
+import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleSearchMatchers.hasSize;
+import static com.pchudzik.springmock.infrastructure.definition.registry.IterableHelper.getOnlyElement;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.util.ReflectionUtils.findField;
@@ -35,9 +35,9 @@ public class DoubleRegistryParserTest {
 		final DoubleRegistry registry = parseClass(MultipleAutowiredMocks.class);
 
 		//then
-		assertEquals(registry.getMocks().size(), 2);
+		assertThat(registry.mockSearch(), hasSize(2));
 		assertThat(
-				registry.getMocks(),
+				registry.mockSearch(),
 				containsInAnyOrder(
 						allOf(doubleWithName(ANY_SERVICE1_NAME), doubleForClass(AnyService1.class)),
 						allOf(doubleWithName(ANY_SERVICE2_NAME), doubleForClass(AnyService2.class))
@@ -50,9 +50,8 @@ public class DoubleRegistryParserTest {
 		final DoubleRegistry doubleRegistry = parseClass(RegisteredAliasesMocks.class);
 
 		//then
-		assertEquals(1, doubleRegistry.getMocks().size());
 		assertThat(
-				getFirstElement(doubleRegistry.getMocks()),
+				getOnlyElement(doubleRegistry.mockSearch()),
 				doubleWithAliases(asList(SERVICE1_ALIAS_1, SERVICE1_ALIAS_2)));
 	}
 
@@ -62,9 +61,8 @@ public class DoubleRegistryParserTest {
 		final DoubleRegistry doubleRegistry = parseClass(MockWithoutNameSpec.class);
 
 		//then
-		assertEquals(1, doubleRegistry.getMocks().size());
 		assertThat(
-				getFirstElement(doubleRegistry.getMocks()),
+				getOnlyElement(doubleRegistry.mockSearch()),
 				doubleWithName(MockWithoutNameSpec.FIELD_NAME));
 	}
 
@@ -74,9 +72,9 @@ public class DoubleRegistryParserTest {
 		final DoubleRegistry doubleRegistry = parseClass(MultipleRegisteredSpies.class);
 
 		//then
-		assertEquals(2, doubleRegistry.getSpies().size());
+		assertThat(doubleRegistry.spySearch(), hasSize(2));
 		assertThat(
-				doubleRegistry.getSpies(),
+				doubleRegistry.spySearch(),
 				containsInAnyOrder(
 						allOf(doubleWithName(ANY_SERVICE1_NAME), doubleForClass(AnyService1.class)),
 						allOf(doubleWithName(ANY_SERVICE2_NAME), doubleForClass(AnyService2.class))));
@@ -88,9 +86,8 @@ public class DoubleRegistryParserTest {
 		final DoubleRegistry doubleRegistry = parseClass(SpyWithoutNameSpec.class);
 
 		//then
-		assertEquals(1, doubleRegistry.getSpies().size());
 		assertThat(
-				getFirstElement(doubleRegistry.getSpies()),
+				getOnlyElement(doubleRegistry.spySearch()),
 				doubleWithName(SpyWithoutNameSpec.FIELD_NAME));
 	}
 
@@ -107,7 +104,7 @@ public class DoubleRegistryParserTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getMocks(),
+				doubleRegistry.mockSearch(),
 				hasItem(doubleWithConfiguration(configuration)));
 	}
 
@@ -125,7 +122,7 @@ public class DoubleRegistryParserTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getSpies(),
+				doubleRegistry.spySearch(),
 				hasItem(doubleWithConfiguration(configuration)));
 	}
 
@@ -145,7 +142,7 @@ public class DoubleRegistryParserTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getMocks(),
+				doubleRegistry.mockSearch(),
 				hasItem(doubleWithConfiguration(configuration)));
 	}
 
@@ -165,7 +162,7 @@ public class DoubleRegistryParserTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getSpies(),
+				doubleRegistry.spySearch(),
 				hasItem(doubleWithConfiguration(configuration)));
 	}
 

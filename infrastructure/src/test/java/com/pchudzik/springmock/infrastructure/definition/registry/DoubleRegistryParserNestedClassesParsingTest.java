@@ -6,9 +6,9 @@ import org.junit.Test;
 import org.springframework.context.annotation.Configuration;
 
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionMatchers.doubleWithName;
-import static com.pchudzik.springmock.infrastructure.definition.registry.IterableHelper.getFirstElement;
+import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleSearchMatchers.hasSize;
+import static com.pchudzik.springmock.infrastructure.definition.registry.IterableHelper.getOnlyElement;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class DoubleRegistryParserNestedClassesParsingTest {
@@ -18,14 +18,12 @@ public class DoubleRegistryParserNestedClassesParsingTest {
 		final DoubleRegistry doubleRegistry = DoubleRegistryTestParser.parseClass(SpyAndMockOnlyInConfiguration_TestCase.class);
 
 		//then
-		assertEquals(1, doubleRegistry.getMocks().size());
 		assertThat(
-				getFirstElement(doubleRegistry.getMocks()),
+				getOnlyElement(doubleRegistry.mockSearch()),
 				doubleWithName(SpyAndMockOnlyInConfiguration_TestCase.MOCK_FIELD_NAME));
 
-		assertEquals(1, doubleRegistry.getSpies().size());
 		assertThat(
-				getFirstElement(doubleRegistry.getSpies()),
+				getOnlyElement(doubleRegistry.spySearch()),
 				doubleWithName(SpyAndMockOnlyInConfiguration_TestCase.SPY_FIELD_NAME));
 	}
 
@@ -35,14 +33,12 @@ public class DoubleRegistryParserNestedClassesParsingTest {
 		final DoubleRegistry doubleRegistry = DoubleRegistryTestParser.parseClass(SameSpyAndMockInConfigurationAndTest_TestCase.class);
 
 		//then
-		assertEquals(1, doubleRegistry.getMocks().size());
 		assertThat(
-				getFirstElement(doubleRegistry.getMocks()),
+				getOnlyElement(doubleRegistry.mockSearch()),
 				doubleWithName(SameSpyAndMockInConfigurationAndTest_TestCase.MOCK_FIELD_NAME));
 
-		assertEquals(1, doubleRegistry.getSpies().size());
 		assertThat(
-				getFirstElement(doubleRegistry.getSpies()),
+				getOnlyElement(doubleRegistry.spySearch()),
 				doubleWithName(SameSpyAndMockInConfigurationAndTest_TestCase.SPY_FIELD_NAME));
 	}
 
@@ -52,14 +48,14 @@ public class DoubleRegistryParserNestedClassesParsingTest {
 		final DoubleRegistry doubleRegistry = DoubleRegistryTestParser.parseClass(DifferentSpyAndMockInConfigurationAndTest_TestCase.class);
 
 		//then
-		assertEquals(2, doubleRegistry.getMocks().size());
-		assertThat(doubleRegistry.getMocks(),
+		assertThat(doubleRegistry.mockSearch(), hasSize(2));
+		assertThat(doubleRegistry.mockSearch(),
 				containsInAnyOrder(
 						doubleWithName(DifferentSpyAndMockInConfigurationAndTest_TestCase.TEST_MOCK_NAME),
 						doubleWithName(DifferentSpyAndMockInConfigurationAndTest_TestCase.CONFIG_MOCK_NAME)));
 
-		assertEquals(2, doubleRegistry.getSpies().size());
-		assertThat(doubleRegistry.getSpies(),
+		assertThat(doubleRegistry.spySearch(), hasSize(2));
+		assertThat(doubleRegistry.spySearch(),
 				containsInAnyOrder(
 						doubleWithName(DifferentSpyAndMockInConfigurationAndTest_TestCase.TEST_SPY_NAME),
 						doubleWithName(DifferentSpyAndMockInConfigurationAndTest_TestCase.CONFIG_SPY_NAME)));

@@ -19,12 +19,12 @@ public class DoubleRegistryParserClassLevelParsingTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getMocks(),
+				doubleRegistry.mockSearch(),
 				contains(allOf(
 						doubleForClass(MockService.class),
 						doubleWithName(SimpleTestCase.MOCK_NAME))));
 		assertThat(
-				doubleRegistry.getSpies(),
+				doubleRegistry.spySearch(),
 				contains(allOf(
 						doubleForClass(SpyService.class),
 						doubleWithName(SimpleTestCase.SPY_NAME))));
@@ -37,12 +37,12 @@ public class DoubleRegistryParserClassLevelParsingTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getMocks(),
+				doubleRegistry.mockSearch(),
 				contains(allOf(
 						doubleForClass(MockService.class),
 						doubleWithName(WithConfigurationTestCase.MOCK_NAME))));
 		assertThat(
-				doubleRegistry.getSpies(),
+				doubleRegistry.spySearch(),
 				contains(allOf(
 						doubleForClass(SpyService.class),
 						doubleWithName(WithConfigurationTestCase.SPY_NAME))));
@@ -55,7 +55,7 @@ public class DoubleRegistryParserClassLevelParsingTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getMocks(),
+				doubleRegistry.mockSearch(),
 				containsInAnyOrder(
 						doubleWithName(RepetableMocksTestCase.MOCK_1_NAME),
 						doubleWithName(RepetableMocksTestCase.MOCK_2_NAME)));
@@ -68,7 +68,7 @@ public class DoubleRegistryParserClassLevelParsingTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getSpies(),
+				doubleRegistry.spySearch(),
 				containsInAnyOrder(
 						doubleWithName(RepetableSpiesTestCase.SPY_1_NAME),
 						doubleWithName(RepetableSpiesTestCase.SPY_2_NAME)));
@@ -81,7 +81,7 @@ public class DoubleRegistryParserClassLevelParsingTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getMocks(),
+				doubleRegistry.mockSearch(),
 				contains(doubleWithName(MockWithoutNameTestCase.EXPECTED_MOCK_NAME)));
 	}
 
@@ -92,7 +92,7 @@ public class DoubleRegistryParserClassLevelParsingTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getMocks(),
+				doubleRegistry.mockSearch(),
 				contains(doubleWithName(MockWithCustomNameTestCase.MOCK_NAME)));
 	}
 
@@ -103,7 +103,7 @@ public class DoubleRegistryParserClassLevelParsingTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getSpies(),
+				doubleRegistry.spySearch(),
 				contains(doubleWithName(SpyWithoutNameTestCase.EXPECTED_SPY_NAME)));
 	}
 
@@ -114,7 +114,7 @@ public class DoubleRegistryParserClassLevelParsingTest {
 
 		//then
 		assertThat(
-				doubleRegistry.getSpies(),
+				doubleRegistry.spySearch(),
 				contains(doubleWithName(SpyWithCustomNameTestCase.SPY_NAME)));
 	}
 

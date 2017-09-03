@@ -33,14 +33,6 @@ public class DoubleRegistry {
 				.collect(Collectors.toSet());
 	}
 
-	public Collection<DoubleDefinition> getMocks() {
-		return Collections.unmodifiableCollection(mocks);
-	}
-
-	public Collection<DoubleDefinition> getSpies() {
-		return Collections.unmodifiableCollection(spies);
-	}
-
 	public DoubleSearch spySearch() {
 		return new DoubleSearch(getSpies());
 	}
@@ -73,5 +65,13 @@ public class DoubleRegistry {
 	@Override
 	public int hashCode() {
 		return Objects.hash(mocks, spies);
+	}
+
+	private Collection<DoubleDefinition> getMocks() {
+		return Collections.unmodifiableCollection(mocks);
+	}
+
+	private Collection<DoubleDefinition> getSpies() {
+		return Collections.unmodifiableCollection(spies);
 	}
 }

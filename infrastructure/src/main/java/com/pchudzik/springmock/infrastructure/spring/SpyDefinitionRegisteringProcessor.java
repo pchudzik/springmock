@@ -10,7 +10,6 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -27,8 +26,7 @@ public class SpyDefinitionRegisteringProcessor implements BeanFactoryPostProcess
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		final Collection<DoubleDefinition> spies = doubleRegistry.getSpies();
-		for (DoubleDefinition spy : spies) {
+		for (DoubleDefinition spy : doubleRegistry.spySearch()) {
 			final Optional<BeanDefinition> beanDefinition = findBeanDefinition(beanFactory, spy);
 			if (!beanDefinition.isPresent()) {
 				doubleDefinitionsRegistrationContext.registerSpy((BeanDefinitionRegistry) beanFactory, spy);
