@@ -9,11 +9,12 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.annotation.*;
 import java.lang.reflect.Field;
 
+import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleConfigurationResolver.MISSING_CONFIGURATION_ANNOTATION;
+import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleConfigurationResolver.NO_FIELD;
 import static org.junit.Assert.assertEquals;
 
 public class DoubleConfigurationResolverTest {
 	private static final String doubleName = "aDouble";
-	private Annotation MISSING_CONFIGURATION_ANNOTATION = null;
 
 	private DoubleConfigurationParser configurationParser = Mockito.mock(DoubleConfigurationParser.class);
 	private DoubleConfigurationResolver configurationResolver = new DoubleConfigurationResolver(DoubleConfig.class, configurationParser);
@@ -54,6 +55,24 @@ public class DoubleConfigurationResolverTest {
 	@Test
 	public void should_return_spy_configuration_from_not_annotated_field() {
 		resolveSpyConfiguration(otherField());
+
+		Mockito
+				.verify(configurationParser)
+				.parseSpyConfiguration(doubleName, MISSING_CONFIGURATION_ANNOTATION);
+	}
+
+	@Test
+	public void should_resolve_class_level_mock_configuration() {
+		configurationResolver.resolveMockConfiguration(doubleName, NO_FIELD);
+
+		Mockito
+				.verify(configurationParser)
+				.parseMockConfiguration(doubleName, MISSING_CONFIGURATION_ANNOTATION);
+	}
+
+	@Test
+	public void should_resolve_class_level_spy_configuration() {
+		configurationResolver.resolveSpyConfiguration(doubleName, NO_FIELD);
 
 		Mockito
 				.verify(configurationParser)

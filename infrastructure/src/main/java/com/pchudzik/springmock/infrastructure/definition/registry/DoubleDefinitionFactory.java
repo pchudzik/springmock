@@ -68,6 +68,9 @@ class DoubleDefinitionFactory<T extends Annotation> {
 				.name(doubleName)
 				.aliases(details.getAlias())
 				.doubleClass(doubleClass)
+				.doubleConfiguration(details
+						.resolveConfiguration(doubleConfigurationResolver)
+						.apply(doubleName, DoubleConfigurationResolver.NO_FIELD))
 				.build();
 	}
 }
