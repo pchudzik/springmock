@@ -297,6 +297,7 @@ issue description or as PR.
   
   * mocks configuration - [@MockitoDouble](mockito/src/main/java/com/pchudzik/springmock/mockito/configuration/MockitoDouble.java)
   * fixed mocks reset in context hierarchy
+  * optimizations to listener responsible for mock reset between tests methods executions
   * class level mocks 
     [sample](infrastructure/src/test/java/com/pchudzik/springmock/infrastructure/test/TestCaseClassLevelDoublesShouldBeRegisteredTest.java)
   * mocks and spies can be created and injected into @Configuration classes

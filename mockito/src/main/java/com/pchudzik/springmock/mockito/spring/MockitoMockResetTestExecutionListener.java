@@ -3,7 +3,6 @@ package com.pchudzik.springmock.mockito.spring;
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleSearch;
-import com.pchudzik.springmock.infrastructure.spring.util.ApplicationContextWalker;
 import com.pchudzik.springmock.mockito.configuration.MockitoDoubleConfiguration;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
@@ -35,13 +34,13 @@ public class MockitoMockResetTestExecutionListener extends AbstractTestExecution
 
 	private void resetMocks(TestContext testContext, Predicate<MockitoDoubleConfiguration> shouldResetPredicate) throws Exception {
 		final ApplicationContext applicationContext = testContext.getApplicationContext();
-		final ApplicationContextWalker contextWalker = new ApplicationContextWalker(applicationContext);
 		final DoubleRegistry doubleRegistry = applicationContext.getBean(DoubleRegistry.BEAN_NAME, DoubleRegistry.class);
 		final DoubleSearch doubleSearch = doubleRegistry.doublesSearch();
 
-		for (String beanName : contextWalker.getBeanDefinitionNames()) {
+		for (DoubleDefinition doubleDefinition : doubleRegistry.doublesSearch()) {
+			final String beanName = doubleDefinition.getName();
 			final Object bean = applicationContext.getBean(beanName);
-			if (Mockito.mockingDetails(bean).isMock() && doubleSearch.containsExactlyOneDouble(beanName)) {
+			if (Mockito.mockingDetails(bean).isMock()) {
 				final DoubleDefinition definition = doubleSearch.findOneDefinition(beanName);
 				final MockitoDoubleConfiguration configuration = definition.getConfiguration(MockitoDoubleConfiguration.class);
 
