@@ -1,4 +1,4 @@
-package com.pchudzik.springmock.mockito.test.mock;
+package com.pchudzik.springmock.mockito.test.acceptance.mock;
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import org.junit.FixMethodOrder;
@@ -24,31 +24,31 @@ import static org.mockito.Mockito.times;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ShouldResetMockBetweenEachTestInvocationTest {
 	@AutowiredMock
-	AnyService anyService;
+	Service service;
 
 	@Test
 	public void test_01() {
 		//when
-		anyService.hello();
+		service.hello();
 
 		//then
 		Mockito
-				.verify(anyService, times(1))
+				.verify(service, times(1))
 				.hello();
 	}
 
 	@Test
 	public void test_02() {
 		//when
-		anyService.hello();
+		service.hello();
 
 		//then
 		Mockito
-				.verify(anyService, times(1))
+				.verify(service, times(1))
 				.hello();
 	}
 
-	private interface AnyService {
-		String hello();
+	private interface Service {
+		void hello();
 	}
 }

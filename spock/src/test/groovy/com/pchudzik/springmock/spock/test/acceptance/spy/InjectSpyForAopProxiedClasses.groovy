@@ -1,4 +1,4 @@
-package com.pchudzik.springmock.spock.test.spy
+package com.pchudzik.springmock.spock.test.acceptance.spy
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy
 import org.springframework.context.annotation.Bean

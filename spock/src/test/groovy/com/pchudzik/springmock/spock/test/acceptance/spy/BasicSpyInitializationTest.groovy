@@ -1,10 +1,7 @@
-package com.pchudzik.springmock.spock.test.spy
+package com.pchudzik.springmock.spock.test.acceptance.spy
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy
 import com.pchudzik.springmock.spock.configuration.SpockDouble
-import com.pchudzik.springmock.spock.test.spy.infrastructure.Service
-import com.pchudzik.springmock.spock.test.spy.infrastructure.ServiceInteractionRecorder
-import com.pchudzik.springmock.spock.test.spy.infrastructure.SpyConfig
 import org.spockframework.mock.DefaultJavaLangObjectInteractions
 import org.spockframework.mock.IDefaultResponse
 import org.spockframework.mock.IMockInvocation
@@ -12,7 +9,6 @@ import org.spockframework.mock.MockUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Import
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -69,11 +65,20 @@ class BasicSpyInitializationTest extends Specification {
 	}
 
 	@Configuration
-	@Import(SpyConfig)
 	static class Config {
 		@Bean
 		Service withDefaultResponse() {
 			return new Service(new ServiceInteractionRecorder())
+		}
+
+		@Bean
+		ServiceInteractionRecorder interactionRecorder() {
+			new ServiceInteractionRecorder()
+		}
+
+		@Bean
+		Service service() {
+			new Service(interactionRecorder())
 		}
 	}
 
@@ -88,6 +93,48 @@ class BasicSpyInitializationTest extends Specification {
 			}
 
 			return DEFAULT_RESPONSE
+		}
+	}
+
+	static class Service {
+		public static final String DEFAULT_RESPONSE = "not a spy"
+		private final ServiceInteractionRecorder serviceInteractionRecorder
+
+		Service(ServiceInteractionRecorder serviceInteractionRecorder) {
+			this.serviceInteractionRecorder = serviceInteractionRecorder
+		}
+
+		String hello(String argument) {
+			serviceInteractionRecorder.record(argument);
+			return DEFAULT_RESPONSE;
+		}
+
+		ServiceInteractionRecorder getServiceInteractionRecorder() {
+			return serviceInteractionRecorder
+		}
+	}
+
+	static class ServiceInteractionRecorder {
+		private LinkedList<String> interactions = []
+
+		void record(String argument) {
+			this.interactions.add(argument)
+		}
+
+		List<String> getInteractions() {
+			return Collections.unmodifiableList(interactions)
+		}
+
+		String getLatestInteraction() {
+			return interactions[0]
+		}
+
+		void resetLatestInteraction() {
+			interactions.removeLast()
+		}
+
+		void resetInteractions() {
+			interactions = []
 		}
 	}
 }

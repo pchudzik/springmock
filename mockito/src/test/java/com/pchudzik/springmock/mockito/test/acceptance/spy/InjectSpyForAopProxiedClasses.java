@@ -1,4 +1,4 @@
-package com.pchudzik.springmock.mockito.test.spy;
+package com.pchudzik.springmock.mockito.test.acceptance.spy;
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
 import org.junit.Test;

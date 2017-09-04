@@ -1,8 +1,7 @@
-package com.pchudzik.springmock.mockito.test.mock;
+package com.pchudzik.springmock.mockito.test.acceptance.mock;
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.mockito.configuration.MockitoDouble;
-import com.pchudzik.springmock.mockito.test.mock.infrastructure.AnyService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.internal.stubbing.answers.Returns;
@@ -58,6 +57,10 @@ public class BasicMockInitializationAcceptanceTest {
 		isAssignable(
 				Closeable.class,
 				withExtraInterface.getClass());
+	}
+
+	private interface AnyService {
+		String hello();
 	}
 
 	private static class ReturnsHelloMock extends Returns {

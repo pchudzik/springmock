@@ -1,7 +1,6 @@
-package com.pchudzik.springmock.spock.test.mock
+package com.pchudzik.springmock.spock.test.acceptance.mock
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock
-import com.pchudzik.springmock.spock.test.mock.infrastructure.AnyService
 import org.spockframework.mock.MockUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
@@ -24,5 +23,9 @@ class MockDependenciesShouldBeSkippedFromAutowiringTest extends Specification {
 		String toStuff() {
 			anyService.hello()
 		}
+	}
+
+	private static abstract class AnyService {
+		abstract String hello()
 	}
 }

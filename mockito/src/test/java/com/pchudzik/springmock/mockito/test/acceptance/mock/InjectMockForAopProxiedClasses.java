@@ -1,4 +1,4 @@
-package com.pchudzik.springmock.mockito.test.mock;
+package com.pchudzik.springmock.mockito.test.acceptance.mock;
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import org.junit.Test;

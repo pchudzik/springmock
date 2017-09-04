@@ -1,6 +1,5 @@
-package com.pchudzik.springmock.mockito.test.mock;
+package com.pchudzik.springmock.mockito.test.acceptance.mock;
 
-import com.pchudzik.springmock.mockito.test.mock.infrastructure.AnyService;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +18,10 @@ public class MockDependenciesShouldBeSkippedFromAutowiringTest {
 	public void should_inject_mock_and_skip_dependency_injection() {
 		//expect
 		assertTrue(mockingDetails(service).isMock());
+	}
+
+	interface AnyService {
+		String hello();
 	}
 
 	static class DestinationService {

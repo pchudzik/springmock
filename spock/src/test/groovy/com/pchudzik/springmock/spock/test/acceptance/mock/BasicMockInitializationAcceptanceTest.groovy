@@ -1,8 +1,7 @@
-package com.pchudzik.springmock.spock.test.mock
+package com.pchudzik.springmock.spock.test.acceptance.mock
 
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock
 import com.pchudzik.springmock.spock.configuration.SpockDouble
-import com.pchudzik.springmock.spock.test.mock.infrastructure.AnyService
 import org.spockframework.mock.DefaultJavaLangObjectInteractions
 import org.spockframework.mock.IDefaultResponse
 import org.spockframework.mock.IMockInvocation
@@ -21,7 +20,7 @@ class BasicMockInitializationAcceptanceTest extends Specification {
 
     def "should inject mock"() {
         expect:
-        true == new MockUtil().isMock(anyService)
+        new MockUtil().isMock(anyService)
     }
 
     def "should inject functional mock"() {
@@ -52,5 +51,9 @@ class BasicMockInitializationAcceptanceTest extends Specification {
 
             return DEFAULT_RESPONSE
         }
+    }
+
+    static abstract class AnyService {
+        abstract String hello()
     }
 }
