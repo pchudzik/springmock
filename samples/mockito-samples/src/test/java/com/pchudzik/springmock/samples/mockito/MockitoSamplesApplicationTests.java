@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@AutowiredMock(doubleClass = DoNothingService.class)
 public class MockitoSamplesApplicationTests {
 	@AutowiredMock
 	@MockitoDouble(stub = true, verbose = true)

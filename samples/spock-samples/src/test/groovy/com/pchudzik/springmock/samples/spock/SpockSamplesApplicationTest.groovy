@@ -12,6 +12,7 @@ import spock.lang.Specification
 import static TwoRepository.TWO
 
 @SpringBootTest
+@AutowiredMock(doubleClass = DoNothingService.class)
 class SpockSamplesApplicationTest extends Specification {
 	@AutowiredMock
 	@SpockDouble(stub = true)
