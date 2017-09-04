@@ -295,7 +295,7 @@ issue description or as PR.
 
 ### 1.1.0 springmock-mockito - to be released
   
-  * mocks configuration - @MockitoDouble
+  * mocks configuration - [@MockitoDouble](mockito/src/main/java/com/pchudzik/springmock/mockito/configuration/MockitoDouble.java)
   * fixed mocks reset in context hierarchy
   * class level mocks 
     [sample](infrastructure/src/test/java/com/pchudzik/springmock/infrastructure/test/TestCaseClassLevelDoublesShouldBeRegisteredTest.java)
@@ -309,7 +309,9 @@ issue description or as PR.
 
 ### 1.1.0 springmock-spock - to be released
 
-  * mocks configuration - @SpockDouble
+  * mocks configuration - [@SpockDouble](spock/src/main/java/com/pchudzik/springmock/spock/configuration/SpockDouble.java)
+  * optimizations to listener attaching mocks to the currently running specification
+  * should not fail when executing on mixed code base with spock and junit tests - [#11](https://github.com/pchudzik/springmock/issues/11) 
   * class level mocks 
     [sample](infrastructure/src/test/java/com/pchudzik/springmock/infrastructure/test/TestCaseClassLevelDoublesShouldBeRegisteredTest.java)
   * mocks and spies can be created and injected into @Configuration classes
