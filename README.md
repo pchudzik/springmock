@@ -41,6 +41,8 @@ by a library of your choice.
     * [spock](#spock-1)
 * [Problems](#problems)
 * [Changelog](#changelog)
+  * [1.1.0 - springmock-mockito - 2017.09.06](#110-springmock-mockito---20170906)
+  * [1.1.0 - springmock-spock - 2017.09.06](#110-springmock-spock---20170906)
   * [1.0.0 - 2017.07.22](#100---20170722)
 
 ## Features
@@ -293,7 +295,7 @@ issue description or as PR.
 
 ## Changelog
 
-### 1.1.0 springmock-mockito - to be released
+### 1.1.0 springmock-mockito - 2017.09.06
   
   * mocks configuration - [@MockitoDouble](mockito/src/main/java/com/pchudzik/springmock/mockito/configuration/MockitoDouble.java)
   * fixed mocks reset in context hierarchy
@@ -308,7 +310,7 @@ issue description or as PR.
     unexpected failures. In general yous should spy on existing bean instance, unless it is very trivial bean without 
     any fields. 
 
-### 1.1.0 springmock-spock - to be released
+### 1.1.0 springmock-spock - 2017.09.06
 
   * mocks configuration - [@SpockDouble](spock/src/main/java/com/pchudzik/springmock/spock/configuration/SpockDouble.java)
   * optimizations to listener attaching mocks to the currently running specification
