@@ -2,6 +2,7 @@ package com.pchudzik.springmock.infrastructure.spring.util;
 
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import org.junit.Test;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 
@@ -9,13 +10,12 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionTestFactory.doubleDefinition;
-import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.bean;
-import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.buildAppContext;
-import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.emptyDoubleRegistry;
+import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.*;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.beans.factory.BeanFactory.FACTORY_BEAN_PREFIX;
 
 public class BeanDefinitionFinderTest {
 	@Test
@@ -113,5 +113,41 @@ public class BeanDefinitionFinderTest {
 
 		//then
 		assertFalse(definition.isPresent());
+	}
+
+	@Test
+	public void should_resolve_factory_bean_definition() {
+		//given
+		final String factoryBeanName = "factoryBean";
+		final DoubleRegistry doubleRegistry = new DoubleRegistry(
+				emptyList(),
+				emptyList());
+		final ApplicationContext appCtx = buildAppContext(Stream.of(
+				bean(factoryBeanName, new AnyFactoryBean())
+		));
+		final BeanDefinitionFinder definitionFinder = new BeanDefinitionFinder(appCtx, doubleRegistry);
+
+		//when
+		Optional<BeanDefinition> definition = definitionFinder.tryToFindBeanDefinition(FACTORY_BEAN_PREFIX + factoryBeanName, FactoryBean.class);
+
+		//then
+		assertTrue(definition.isPresent());
+	}
+
+	private static class AnyFactoryBean implements FactoryBean<String> {
+		@Override
+		public String getObject() throws Exception {
+			return "string from factory";
+		}
+
+		@Override
+		public Class<?> getObjectType() {
+			return String.class;
+		}
+
+		@Override
+		public boolean isSingleton() {
+			return true;
+		}
 	}
 }

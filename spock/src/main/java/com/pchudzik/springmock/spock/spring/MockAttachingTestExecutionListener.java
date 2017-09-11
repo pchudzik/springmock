@@ -2,10 +2,10 @@ package com.pchudzik.springmock.spock.spring;
 
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
+import com.pchudzik.springmock.infrastructure.spring.util.FactoryBeanRecognizer;
 import com.pchudzik.springmock.spock.SpockConstants;
 import org.spockframework.mock.MockUtil;
 import org.springframework.beans.factory.BeanIsNotAFactoryException;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.TestContext;
@@ -15,8 +15,10 @@ import spock.lang.Specification;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
-import static org.springframework.beans.factory.BeanFactory.FACTORY_BEAN_PREFIX;
+import static com.pchudzik.springmock.infrastructure.spring.util.FactoryBeanRecognizer.isFactoryBean;
 
 /**
  * Will attach spock detached mocks to specification currently being executed.
@@ -50,13 +52,12 @@ public class MockAttachingTestExecutionListener extends AbstractTestExecutionLis
 		final DoubleRegistry doubleRegistry = applicationContext.getBean(DoubleRegistry.BEAN_NAME, DoubleRegistry.class);
 
 		for (DoubleDefinition doubleDefinition : doubleRegistry.doublesSearch()) {
-			final String doubleNameInSpringContext = isFactoryBeanMock(doubleDefinition)
-					? FACTORY_BEAN_PREFIX + doubleDefinition.getName()
-					: doubleDefinition.getName();
-			final Object doubleBean = tryToGetBean(applicationContext, doubleNameInSpringContext);
+			final Optional<Object> doubleBean = tryToGetBean(applicationContext, doubleDefinition);
 
-			mocks.add(doubleBean);
-			mockUtil.attachMock(doubleBean, specification);
+			doubleBean.ifPresent(bean -> {
+				mocks.add(bean);
+				mockUtil.attachMock(bean, specification);
+			});
 		}
 
 		testContext.setAttribute(MOCKED_BEANS_NAMES, mocks);
@@ -67,12 +68,28 @@ public class MockAttachingTestExecutionListener extends AbstractTestExecutionLis
 		getMocksFromContext(testContext).forEach(mockUtil::detachMock);
 	}
 
-	private Object tryToGetBean(ApplicationContext applicationContext, String beanName) {
+	private Optional<Object> tryToGetBean(ApplicationContext applicationContext, DoubleDefinition doubleDefinition) {
+		final Function<String, String> beanNameResolver = isFactoryBean(doubleDefinition.getDoubleClass())
+				? FactoryBeanRecognizer::getFactoryBeanName
+				: Function.identity();
+
+		return Stream
+				.concat(
+						Stream.of(doubleDefinition.getName()),
+						doubleDefinition.getAliases().stream())
+				.map(beanNameResolver)
+				.map(nameOrAlias -> tryToGetBean(applicationContext, nameOrAlias))
+				.filter(Optional::isPresent)
+				.findFirst()
+				.orElse(Optional.empty());
+	}
+
+	private Optional<Object> tryToGetBean(ApplicationContext applicationContext, String beanName) {
 		try {
 			//null is possible when mocking factoryBean without default return value
-			return applicationContext.getBean(beanName);
+			return Optional.ofNullable(applicationContext.getBean(beanName));
 		} catch (NoSuchBeanDefinitionException | BeanIsNotAFactoryException ex) {
-			return null;
+			return Optional.empty();
 		}
 	}
 
@@ -81,10 +98,5 @@ public class MockAttachingTestExecutionListener extends AbstractTestExecutionLis
 		return Optional
 				.ofNullable((List<Object>) testContext.getAttribute(MOCKED_BEANS_NAMES))
 				.orElseGet(LinkedList::new);
-
-	}
-
-	private boolean isFactoryBeanMock(DoubleDefinition doubleDefinition) {
-		return FactoryBean.class.isAssignableFrom(doubleDefinition.getDoubleClass());
 	}
 }

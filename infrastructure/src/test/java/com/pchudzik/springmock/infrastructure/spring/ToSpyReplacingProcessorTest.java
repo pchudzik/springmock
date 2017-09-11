@@ -17,6 +17,7 @@ import java.util.List;
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionTestFactory.doubleDefinition;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -149,6 +150,30 @@ public class ToSpyReplacingProcessorTest {
 
 		//then
 		Mockito.verifyZeroInteractions(doubleFactory);
+	}
+
+	@Test
+	public void should_register_spy_replacement_in_registration_context() {
+		//given
+		final Service service = new Service();
+		final String serviceName = "service";
+		final DoubleDefinition definition = DoubleDefinition.builder()
+				.doubleClass(Service.class)
+				.name(serviceName)
+				.build();
+
+		final SpyProcessorBuilder processorBuilder = new SpyProcessorBuilder()
+				.withBean(serviceName, service)
+				.withSpy(definition);
+		final ToSpyReplacingProcessor processor = processorBuilder.build();
+
+		//when
+		processor.postProcessAfterInitialization(service, serviceName);
+
+		//then
+		assertTrue(processorBuilder
+				.doubleDefinitionsRegistrationContext
+				.isBeanDefinitionRegisteredForDouble(definition));
 	}
 
 	private class SpyProcessorBuilder {

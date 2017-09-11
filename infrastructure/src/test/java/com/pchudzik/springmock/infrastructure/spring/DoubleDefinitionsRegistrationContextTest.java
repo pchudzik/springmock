@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 public class DoubleDefinitionsRegistrationContextTest {
 	private DoubleFactory doubleFactory = Mockito.mock(DoubleFactory.class);
-	private DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext = new DoubleDefinitionsRegistrationContext();
+	private DoubleDefinitionsRegistrationContext registrationContext = new DoubleDefinitionsRegistrationContext();
 
 	@Test
 	public void should_register_mock_creation() {
@@ -24,7 +24,7 @@ public class DoubleDefinitionsRegistrationContextTest {
 				.build();
 
 		//when
-		doubleDefinitionsRegistrationContext.registerMock(beanFactory, mockDefinition);
+		registrationContext.registerMock(beanFactory, mockDefinition);
 		bootstrapApplicationContext(beanFactory);
 
 		//then
@@ -43,7 +43,7 @@ public class DoubleDefinitionsRegistrationContextTest {
 				.build();
 
 		//when
-		doubleDefinitionsRegistrationContext.registerSpy(beanFactory, spyDefinition);
+		registrationContext.registerSpy(beanFactory, spyDefinition);
 		bootstrapApplicationContext(beanFactory);
 
 		//then
@@ -68,14 +68,29 @@ public class DoubleDefinitionsRegistrationContextTest {
 				.name("mock")
 				.doubleClass(Object.class)
 				.build();
-		doubleDefinitionsRegistrationContext.registerSpy(beanFactory, spyDefinition);
-		doubleDefinitionsRegistrationContext.registerMock(beanFactory, mockDefinition);
+		registrationContext.registerSpy(beanFactory, spyDefinition);
+		registrationContext.registerMock(beanFactory, mockDefinition);
 		bootstrapApplicationContext(beanFactory);
 
 		//expect
-		assertFalse(doubleDefinitionsRegistrationContext.isBeanDefinitionRegisteredForDouble(otherDouble));
-		assertTrue(doubleDefinitionsRegistrationContext.isBeanDefinitionRegisteredForDouble(spyDefinition));
-		assertTrue(doubleDefinitionsRegistrationContext.isBeanDefinitionRegisteredForDouble(mockDefinition));
+		assertFalse(registrationContext.isBeanDefinitionRegisteredForDouble(otherDouble));
+		assertTrue(registrationContext.isBeanDefinitionRegisteredForDouble(spyDefinition));
+		assertTrue(registrationContext.isBeanDefinitionRegisteredForDouble(mockDefinition));
+	}
+
+	@Test
+	public void should_detect_spies_which_replaced_original_beans() {
+		//given
+		final DoubleDefinition doubleDefinition = DoubleDefinition.builder()
+				.name("spy")
+				.doubleClass(Object.class)
+				.build();
+
+		//when
+		registrationContext.registerSpyReplacement(doubleDefinition);
+
+		//then
+		assertTrue(registrationContext.isBeanDefinitionRegisteredForDouble(doubleDefinition));
 	}
 
 	private void bootstrapApplicationContext(DefaultListableBeanFactory beanFactory) {

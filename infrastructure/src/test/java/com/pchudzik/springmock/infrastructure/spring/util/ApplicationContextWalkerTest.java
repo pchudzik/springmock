@@ -11,8 +11,7 @@ import java.util.stream.Stream;
 import static com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry.BEAN_NAME;
 import static com.pchudzik.springmock.infrastructure.spring.test.ApplicationContextCreator.*;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class ApplicationContextWalkerTest {
 	@Test
@@ -59,5 +58,44 @@ public class ApplicationContextWalkerTest {
 		assertNotNull(childDefinition);
 		assertNotNull(middleDefinition);
 		assertNotNull(parentDefinition);
+	}
+
+	@Test
+	public void should_detect_when_has_single_bean_of_type() {
+		//given
+		class Bean1 {}
+		class Bean2 {}
+		final ApplicationContext parentContext = buildAppContext(Stream.of(bean("bean1", new Bean1())));
+		final ApplicationContext ctx = buildAppContext(parentContext, Stream.of(bean("bean2", new Bean2())));
+		final ApplicationContextWalker walker = new ApplicationContextWalker(ctx);
+
+		//expect
+		assertTrue(walker.hasOnlyOneBeanOfClass(Bean1.class));
+		assertTrue(walker.hasOnlyOneBeanOfClass(Bean2.class));
+	}
+
+	@Test
+	public void should_detect_duplicated_beans_of_the_same_type_on_the_same_level() {
+		//given
+		class Bean {}
+		final ApplicationContext ctx = buildAppContext(Stream.of(
+				bean("1", new Bean()),
+				bean("2", new Bean())));
+		final ApplicationContextWalker walker = new ApplicationContextWalker(ctx);
+
+		//expect
+		assertFalse(walker.hasOnlyOneBeanOfClass(Bean.class));
+	}
+
+	@Test
+	public void should_detect_duplicated_beans_of_the_same_type_on_different_contexts() {
+		//given
+		class Bean {}
+		final ApplicationContext parent = buildAppContext(Stream.of(bean("1", new Bean())));
+		final ApplicationContext ctx = buildAppContext(parent, Stream.of(bean("2", new Bean())));
+		final ApplicationContextWalker walker = new ApplicationContextWalker(ctx);
+
+		//expect
+		assertFalse(walker.hasOnlyOneBeanOfClass(Bean.class));
 	}
 }

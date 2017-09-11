@@ -5,6 +5,7 @@ import com.pchudzik.springmock.infrastructure.MockConstants;
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleSearch;
+import com.pchudzik.springmock.infrastructure.spring.util.ApplicationContextWalker;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -64,11 +65,13 @@ public class ToSpyReplacingProcessor extends InstantiationAwareBeanPostProcessor
 			return bean;
 		}
 
+		//in case when spy instance exists then I need to register spy definition manually otherwise registrationContext will not be aware of this bean
+		doubleDefinitionsRegistrationContext.registerSpyReplacement(spyDefinition);
 		return doubleFactory.createSpy(unwrapAopProxy(bean), spyDefinition);
 	}
 
 	private boolean hasOnlyOneBeanOfClass(Class<?> beanClass) {
-		return applicationContext.getBeansOfType(beanClass).size() == 1;
+		return new ApplicationContextWalker(applicationContext).hasOnlyOneBeanOfClass(beanClass);
 	}
 
 	/**

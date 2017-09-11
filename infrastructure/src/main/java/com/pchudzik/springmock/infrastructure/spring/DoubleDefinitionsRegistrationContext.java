@@ -25,6 +25,10 @@ public class DoubleDefinitionsRegistrationContext {
 
 	private final Set<DoubleDefinition> doublesRegisteredInContext = new HashSet<>();
 
+	public void registerSpyReplacement(DoubleDefinition spyDefinition) {
+		this.doublesRegisteredInContext.add(spyDefinition);
+	}
+
 	public void registerMock(BeanDefinitionRegistry registry, DoubleDefinition mockDefinition) {
 		registerBeanDefinition(
 				mockDefinition,

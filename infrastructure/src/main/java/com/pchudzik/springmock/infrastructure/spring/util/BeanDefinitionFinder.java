@@ -8,6 +8,8 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.Optional;
 
+import static com.pchudzik.springmock.infrastructure.spring.util.FactoryBeanRecognizer.getBeanDefinitionName;
+
 public class BeanDefinitionFinder {
 	private final ConfigurableListableBeanFactory definitionRegistry;
 	private final DoubleRegistry doubleRegistry;
@@ -41,7 +43,7 @@ public class BeanDefinitionFinder {
 	public Optional<BeanDefinition> tryToFindSingleBeanDefinition(Class<?> doubleClass) {
 		final String[] beanNamesForType = definitionRegistry.getBeanNamesForType(doubleClass);
 		if (beanNamesForType.length == 1) {
-			final String beanName = beanNamesForType[0];
+			final String beanName = getBeanDefinitionName(beanNamesForType[0]);
 
 			if(doubleRegistryContainsDouble(beanName, doubleClass)) {
 				return Optional.empty();

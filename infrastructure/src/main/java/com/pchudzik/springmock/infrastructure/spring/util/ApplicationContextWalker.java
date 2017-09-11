@@ -31,6 +31,13 @@ public class ApplicationContextWalker {
 				.orElseThrow(() -> new NoSuchBeanDefinitionException("No bean definition for " + beanName));
 	}
 
+	public boolean hasOnlyOneBeanOfClass(Class<?> beanClass) {
+		return 1 == walkContext(ctx -> ctx.getBeansOfType(beanClass).values())
+				.stream()
+				.mapToInt(Collection::size)
+				.sum();
+	}
+
 	public Collection<String> getBeanDefinitionNames() {
 		return walkContext(ctx -> asList(ctx.getBeanDefinitionNames()))
 				.stream()

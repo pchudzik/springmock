@@ -26,6 +26,11 @@ public class SpockDoubleFactory implements DoubleFactory {
 	public Object createSpy(@Nullable Object bean, DoubleDefinition spyDefinition) {
 		final Map<String, Object> spyConfiguration = resolveConfiguration(spyDefinition);
 		spyConfiguration.put(SpockSettingsKeys.INSTANCE, bean);
+
+		if(bean != null && spyDefinition.getDoubleClass().isInterface()) {
+			return mockFactory.Spy(spyConfiguration, bean.getClass());
+		}
+
 		return mockFactory.Spy(spyConfiguration, spyDefinition.getDoubleClass());
 	}
 

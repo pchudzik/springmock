@@ -64,4 +64,24 @@ public class DoubleDefinitionTest {
 				definition.getConfiguration(Map.class));
 	}
 
+	@Test
+	public void should_detect_definition_class() {
+		//given
+		class Parent {}
+		class Child extends Parent {}
+
+		//when
+		final DoubleDefinition definition = DoubleDefinition.builder()
+				.name("mock")
+				.doubleClass(Child.class)
+				.build();
+
+		//then
+		assertTrue(definition.hasClass(Object.class));
+		assertTrue(definition.hasClass(Parent.class));
+		assertTrue(definition.hasClass(Child.class));
+
+		assertFalse(definition.hasClass(DoubleDefinition.class));
+	}
+
 }
