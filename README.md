@@ -295,6 +295,10 @@ issue description or as PR.
 
 ## Changelog
 
+### 1.1.1 springmock-spock - to be released
+  
+  * Fixed spy reset code to handle missing beans - [#15](https://github.com/pchudzik/springmock/issues/15) 
+
 ### 1.1.0 springmock-mockito - 2017.09.06
   
   * mocks configuration - [@MockitoDouble](mockito/src/main/java/com/pchudzik/springmock/mockito/configuration/MockitoDouble.java)
