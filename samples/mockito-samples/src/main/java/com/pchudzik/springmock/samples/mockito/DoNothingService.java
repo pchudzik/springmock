@@ -1,7 +1,7 @@
 package com.pchudzik.springmock.samples.mockito;
 
 //not a spring service by design
-class DoNothingService {
+public class DoNothingService {
 	void noop() {
 		//doing nothing
 	}

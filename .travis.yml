@@ -13,7 +13,10 @@ cache:
 
 install: true  #skip ./mvwn install it's not required
 
-script: ./mvnw -B clean verify
+script:
+  - ./mvnw -B install
+  - (cd samples/mockito-samples ; ./mvnw -B verify)
+  - (cd samples/spock-samples ; ./gradlew )
 
 after_success:
   - "[[ $TRAVIS_BRANCH == \"master\" ]] && ./mvnw -DskipTests -B --settings .mvn/settings.xml deploy"
