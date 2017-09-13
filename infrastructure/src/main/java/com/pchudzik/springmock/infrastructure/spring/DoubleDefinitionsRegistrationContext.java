@@ -29,27 +29,38 @@ public class DoubleDefinitionsRegistrationContext {
 		this.doublesRegisteredInContext.add(spyDefinition);
 	}
 
-	public void registerMock(BeanDefinitionRegistry registry, DoubleDefinition mockDefinition) {
+	public void registerMock(BeanDefinitionRegistry registry, String definitionName, DoubleDefinition mockDefinition) {
 		registerBeanDefinition(
 				mockDefinition,
+				definitionName,
 				registry,
 				buildBeanDefinition(CREATE_MOCK_FACTORY_METHOD, mockDefinition, mockDefinition));
+	}
+
+	public void registerMock(BeanDefinitionRegistry registry, DoubleDefinition mockDefinition) {
+		registerMock(registry, mockDefinition.getName(), mockDefinition);
 	}
 
 	public void registerSpy(BeanDefinitionRegistry registry, DoubleDefinition spyDefinition) {
 		registerBeanDefinition(
 				spyDefinition,
+				spyDefinition.getName(),
 				registry,
 				buildBeanDefinition(CREATE_SPY_FACTORY_METHOD, spyDefinition, NULL_OBJECT_TO_SPY_ON, spyDefinition));
 	}
 
 	public boolean isBeanDefinitionRegisteredForDouble(DoubleDefinition definition) {
-		return doublesRegisteredInContext.contains(definition);
+		return doublesRegisteredInContext
+				.stream()
+				.anyMatch(registeredDefinition -> registeredDefinition.hasNameOrAlias(definition.getName()));
 	}
 
-	private void registerBeanDefinition(DoubleDefinition doubleDefinition, BeanDefinitionRegistry beanDefinitionRegistry, BeanDefinition beanDefinition) {
-		beanDefinitionRegistry.registerBeanDefinition(doubleDefinition.getName(), beanDefinition);
-		doubleDefinition.getAliases().forEach(alias -> beanDefinitionRegistry.registerAlias(doubleDefinition.getName(), alias));
+	private void registerBeanDefinition(DoubleDefinition doubleDefinition, String definitionName, BeanDefinitionRegistry beanDefinitionRegistry, BeanDefinition beanDefinition) {
+		beanDefinitionRegistry.registerBeanDefinition(definitionName, beanDefinition);
+		doubleDefinition.getAliases().forEach(alias -> beanDefinitionRegistry.registerAlias(definitionName, alias));
+		if(!definitionName.equals(doubleDefinition.getName())) {
+			beanDefinitionRegistry.registerAlias(definitionName, doubleDefinition.getName());
+		}
 
 		doublesRegisteredInContext.add(doubleDefinition);
 	}

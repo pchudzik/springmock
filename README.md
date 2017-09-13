@@ -297,7 +297,12 @@ issue description or as PR.
 
 ### 1.1.1 springmock-spock - to be released
   
-  * Fixed spy reset code to handle missing beans - [#15](https://github.com/pchudzik/springmock/issues/15) 
+  * Fixed spy reset code to handle missing beans - [#15](https://github.com/pchudzik/springmock/issues/15)
+  * Single bean instance will be replaced by mock/spy without matching name [#10](https://github.com/pchudzik/springmock/issues/10)
+  
+### 1.1.1 springmock-mockito - to be released
+  
+  * Single bean instance will be replaced by mock/spy without matching name [#10](https://github.com/pchudzik/springmock/issues/10) 
 
 ### 1.1.0 springmock-mockito - 2017.09.06
   

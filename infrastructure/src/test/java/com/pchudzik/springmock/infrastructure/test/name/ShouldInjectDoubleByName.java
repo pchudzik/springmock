@@ -7,8 +7,6 @@ import com.pchudzik.springmock.infrastructure.test.infrastructure.SpringMockCont
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.BootstrapWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -41,14 +39,6 @@ public class ShouldInjectDoubleByName {
 	@Test
 	public void should_inject_spy_by_name() {
 		assertEquals(aSpy, injectedSpy);
-	}
-
-	@Configuration
-	static class Config {
-		@Bean
-		Service otherService() {
-			return new Service();
-		}
 	}
 
 	static class TestContextBootstrapper extends SpringMockContextBootstrapper {

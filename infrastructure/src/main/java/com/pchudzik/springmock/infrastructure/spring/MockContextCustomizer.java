@@ -48,13 +48,20 @@ public class MockContextCustomizer implements ContextCustomizer {
 
 		registerDoubleRegistry(registry);
 		registerDoubleFactory(configurableApplicationContext.getBeanFactory(), registry);
-
-		registerMockRegistrationPostProcessor(registry);
 		registerMockClassResolver(registry);
 
+		registerDoubleDefinitionRegisteringProcessor(registry);
 		registerSpyRegistrationPostProcessor(registry);
 
 		registerAdditionalBeanDefinitions(registry, additionalDefinitions);
+	}
+
+	private void registerDoubleDefinitionRegisteringProcessor(BeanDefinitionRegistry registry) {
+		registry.registerBeanDefinition(DoubleRegisteringProcessor.BEAN_NAME, BeanDefinitionBuilder
+				.rootBeanDefinition(DoubleRegisteringProcessor.class)
+				.addConstructorArgReference(DoubleRegistry.BEAN_NAME)
+				.addConstructorArgReference(DoubleDefinitionsRegistrationContext.BEAN_NAME)
+				.getBeanDefinition());
 	}
 
 	/**
@@ -99,12 +106,6 @@ public class MockContextCustomizer implements ContextCustomizer {
 		registry.registerBeanDefinition(ToSpyReplacingProcessor.BEAN_NAME, BeanDefinitionBuilder
 				.rootBeanDefinition(ToSpyReplacingProcessor.class)
 				.getBeanDefinition());
-
-		registry.registerBeanDefinition(SpyDefinitionRegisteringProcessor.BEAN_NAME, BeanDefinitionBuilder
-				.rootBeanDefinition(SpyDefinitionRegisteringProcessor.class)
-				.addConstructorArgValue(doubleRegistry)
-				.addConstructorArgReference(DoubleDefinitionsRegistrationContext.BEAN_NAME)
-				.getBeanDefinition());
 	}
 
 	private void registerMockClassResolver(BeanDefinitionRegistry registry) {
@@ -135,14 +136,6 @@ public class MockContextCustomizer implements ContextCustomizer {
 		registry.registerBeanDefinition(DoubleFactory.DOUBLE_FACTORY_BEAN_NAME, BeanDefinitionBuilder
 				.rootBeanDefinition(DoubleFactory.class)
 				.setFactoryMethodOnBean(DoubleFactoryCreator.FACTORY_METHOD_NAME, DoubleFactoryCreator.BEAN_NAME)
-				.getBeanDefinition());
-	}
-
-	private void registerMockRegistrationPostProcessor(BeanDefinitionRegistry registry) {
-		registry.registerBeanDefinition(MockDefinitionsRegisteringProcessor.BEAN_NAME, BeanDefinitionBuilder
-				.rootBeanDefinition(MockDefinitionsRegisteringProcessor.class)
-				.addConstructorArgReference(DoubleRegistry.BEAN_NAME)
-				.addConstructorArgReference(DoubleDefinitionsRegistrationContext.BEAN_NAME)
 				.getBeanDefinition());
 	}
 }
