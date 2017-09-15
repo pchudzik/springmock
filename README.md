@@ -1,6 +1,8 @@
 # springmock
 
 [![Build Status](https://travis-ci.org/pchudzik/springmock.svg?branch=master)](https://travis-ci.org/pchudzik/springmock)
+[![Coverage Status](https://coveralls.io/repos/github/pchudzik/springmock/badge.svg?branch=badges)](https://coveralls.io/github/pchudzik/springmock?branch=badges)
+
 
 ## Introduction
 
