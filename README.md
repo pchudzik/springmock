@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/pchudzik/springmock.svg?branch=master)](https://travis-ci.org/pchudzik/springmock)
 [![Coverage Status](https://coveralls.io/repos/github/pchudzik/springmock/badge.svg?branch=badges)](https://coveralls.io/github/pchudzik/springmock?branch=badges)
 
-
 ## Introduction
 
 Alternative spring mocking infrastructure. With pluggable mocking library support. The purpose is to
@@ -93,6 +92,8 @@ To get spock mocks running you'll need:
 
 ##### mvn
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.pchudzik.springmock/springmock-mockito/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.pchudzik.springmock/springmock-mockito)
+
 ```xml
 <dependency>
   <groupId>com.pchudzik.springmock</groupId>
@@ -110,6 +111,8 @@ testCompile('com.pchudzik.springmock:springmock-mockito:1.1.0')
 #### With Spock as mock provider 
 
 ##### mvn
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.pchudzik.springmock/springmock-spock/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.pchudzik.springmock/springmock-spock)
 
 ```xml
 <dependency>
