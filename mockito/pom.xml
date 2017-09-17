@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>com.pchudzik.springmock</groupId>
 		<artifactId>springmock-core</artifactId>
-		<version>1.1.2</version>
+		<version>1.1.3-SNAPSHOT</version>
 	</parent>
 
 	<name>springmock-mockito</name>
 	<artifactId>springmock-mockito</artifactId>
-	<version>1.1.2</version>
+	<version>1.1.3-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 	<description>springmock mockito support</description>
