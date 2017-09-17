@@ -42,6 +42,8 @@ by a library of your choice.
     * [spock](#spock-1)
 * [Problems](#problems)
 * [Changelog](#changelog)
+  * [1.1.2 - springmock-mockito - 2017.09.17](#112-springmock-mockito---20170917)
+  * [1.1.2 - springmock-spock - 2017.09.17](#112-springmock-spock---20170917)
   * [1.1.0 - springmock-mockito - 2017.09.06](#110-springmock-mockito---20170906)
   * [1.1.0 - springmock-spock - 2017.09.06](#110-springmock-spock---20170906)
   * [1.0.0 - 2017.07.22](#100---20170722)
@@ -98,14 +100,14 @@ To get spock mocks running you'll need:
 <dependency>
   <groupId>com.pchudzik.springmock</groupId>
   <artifactId>springmock-mockito</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.2</version>
 </dependency>
 ```
 
 ##### gradle
 
 ```java
-testCompile('com.pchudzik.springmock:springmock-mockito:1.1.0')
+testCompile('com.pchudzik.springmock:springmock-mockito:1.1.2')
 ``` 
 
 #### With Spock as mock provider 
@@ -118,14 +120,14 @@ testCompile('com.pchudzik.springmock:springmock-mockito:1.1.0')
 <dependency>
   <groupId>com.pchudzik.springmock</groupId>
   <artifactId>springmock-spock</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.2</version>
 </dependency>
 ```
 
 ##### gradle
 
 ```
-testCompile('com.pchudzik.springmock:springmock-mockito:1.1.0')
+testCompile('com.pchudzik.springmock:springmock-mockito:1.1.2')
 ```
 
 [sample pom.xml with spring-boot](samples/mockito-samples/pom.xml)
@@ -166,14 +168,14 @@ Include mvn dependency:
 <dependency>
   <groupId>com.pchudzik.springmock</groupId>
   <artifactId>springmock-mockito</artifactId>
-  <version>1.1.1-SNAPSHOT</version>
+  <version>1.1.3-SNAPSHOT</version>
 </dependency>
 ```
 
 Or gradle dependency:
 
 ```
-testCompile('com.pchudzik.springmock:springmock-mockito:1.1.1-SNAPSHOT')
+testCompile('com.pchudzik.springmock:springmock-mockito:1.1.3-SNAPSHOT')
 ```
 
 #### Spock as mocks provider
@@ -183,14 +185,14 @@ Include mvn dependency:
 <dependency>
   <groupId>com.pchudzik.springmock</groupId>
   <artifactId>springmock-spock</artifactId>
-  <version>1.1.1-SNAPSHOT</version>
+  <version>1.1.3-SNAPSHOT</version>
 </dependency>
 ```
 
 Or gradle dependency:
 
 ```
-testCompile('com.pchudzik.springmock:springmock-spock:1.1.1-SNAPSHOT')
+testCompile('com.pchudzik.springmock:springmock-spock:1.1.3-SNAPSHOT')
 ```
 
 ## Usage
@@ -300,12 +302,12 @@ issue description or as PR.
 
 ## Changelog
 
-### 1.1.1 springmock-spock - to be released
+### 1.1.2 springmock-spock - 2017.09.17
   
   * Fixed spy reset code to handle missing beans - [#15](https://github.com/pchudzik/springmock/issues/15)
   * Single bean instance will be replaced by mock/spy without matching name [#10](https://github.com/pchudzik/springmock/issues/10)
   
-### 1.1.1 springmock-mockito - to be released
+### 1.1.2 springmock-mockito - 2017.09.17
   
   * Single bean instance will be replaced by mock/spy without matching name [#10](https://github.com/pchudzik/springmock/issues/10) 
 

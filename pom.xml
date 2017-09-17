@@ -3,7 +3,7 @@
 
 	<groupId>com.pchudzik.springmock</groupId>
 	<artifactId>springmock-core</artifactId>
-	<version>1.1.1-SNAPSHOT</version>
+	<version>1.1.2</version>
 	<name>springmock-parent-pom</name>
 	<description>Parent pom for springmock</description>
 
@@ -38,7 +38,7 @@
 		<spring.version>4.3.6.RELEASE</spring.version>
 		<spock.version>1.1-groovy-2.4</spock.version>
 		<mockito.version>1.10.5</mockito.version>
-		<springmock.version>2.0.1-SNAPSHOT</springmock.version>
+		<springmock.version>3.0.1</springmock.version>
 	</properties>
 
 	<modules>
@@ -210,7 +210,7 @@
 						<configuration>
 							<serverId>ossrh</serverId>
 							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
+							<autoReleaseAfterClose>false</autoReleaseAfterClose>
 						</configuration>
 					</plugin>
 				</plugins>

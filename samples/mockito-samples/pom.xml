@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>com.pchudzik.springmock</groupId>
 			<artifactId>springmock-mockito</artifactId>
-			<version>1.1.1-SNAPSHOT</version>
+			<version>1.1.2</version>
 		</dependency>
 	</dependencies>
 
