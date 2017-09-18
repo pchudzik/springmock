@@ -127,7 +127,7 @@ testCompile('com.pchudzik.springmock:springmock-mockito:1.1.2')
 ##### gradle
 
 ```
-testCompile('com.pchudzik.springmock:springmock-mockito:1.1.2')
+testCompile('com.pchudzik.springmock:springmock-spock:1.1.2')
 ```
 
 [sample pom.xml with spring-boot](samples/mockito-samples/pom.xml)
