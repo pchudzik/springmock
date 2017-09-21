@@ -168,14 +168,14 @@ Include mvn dependency:
 <dependency>
   <groupId>com.pchudzik.springmock</groupId>
   <artifactId>springmock-mockito</artifactId>
-  <version>1.1.3-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
 </dependency>
 ```
 
 Or gradle dependency:
 
 ```
-testCompile('com.pchudzik.springmock:springmock-mockito:1.1.3-SNAPSHOT')
+testCompile('com.pchudzik.springmock:springmock-mockito:1.2.0-SNAPSHOT')
 ```
 
 #### Spock as mocks provider
@@ -185,14 +185,14 @@ Include mvn dependency:
 <dependency>
   <groupId>com.pchudzik.springmock</groupId>
   <artifactId>springmock-spock</artifactId>
-  <version>1.1.3-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
 </dependency>
 ```
 
 Or gradle dependency:
 
 ```
-testCompile('com.pchudzik.springmock:springmock-spock:1.1.3-SNAPSHOT')
+testCompile('com.pchudzik.springmock:springmock-spock:1.2.0-SNAPSHOT')
 ```
 
 ## Usage
