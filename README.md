@@ -306,7 +306,7 @@ issue description or as PR.
 
   * register field name as double alias - [#9](https://github.com/pchudzik/springmock/issues/9)
   
-### 1.2.0 springmock-spock - to be released
+### 1.2.0 springmock-mockito - to be released
 
   * register field name as double alias - [#9](https://github.com/pchudzik/springmock/issues/9)
 
