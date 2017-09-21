@@ -35,7 +35,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring.version>4.3.6.RELEASE</spring.version>
+		<spring.version>5.0.0.RC4</spring.version>
 		<spock.version>1.1-groovy-2.4</spock.version>
 		<mockito.version>1.10.5</mockito.version>
 		<springmock.version>3.0.2-SNAPSHOT</springmock.version>
@@ -57,6 +57,17 @@
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 		</repository>
 	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/libs-milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<dependencyManagement>
 		<dependencies>
