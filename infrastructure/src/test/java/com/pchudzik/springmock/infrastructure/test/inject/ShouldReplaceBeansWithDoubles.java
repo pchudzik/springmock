@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.BootstrapWith;
@@ -29,11 +28,9 @@ public class ShouldReplaceBeansWithDoubles {
 	private static final String SPY = "spy";
 
 	@AutowiredMock(name = MOCK)
-	@Qualifier(MOCK)
 	Service mock;
 
 	@AutowiredSpy(name = SPY)
-	@Qualifier(SPY)
 	Service spy;
 
 	@Autowired

@@ -4,7 +4,6 @@ import com.pchudzik.springmock.infrastructure.annotation.AutowiredMock;
 import com.pchudzik.springmock.infrastructure.annotation.AutowiredSpy;
 import com.pchudzik.springmock.infrastructure.test.infrastructure.MatchingDoubleFactory;
 import com.pchudzik.springmock.infrastructure.test.infrastructure.SpringMockContextBootstrapper;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.BootstrapWith;
@@ -14,7 +13,6 @@ import static com.pchudzik.springmock.infrastructure.test.infrastructure.Matchin
 import static com.pchudzik.springmock.infrastructure.test.infrastructure.MatchingDoubleFactory.MatchingDoubleFactoryBuilder.byNameSpyMatcher;
 import static org.junit.Assert.assertNotEquals;
 
-@Ignore("https://github.com/pchudzik/springmock/issues/9")
 @RunWith(SpringRunner.class)
 @BootstrapWith(DoubleNameShouldBeUsedAsQualifier.TestContextBootstrapper.class)
 public class DoubleNameShouldBeUsedAsQualifier {

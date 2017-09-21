@@ -5,6 +5,9 @@ import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -52,7 +55,7 @@ class DoubleDefinitionFactory<T extends Annotation> {
 
 		return DoubleDefinition.builder()
 				.name(doubleName)
-				.aliases(details.getAlias())
+				.aliases(resolveDoubleAliases(details, doubleName, field))
 				.doubleClass(doubleClass)
 				.doubleConfiguration(details
 						.resolveConfiguration(doubleConfigurationResolver)
@@ -72,5 +75,20 @@ class DoubleDefinitionFactory<T extends Annotation> {
 						.resolveConfiguration(doubleConfigurationResolver)
 						.apply(doubleName, DoubleConfigurationResolver.NO_FIELD))
 				.build();
+	}
+
+	private Collection<String> resolveDoubleAliases(AnnotationDetails details, String doubleName, Field field) {
+		/*
+		Include field name as an alias. This way injection is more flexible and allows to inject have different name for
+		inject mock into field when mock name does not match registered double name. With this custom @Qualifier
+		implementation can be avoided and doubles registered under different name are resolvable by field name
+		see com.pchudzik.springmock.infrastructure.test.name.DoubleNameShouldBeUsedAsQualifier for sample test case
+		 */
+
+		final Set<String> aliases = new HashSet<>(details.getAlias());
+		if(!Objects.equals(field.getName(), doubleName)) {
+			aliases.add(field.getName());
+		}
+		return aliases;
 	}
 }
