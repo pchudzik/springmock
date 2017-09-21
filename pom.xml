@@ -3,7 +3,7 @@
 
 	<groupId>com.pchudzik.springmock</groupId>
 	<artifactId>springmock-core</artifactId>
-	<version>1.1.3-SNAPSHOT</version>
+	<version>1.2.0-SNAPSHOT</version>
 	<name>springmock-parent-pom</name>
 	<description>Parent pom for springmock</description>
 
@@ -38,7 +38,7 @@
 		<spring.version>4.3.6.RELEASE</spring.version>
 		<spock.version>1.1-groovy-2.4</spock.version>
 		<mockito.version>1.10.5</mockito.version>
-		<springmock.version>3.0.2-SNAPSHOT</springmock.version>
+		<springmock.version>3.1.0-SNAPSHOT</springmock.version>
 	</properties>
 
 	<modules>

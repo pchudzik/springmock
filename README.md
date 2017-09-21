@@ -302,6 +302,14 @@ issue description or as PR.
 
 ## Changelog
 
+### 1.2.0 springmock-spock - to be released
+
+  * register field name as double alias - [#9](https://github.com/pchudzik/springmock/issues/9)
+  
+### 1.2.0 springmock-spock - to be released
+
+  * register field name as double alias - [#9](https://github.com/pchudzik/springmock/issues/9)
+
 ### 1.1.2 springmock-spock - 2017.09.17
   
   * Fixed spy reset code to handle missing beans - [#15](https://github.com/pchudzik/springmock/issues/15)
