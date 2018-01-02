@@ -3,8 +3,16 @@ package com.pchudzik.springmock.infrastructure.spring;
 import com.pchudzik.springmock.infrastructure.DoubleFactory;
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.infrastructure.definition.registry.DoubleRegistry;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
+import junitparams.naming.TestCaseName;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -15,12 +23,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.pchudzik.springmock.infrastructure.definition.DoubleDefinitionTestFactory.doubleDefinition;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
+@RunWith(JUnitParamsRunner.class)
 public class ToSpyReplacingProcessorTest {
 	private DoubleFactory doubleFactory = Mockito.mock(DoubleFactory.class);
 
@@ -29,7 +40,7 @@ public class ToSpyReplacingProcessorTest {
 		//given
 		final Object anyBean = new Object();
 		final String anyBeanName = "any bean";
-		final ToSpyReplacingProcessor postProcessor = new SpyProcessorBuilder().build();
+		final ToSpyReplacingProcessor postProcessor = new TestContextBuilder().build().toSpyReplacingProcessor;
 
 		//when
 		final Object processedBean = postProcessor.postProcessAfterInitialization(anyBean, anyBeanName);
@@ -52,13 +63,14 @@ public class ToSpyReplacingProcessorTest {
 				.name(serviceName)
 				.build();
 
-		final ToSpyReplacingProcessor processor = new SpyProcessorBuilder()
+		final ToSpyReplacingProcessor processor = new TestContextBuilder()
 				.withBean(serviceName, service1)
 				.withSpy(definition)
 
 				.withBean("any service", service2)
 				.withSpy(doubleDefinition(Service.class))
-				.build();
+				.build()
+				.toSpyReplacingProcessor;
 
 		//when
 		processor.postProcessAfterInitialization(service1, serviceName);
@@ -77,10 +89,11 @@ public class ToSpyReplacingProcessorTest {
 		final String serviceName = "service";
 		final String spyName = "spy";
 		final DoubleDefinition definition = doubleDefinition(Service.class, spyName);
-		final ToSpyReplacingProcessor postProcessor = new SpyProcessorBuilder()
+		final ToSpyReplacingProcessor postProcessor = new TestContextBuilder()
 				.withBean(serviceName, service)
 				.withSpy(definition)
-				.build();
+				.build()
+				.toSpyReplacingProcessor;
 
 		//when
 		postProcessor.postProcessAfterInitialization(service, serviceName);
@@ -99,12 +112,13 @@ public class ToSpyReplacingProcessorTest {
 		final Service service = new Service();
 		final String childServiceName = "childService";
 		final ChildService childService = new ChildService();
-		final ToSpyReplacingProcessor postProcessor = new SpyProcessorBuilder()
+		final ToSpyReplacingProcessor postProcessor = new TestContextBuilder()
 				.withBean(serviceName, service)
 				.withBean(childServiceName, childService)
 				.withSpy(doubleDefinition(Service.class))
 				.withSpy(doubleDefinition(Service.class))
-				.build();
+				.build()
+				.toSpyReplacingProcessor;
 
 		//when
 		postProcessor.postProcessAfterInitialization(service, serviceName);
@@ -120,10 +134,11 @@ public class ToSpyReplacingProcessorTest {
 		final String serviceName = "service";
 		final OtherService otherService = new OtherService();
 		final DoubleDefinition spyDefinition = doubleDefinition(Service.class, serviceName);
-		final ToSpyReplacingProcessor postProcessor = new SpyProcessorBuilder()
+		final ToSpyReplacingProcessor postProcessor = new TestContextBuilder()
 				.withBean(serviceName, otherService)
 				.withSpy(spyDefinition)
-				.build();
+				.build()
+				.toSpyReplacingProcessor;
 
 		//when
 		postProcessor.postProcessAfterInitialization(otherService, serviceName);
@@ -140,10 +155,11 @@ public class ToSpyReplacingProcessorTest {
 		final String spyName = "myService";
 		final Service spy = Mockito.spy(new Service());
 		final DoubleDefinition spyDefinition = doubleDefinition(Service.class, spyName);
-		final ToSpyReplacingProcessor postProcessor = new SpyProcessorBuilder()
+		final ToSpyReplacingProcessor postProcessor = new TestContextBuilder()
 				.withSpyBean(spyName, spy, spyDefinition)
 				.withSpy(spyDefinition)
-				.build();
+				.build()
+				.toSpyReplacingProcessor;
 
 		//when
 		postProcessor.postProcessAfterInitialization(spy, spyName);
@@ -162,47 +178,112 @@ public class ToSpyReplacingProcessorTest {
 				.name(serviceName)
 				.build();
 
-		final SpyProcessorBuilder processorBuilder = new SpyProcessorBuilder()
+		final TestContextBuilder.TestContext testContext = new TestContextBuilder()
 				.withBean(serviceName, service)
-				.withSpy(definition);
-		final ToSpyReplacingProcessor processor = processorBuilder.build();
+				.withSpy(definition)
+				.build();
+		final ToSpyReplacingProcessor processor = testContext.toSpyReplacingProcessor;
 
 		//when
 		processor.postProcessAfterInitialization(service, serviceName);
 
 		//then
-		assertTrue(processorBuilder
+		assertTrue(testContext
 				.doubleDefinitionsRegistrationContext
 				.isBeanDefinitionRegisteredForDouble(definition));
 	}
 
-	private class SpyProcessorBuilder {
+	@Test
+	@Parameters(method = proxyInterfaceDataProvider)
+	@TestCaseName("should_unwrap_{0}_from_spied_on_instance")
+	public void should_unwrap_proxy_from_spied_on_instance(String proxyProviderName, boolean proxyTargetClass) throws ClassNotFoundException {
+		//given
+		final IService rawService = new Service();
+		final String serviceName = "service";
+		final DoubleDefinition definition = DoubleDefinition.builder()
+				.doubleClass(IService.class)
+				.name(serviceName)
+				.build();
+		final TestContextBuilder.TestContext testContext = new TestContextBuilder()
+				.withBean(serviceName, createProxyFactoryBean(rawService, proxyTargetClass))
+				.withSpy(definition)
+				.build();
+
+		//when
+		final Object bean = testContext.applicationContext.getBean(serviceName);
+		testContext.toSpyReplacingProcessor.postProcessAfterInitialization(bean, serviceName);
+
+		//then
+		assertTrue(AopUtils.isAopProxy(bean));
+		Mockito.verify(doubleFactory).createSpy(
+				argThat(not(isProxy())),
+				eq(definition));
+	}
+
+	private static final String proxyInterfaceDataProvider = "proxyInterfaceDataProvider";
+
+	@SuppressWarnings("unused")
+	private List<Object[]> proxyInterfaceDataProvider() {
+		final boolean doProxyTargetClass = true;
+		return asList(
+				new Object[]{"jdk", !doProxyTargetClass},
+				new Object[]{"cglib", doProxyTargetClass}
+		);
+	}
+
+	private ProxyFactoryBean createProxyFactoryBean(IService rawService, boolean proxyTargetClass) throws ClassNotFoundException {
+		final ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
+		proxyFactoryBean.setProxyInterfaces(new Class<?>[]{IService.class});
+		proxyFactoryBean.setTarget(rawService);
+		proxyFactoryBean.setProxyTargetClass(proxyTargetClass);
+		return proxyFactoryBean;
+	}
+
+	private BaseMatcher<Object> isProxy() {
+		return new BaseMatcher<Object>() {
+			@Override
+			public boolean matches(Object item) {
+				return AopUtils.isAopProxy(item);
+			}
+
+			@Override
+			public void describeTo(Description description) {
+			}
+		};
+	}
+
+	private class TestContextBuilder {
 		private final DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext = new DoubleDefinitionsRegistrationContext();
 		private List<TestBeanDefinition> beans = new LinkedList<>();
 		private List<DoubleDefinition> spies = new LinkedList<>();
 
-		public SpyProcessorBuilder withBean(String name, Object bean) {
+		public TestContextBuilder withBean(String name, Object bean) {
 			beans.add(new TestBeanDefinition(name, bean));
 			return this;
 		}
 
-		public SpyProcessorBuilder withSpyBean(String name, Object bean, DoubleDefinition doubleDefinition) {
+		public TestContextBuilder withSpyBean(String name, Object bean, DoubleDefinition doubleDefinition) {
 			beans.add(new TestBeanDefinition(name, bean));
 			doubleDefinitionsRegistrationContext.registerSpy(Mockito.mock(BeanDefinitionRegistry.class), doubleDefinition);
 			return this;
 		}
 
-		public SpyProcessorBuilder withSpy(DoubleDefinition spyDefinition) {
+		public TestContextBuilder withSpy(DoubleDefinition spyDefinition) {
 			spies.add(spyDefinition);
 			return this;
 		}
 
-		public ToSpyReplacingProcessor build() {
-			return new ToSpyReplacingProcessor(
-					createContext(beans),
-					new DoubleRegistry(emptyList(), spies),
-					doubleFactory,
-					doubleDefinitionsRegistrationContext);
+		public TestContext build() {
+			final ApplicationContext applicationContext = createContext(beans);
+
+			return new TestContext(
+					applicationContext,
+					doubleDefinitionsRegistrationContext,
+					new ToSpyReplacingProcessor(
+							applicationContext,
+							new DoubleRegistry(emptyList(), spies),
+							doubleFactory,
+							doubleDefinitionsRegistrationContext));
 		}
 
 		private ApplicationContext createContext(Collection<TestBeanDefinition> beans) {
@@ -213,6 +294,21 @@ public class ToSpyReplacingProcessorTest {
 			applicationContext.refresh();
 
 			return applicationContext;
+		}
+
+		public class TestContext {
+			final ApplicationContext applicationContext;
+			final DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext;
+			final ToSpyReplacingProcessor toSpyReplacingProcessor;
+
+			public TestContext(
+					ApplicationContext applicationContext,
+					DoubleDefinitionsRegistrationContext doubleDefinitionsRegistrationContext,
+					ToSpyReplacingProcessor toSpyReplacingProcessor) {
+				this.applicationContext = applicationContext;
+				this.doubleDefinitionsRegistrationContext = doubleDefinitionsRegistrationContext;
+				this.toSpyReplacingProcessor = toSpyReplacingProcessor;
+			}
 		}
 
 		private class TestBeanDefinition {
@@ -230,7 +326,10 @@ public class ToSpyReplacingProcessorTest {
 		}
 	}
 
-	private static class Service {
+	private interface IService {
+	}
+
+	private static class Service implements IService {
 	}
 
 	private static class ChildService extends Service {
