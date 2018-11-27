@@ -17,7 +17,8 @@ install: true  #skip ./mvwn install it's not required
 script:
   - ./mvnw -B install
   - (cd samples/mockito-samples ; ./mvnw -B verify)
-  - (cd samples/spock-samples ; ./gradlew )
+  - (cd samples/spock-samples ; ./gradlew check )
+  - (cd samples/spock-springboot2 ; ./gradlew check )
 
 after_success:
   - mvn -DrepoToken=$COVERALLS_TOKEN clean test jacoco:report coveralls:report
