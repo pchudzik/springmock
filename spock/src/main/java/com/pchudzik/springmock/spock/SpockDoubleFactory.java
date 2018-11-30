@@ -5,6 +5,8 @@ import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import com.pchudzik.springmock.spock.configuration.SpockDoubleConfiguration;
 import com.pchudzik.springmock.spock.configuration.SpockSettingsKeys;
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.description.modifier.Visibility;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.springframework.aop.framework.AopInfrastructureBean;
 import spock.mock.DetachedMockFactory;
 
@@ -56,7 +58,7 @@ public class SpockDoubleFactory implements DoubleFactory {
 				.subclass(mockDefinition.getDoubleClass())
 				.implement(AopInfrastructureBean.class)
 				.make()
-				.load(getClass().getClassLoader())
+				.load(mockDefinition.getDoubleClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
 				.getLoaded();
 	}
 }

@@ -4,6 +4,7 @@ import com.pchudzik.springmock.infrastructure.DoubleFactory;
 import com.pchudzik.springmock.infrastructure.definition.DoubleDefinition;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.support.GenericApplicationContext;
 
@@ -93,9 +94,36 @@ public class DoubleDefinitionsRegistrationContextTest {
 		assertTrue(registrationContext.isBeanDefinitionRegisteredForDouble(doubleDefinition));
 	}
 
+	@Test
+	public void should_work_fine_when_bean_overriding_is_disabled() {
+		//given
+		final String beanName = "someService";
+		final DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+		beanFactory.setAllowBeanDefinitionOverriding(false);
+		beanFactory.registerBeanDefinition(beanName, BeanDefinitionBuilder
+				.rootBeanDefinition(Object.class)
+				.getBeanDefinition());
+
+		final DoubleDefinition mockDefinition = DoubleDefinition.builder()
+				.name(beanName)
+				.doubleClass(Object.class)
+				.build();
+
+		//when
+		registrationContext.registerMock(beanFactory, mockDefinition);
+		bootstrapApplicationContext(beanFactory);
+
+		//then
+		noExceptionThrown();
+		assertTrue(registrationContext.isBeanDefinitionRegisteredForDouble(mockDefinition));
+	}
+
 	private void bootstrapApplicationContext(DefaultListableBeanFactory beanFactory) {
 		beanFactory.registerSingleton(DoubleFactory.DOUBLE_FACTORY_BEAN_NAME, doubleFactory);
 		final GenericApplicationContext applicationContext = new GenericApplicationContext(beanFactory);
 		applicationContext.refresh();
+	}
+
+	private void noExceptionThrown() {
 	}
 }

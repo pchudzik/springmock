@@ -56,9 +56,13 @@ public class DoubleDefinitionsRegistrationContext {
 	}
 
 	private void registerBeanDefinition(DoubleDefinition doubleDefinition, String definitionName, BeanDefinitionRegistry beanDefinitionRegistry, BeanDefinition beanDefinition) {
+		if (beanDefinitionRegistry.containsBeanDefinition(definitionName)) {
+			beanDefinitionRegistry.removeBeanDefinition(definitionName);
+		}
+
 		beanDefinitionRegistry.registerBeanDefinition(definitionName, beanDefinition);
 		doubleDefinition.getAliases().forEach(alias -> beanDefinitionRegistry.registerAlias(definitionName, alias));
-		if(!definitionName.equals(doubleDefinition.getName())) {
+		if (!definitionName.equals(doubleDefinition.getName())) {
 			beanDefinitionRegistry.registerAlias(definitionName, doubleDefinition.getName());
 		}
 
