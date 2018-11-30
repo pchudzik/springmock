@@ -35,7 +35,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<spring.version>4.3.6.RELEASE</spring.version>
+		<spring.version>4.3.18.RELEASE</spring.version>
 		<spock.version>1.1-groovy-2.4</spock.version>
 		<mockito.version>1.10.5</mockito.version>
 		<springmock.version>3.1.0-SNAPSHOT</springmock.version>
