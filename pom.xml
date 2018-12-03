@@ -3,7 +3,7 @@
 
 	<groupId>com.pchudzik.springmock</groupId>
 	<artifactId>springmock-core</artifactId>
-	<version>1.2.0</version>
+	<version>1.2.1-SNAPSHOT</version>
 	<name>springmock-parent-pom</name>
 	<description>Parent pom for springmock</description>
 
@@ -38,7 +38,7 @@
 		<spring.version>4.3.18.RELEASE</spring.version>
 		<spock.version>1.1-groovy-2.4</spock.version>
 		<mockito.version>1.10.5</mockito.version>
-		<springmock.version>3.1.0</springmock.version>
+		<springmock.version>3.1.1-SNAPSHOT</springmock.version>
 	</properties>
 
 	<modules>
@@ -166,7 +166,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<!-- ./mvnw -P versions-update gplus:execute -e -N -->
 						<groupId>org.codehaus.gmavenplus</groupId>
 						<artifactId>gmavenplus-plugin</artifactId>
 						<version>1.6</version>

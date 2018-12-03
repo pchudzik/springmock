@@ -41,6 +41,9 @@ by a library of your choice.
     * [mockito](#mockito-1)
     * [spock](#spock-1)
 * [Problems](#problems)
+* [Development](#development)
+  * [Versions](#versions)
+  * [Deployment](#deployment)
 * [Changelog](#changelog)
   * [1.2.0 - springmock-mockito - 2018.12.03](#120-springmock-mockito---20181203)
   * [1.2.0 - springmock-spock - 2017.12.03](#120-springmock-spock---20181203)
@@ -301,6 +304,28 @@ Annotate @AutowiredMock or @AutowiredSpy field with
 
 Please report any problems with the library using Github issues. I'd really appreciate failing test case included in
 issue description or as PR.
+
+## Development
+
+### Versions
+
+Setting version is done using script[.mvnw/update-versions.groovy](.mvnw/update-versions.groovy).
+From this script versions are loaded from version.properties and applied on all required projects (root + samples).
+
+To apply versions from property file execute:
+
+```./mvnw -P versions-update gplus:execute -N```
+
+### Deployment
+
+Private key must be imported into pgp.
+
+In order to do the release, release versions must be set in poms and one must execute goal:
+```
+SONATYPE_USERNAME=secret_user \
+SONATYPE_PASSWORD=secret_password  \
+./mvnw --settings .mvn/settings.xml -P release clean deploy
+```  
 
 ## Changelog
 
