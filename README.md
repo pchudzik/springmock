@@ -312,6 +312,7 @@ issue description or as PR.
 ### 1.2.0 springmock-mockito - 2018.12.03
 
   * register field name as double alias - [#9](https://github.com/pchudzik/springmock/issues/9)
+  * added support for springboot2.1 - [#17](https://github.com/pchudzik/springmock/issues/17)
 
 ### 1.1.2 springmock-spock - 2017.09.17
   
