@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>com.pchudzik.springmock</groupId>
 		<artifactId>springmock-core</artifactId>
-		<version>1.2.0-SNAPSHOT</version>
+		<version>1.2.0</version>
 	</parent>
 
 	<name>springmock-infrastructure</name>
 	<artifactId>springmock-infrastructure</artifactId>
-	<version>3.1.0-SNAPSHOT</version>
+	<version>3.1.0</version>
 
 	<packaging>jar</packaging>
 	<description>Infrastructure for registering mocks and spies inside spring context</description>

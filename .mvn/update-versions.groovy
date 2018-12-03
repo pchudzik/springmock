@@ -16,12 +16,10 @@ new PomFile("infrastructure/pom.xml")
 
 new PomFile("mockito/pom.xml")
 		.replaceParentPomVersion(versions.parent)
-		.replaceModuleVersion(versions.mockito)
 		.save()
 
 new PomFile("spock/pom.xml")
 		.replaceParentPomVersion(versions.parent)
-		.replaceModuleVersion(versions.spock)
 		.save()
 
 new MockitoSamplesPom("samples/mockito-samples/pom.xml")
