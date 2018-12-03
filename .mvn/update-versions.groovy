@@ -30,6 +30,11 @@ new SpockSamplesBuildGradle("samples/spock-samples/build.gradle")
 		.updateSpringmockSpockVersion(versions.spock)
 		.save()
 
+new SpockSamplesBuildGradle("samples/spock-springboot2/build.gradle")
+		.updateSpringmockSpockVersion(versions.spock)
+		.save()
+
+
 class VersionProperties {
 	final parent
 	final infrastructure
